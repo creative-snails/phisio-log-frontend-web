@@ -8,26 +8,26 @@
 
 ### Frontend
 
-- **Framework:** [React](https://reactjs.org/)  
+- **Framework:** React
   _Reason:_ React provides a robust foundation for building responsive and interactive web applications with a wide ecosystem of libraries and tools.
 
-- **UI Library:** Vanilla CSS or utility-first frameworks like [Tailwind CSS](https://tailwindcss.com/)  
+- **UI Library:** Vanilla styling
   _Reason:_ Lightweight and flexible styling options allow for precise control over component rendering and responsiveness.
 
-- **State Management:** React's built-in tools (`useState`, `useReducer`, `Context API`)  
-  _Reason:_ Ideal for managing state in small to medium apps. Consider [Zustand](https://github.com/pmndrs/zustand) if state complexity grows, due to its minimal API and performance advantages.
+- **State Management:** React's built-in tools
+  _Reason:_ Ideal for managing state in small to medium apps. If state complexity grows, Zustand can be considered due to its minimal API and performance advantages.
 
 - **Audio Input Support:**
   - **Audio Capture:** Web Speech API or third-party browser-compatible libraries.
-  - **Speech-to-Text:** [Google Cloud Speech-to-Text](https://cloud.google.com/speech-to-text) or similar APIs.
-  - **Text Processing:** Use [ChatGPT API](https://platform.openai.com/docs) (starting with GPT-3.5 Turbo) to interpret and structure audio transcripts.
-  - **JSON Structuring:** Transcribed text is converted into structured JSON.
-  - **User Confirmation:** Users can review and edit structured data before saving.
+  - **Speech-to-Text:** Google Cloud Speech-to-Text to convert audio to text.
+  - **Text Processing:** Send the transcribed text to the ChatGPT API (starting with GPT-3.5 Turbo for cost-effectiveness, with the option to switch to GPT-4 if needed).
+  - **JSON Structuring:** ChatGPT interprets the text and structures it into a JSON object.
+  - **User Confirmation:** The structured data is returned to the user for confirmation and manual alterations if necessary.
 
 - **File Storage:** Integration with cloud services (e.g., AWS S3 or browser-compatible alternatives) to allow users to upload and store medical documents like test results.
 
 - **Notifications (Optional):**
-  - **Browser Notifications:** Use browser push APIs or tools like [OneSignal](https://onesignal.com/) for sending notifications.
+  - **Browser Notifications:** Use browser push APIs or tools like OneSignal for sending notifications.
   - **Custom Notifications:** In-app notification components can be built for simpler use cases.
 
 ---
@@ -47,13 +47,6 @@
 - **Data Privacy:** Aim to implement strong client-side encryption such as AES-256 to protect user data stored locally or in the cloud.
 
 - **Automated Reports:** Enable users to generate and download periodic reports (CSV, PDF, or JSON) of their health logs for backup or sharing.
-
----
-
-## 📌 Notes
-
-- This project is being developed with a focus on **web-first** experience using modern React tooling.
-- Future support for mobile or desktop may be explored depending on user demand.
 
 ---
 
