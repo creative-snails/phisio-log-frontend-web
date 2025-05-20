@@ -1,27 +1,18 @@
 {
   "compilerOptions": {
     "composite": true,
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "react-jsx",
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "baseUrl": "./src",
     "paths": {
-      "@components/*": ["components/*"]
-    }
+  "~/*": ["./src/*"],
+}
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ]
 }
+
