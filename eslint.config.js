@@ -54,16 +54,14 @@ export default tseslint.config(
           patterns: [
             {
               group: ['../*', '../*/*', '../../*'],
-              message: 'Please use absolute paths with the ~ prefix instead of relative parent paths.',
+              message:
+                'Please use absolute paths with the ~ prefix instead of relative parent paths.',
             },
           ],
         },
       ],
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'simple-import-sort/imports': [
         'error',
         {
