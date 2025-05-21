@@ -18,6 +18,7 @@
   _Reason:_ Ideal for managing state in small to medium apps. If state complexity grows, Zustand can be considered due to its minimal API and performance advantages.
 
 - **Audio Input Support:**
+
   - **Audio Capture:** Web Speech API or third-party browser-compatible libraries.
   - **Speech-to-Text:** Google Cloud Speech-to-Text to convert audio to text.
   - **Text Processing:** Send the transcribed text to the ChatGPT API (starting with GPT-3.5 Turbo for cost-effectiveness, with the option to switch to GPT-4 if needed).
@@ -49,4 +50,3 @@
 - **Automated Reports:** Enable users to generate and download periodic reports (CSV, PDF, or JSON) of their health logs for backup or sharing.
 
 ---
-
