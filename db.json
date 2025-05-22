@@ -1,0 +1,108 @@
+{
+  "health-records": [
+    {
+      "id": 1,
+      "user": "me",
+      "description": "Severe migraine lasting for days",
+      "symptoms": [
+        {
+          "name": "Migraine",
+          "startDate": "2025-02-20",
+          "duration": "3 days"
+        },
+        {
+          "name": "Nausea",
+          "startDate": "2025-02-21",
+          "duration": "2 days"
+        }
+      ],
+      "status": {
+        "stage": "in-progress",
+        "severity": "severe",
+        "progression": "stable"
+      },
+      "treatmentsTried": ["Painkillers", "Cold compress", "Hydration"],
+      "medicalConsultations": [
+        {
+          "consultant": "Dr. Smith",
+          "date": "2025-02-22",
+          "diagnosis": "Tension headache",
+          "followUpActions": ["Rest", "Reduce screen time"]
+        },
+        {
+          "consultant": "Dr. Lee",
+          "date": "2025-02-23",
+          "diagnosis": "Migraine",
+          "followUpActions": ["Try new medication", "Monitor symptoms"]
+        }
+      ],
+      "updates": [
+        {
+          "description": "Tried a new painkiller, mild relief",
+          "symptoms": [
+            {
+              "name": "Migraine",
+              "startDate": "2025-02-20",
+              "duration": "3 days"
+            }
+          ],
+          "stage": "open",
+          "treatmentsTried": ["Painkillers"],
+          "progression": "improving",
+          "medicalConsultations": []
+        }
+      ],
+      "createdAt": "2025-02-20T10:00:00.000Z",
+      "updatedAt": "2025-02-23T15:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "user": "me",
+      "description": "Persistent lower back pain affecting mobility",
+      "symptoms": [
+        {
+          "name": "Lower back pain",
+          "startDate": "2025-02-10",
+          "duration": "2 weeks"
+        },
+        {
+          "name": "Muscle stiffness",
+          "startDate": "2025-02-12",
+          "duration": "12 days"
+        }
+      ],
+      "status": {
+        "stage": "open",
+        "severity": "moderate",
+        "progression": "variable"
+      },
+      "treatmentsTried": ["Physical therapy", "Hot compress", "Stretching"],
+      "medicalConsultations": [
+        {
+          "consultant": "Dr. Adams",
+          "date": "2025-02-15",
+          "diagnosis": "Lumbar strain",
+          "followUpActions": ["Continue therapy", "Apply ice and heat alternately"]
+        }
+      ],
+      "updates": [
+        {
+          "description": "Started physical therapy, mild improvement",
+          "symptoms": [
+            {
+              "name": "Lower back pain",
+              "startDate": "2025-02-10",
+              "duration": "2 weeks"
+            }
+          ],
+          "stage": "in-progress",
+          "treatmentsTried": ["Physical therapy"],
+          "progression": "improving",
+          "medicalConsultations": []
+        }
+      ],
+      "createdAt": "2025-02-10T08:30:00.000Z",
+      "updatedAt": "2025-02-22T12:45:00.000Z"
+    }
+  ]
+}
