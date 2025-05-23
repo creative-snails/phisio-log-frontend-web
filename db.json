@@ -11,8 +11,7 @@
         },
         {
           "name": "Nausea",
-          "startDate": "2025-02-21",
-          "duration": "2 days"
+          "startDate": "2025-02-21"
         }
       ],
       "status": {
@@ -41,8 +40,7 @@
           "symptoms": [
             {
               "name": "Migraine",
-              "startDate": "2025-02-20",
-              "duration": "3 days"
+              "startDate": "2025-02-20"
             }
           ],
           "stage": "open",
@@ -61,13 +59,11 @@
       "symptoms": [
         {
           "name": "Lower back pain",
-          "startDate": "2025-02-10",
-          "duration": "2 weeks"
+          "startDate": "2025-02-10"
         },
         {
           "name": "Muscle stiffness",
-          "startDate": "2025-02-12",
-          "duration": "12 days"
+          "startDate": "2025-02-12"
         }
       ],
       "status": {
@@ -90,8 +86,7 @@
           "symptoms": [
             {
               "name": "Lower back pain",
-              "startDate": "2025-02-10",
-              "duration": "2 weeks"
+              "startDate": "2025-02-10"
             }
           ],
           "stage": "in-progress",
