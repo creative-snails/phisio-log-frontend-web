@@ -1,17 +1,10 @@
-import TopNavBar from "./TopNavBar";
 import SideNavBar from "./SideNavBar";
+import TopNavBar from "./TopNavBar";
 
-interface Props {
-  user: { name: string } | null;
-  onSignIn: () => void;
-  onSignOut: () => void;
-  children: React.ReactNode;
-}
-
-const Layout = ({ user, onSignIn, onSignOut, children }: Props) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="layout">
-      <TopNavBar user={user} onSignIn={onSignIn} onSignOut={onSignOut} />
+      <TopNavBar />
       <div className="layout-body">
         <SideNavBar />
         <main className="page-content">{children}</main>

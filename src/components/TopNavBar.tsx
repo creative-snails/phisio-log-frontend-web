@@ -1,13 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import "../App.css";
 
-interface Props {
-  user: { name: string } | null;
-  onSignIn: () => void;
-  onSignOut: () => void;
-}
+import "~/App.css";
 
-const TopNavBar = ({ user, onSignIn, onSignOut }: Props) => {
+const TopNavBar = () => {
+  const [user, setUser] = useState<{ name: string } | null>(null);
+
+  const handleSignIn = () => setUser({ name: "Emmet" });
+  const handleSignOut = () => setUser(null);
+
   return (
     <header className="top-navbar">
       <div className="top-left">
@@ -17,7 +18,7 @@ const TopNavBar = ({ user, onSignIn, onSignOut }: Props) => {
       </div>
       <div className="top-right">
         {user && <span>Hi, {user.name}</span>}
-        <button onClick={user ? onSignOut : onSignIn} className={user ? "sign-out-button" : "sign-in-button"}>
+        <button onClick={user ? handleSignOut : handleSignIn} className={user ? "sign-out-button" : "sign-in-button"}>
           {user ? "Sign Out" : "Sign In"}
         </button>
       </div>
