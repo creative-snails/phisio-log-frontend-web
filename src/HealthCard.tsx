@@ -18,9 +18,14 @@ export const HealthCard: React.FC<{ record: HealthRecord }> = ({ record }) => {
         <p>
           <strong>Symptoms:</strong> {record.symptoms.map((s) => s.name).join(", ")}
         </p>
-        <button onClick={() => setIsExpanded(!isExpanded)} className="details-toggle">
-          {isExpanded ? "Show Less" : "Show More"}
-        </button>
+        <div className="container-button">
+          <button onClick={() => setIsExpanded(!isExpanded)} className="details-toggle">
+            {isExpanded ? "Show Less" : "Show More"}
+          </button>
+          <button className="edit-button"  onClick={() => alert("This is a placeholder...")}>
+            Edit
+          </button>
+        </div>
       </div>
 
       {/* Detailed information shown only when expanded */}
