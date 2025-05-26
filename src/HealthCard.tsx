@@ -22,7 +22,7 @@ export const HealthCard: React.FC<{ record: HealthRecord }> = ({ record }) => {
           <button onClick={() => setIsExpanded(!isExpanded)} className="details-toggle">
             {isExpanded ? "Show Less" : "Show More"}
           </button>
-          <button className="edit-button"  onClick={() => alert("This is a placeholder...")}>
+          <button className="edit-button" onClick={() => alert("This is a placeholder...")}>
             Edit
           </button>
         </div>
