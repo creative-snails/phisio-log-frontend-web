@@ -1,22 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout";
+import BodyMap from "./pages/BodyMap";
+import HealthRecord from "./pages/HealthRecord";
+import Home from "./pages/Home";
+import Reports from "./pages/Reports";
 
 import "./App.css";
 
-const App: React.FC = () => {
+function App() {
   return (
-    <div className="container">
-      <nav>
-        <h1>Welcome to Health Records</h1>
-        <Link to="/health-records" className="nav-link">
-          View Health Records
-        </Link>
-      </nav>
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/health-record" element={<HealthRecord />} />
+        <Route path="/body-map" element={<BodyMap />} />
+        <Route path="/reports" element={<Reports />} />
+      </Routes>
+    </Layout>
   );
-};
+}
 
 export default App;
-//git add .
-//git commit -m "describe what you have done"
-//git push origin main

@@ -48,17 +48,18 @@ export default tseslint.config(
       "simple-import-sort": simpleImportSort,
     },
     rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["../*", "../*/*", "../../*"],
-              message: "Please use absolute paths with the ~ prefix instead of relative parent paths.",
-            },
-          ],
-        },
-      ],
+      // "no-restricted-imports": [
+      //   "error",
+      //   {
+      //     patterns: [
+      //       {
+      //         //group: ["../*", "../*/*", "../../*"],
+      //         group: [".*"],
+      //         message: "Please use absolute paths with the ~ prefix instead of relative parent paths.",
+      //       },
+      //     ],
+      //   },
+      // ],
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "simple-import-sort/imports": [

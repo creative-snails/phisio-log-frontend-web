@@ -17,6 +17,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  color: black;
 }
 
 .container-button {
@@ -54,4 +55,5 @@
   border-top: 1px solid #eee;
   margin-top: 1rem;
   padding-top: 1rem;
+  color: black;
 }

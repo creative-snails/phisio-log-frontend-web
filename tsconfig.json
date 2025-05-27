@@ -5,7 +5,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    //"baseUrl": "src",
     "paths": {
+      //"~/*": ["*"]
       "~/*": ["./src/*"]
     }
   },

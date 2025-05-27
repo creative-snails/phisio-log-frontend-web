@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { HealthRecord } from "./types";
+import type { HealthRecord } from "../types";
 
 import "./HealthCard.css";
 

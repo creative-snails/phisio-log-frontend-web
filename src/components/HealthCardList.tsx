@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import type { HealthRecord } from "../types";
 import { HealthCard } from "./HealthCard";
-import type { HealthRecord } from "./types";
 
 const Home: React.FC = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
