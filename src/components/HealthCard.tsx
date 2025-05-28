@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import type { HealthRecord } from "../types";
+import { useState } from "react";
 
-import "./HealthCard.css";
+import "~/components/HealthCard.css";
+import type { HealthRecord } from "~/types";
 
-export const HealthCard: React.FC<{ record: HealthRecord }> = ({ record }) => {
+export const HealthCard = ({ record }: { record: HealthRecord }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const latestConsultation = record.medicalConsultations[record.medicalConsultations.length - 1];
 

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import type { HealthRecord } from "../types";
-import { HealthCard } from "./HealthCard";
+import { useEffect, useState } from "react";
 
-const Home: React.FC = () => {
+import { HealthCard } from "~/components/HealthCard";
+import type { HealthRecord } from "~/types";
+
+const HealthCardList = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
 
   useEffect(() => {
@@ -23,4 +24,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default HealthCardList;

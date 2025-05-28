@@ -1,4 +1,4 @@
-import HealthCardList from "../components/HealthCardList";
+import HealthCardList from "~/components/HealthCardList";
 
 const HealthRecord = () => (
   <div className="content-wrapper">
