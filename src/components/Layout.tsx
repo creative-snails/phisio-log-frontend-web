@@ -1,5 +1,5 @@
-import SideNavBar from "~/components/SideNavBar";
-import TopNavBar from "~/components/TopNavBar";
+import SideNavBar from "./SideNavBar";
+import TopNavBar from "./TopNavBar";
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -54,7 +54,6 @@ export default tseslint.config(
           patterns: [
             {
               group: ["../*", "../*/*", "../../*"],
-              group: [".*"],
               message: "Please use absolute paths with the ~ prefix instead of relative parent paths.",
             },
           ],

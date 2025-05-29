@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import "~/pages/Home.css";
+import "./Home.css";
 
 const Home = () => (
   <div className="content-wrapper">

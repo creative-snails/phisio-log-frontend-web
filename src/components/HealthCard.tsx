@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import "~/components/HealthCard.css";
+import "./HealthCard.css";
 import type { HealthRecord } from "~/types";
 
-export const HealthCard = ({ record }: { record: HealthRecord }) => {
+const HealthCard = ({ record }: { record: HealthRecord }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const latestConsultation = record.medicalConsultations[record.medicalConsultations.length - 1];
 
@@ -55,3 +55,5 @@ export const HealthCard = ({ record }: { record: HealthRecord }) => {
     </li>
   );
 };
+
+export default HealthCard;

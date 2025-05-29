@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import HealthCard from "./HealthCard";
 
-import { HealthCard } from "~/components/HealthCard";
 import type { HealthRecord } from "~/types";
 
 const HealthCardList = () => {
