@@ -3,6 +3,11 @@
   border-radius: 8px;
   margin-bottom: 1rem;
   padding: 1rem;
+  color: black;
+}
+
+.health-records-list .health-card .health-card-header h3 {
+  color: black !important;
 }
 
 .health-card-header {
