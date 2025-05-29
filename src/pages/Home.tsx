@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+
+import "./Home.css";
+
 const Home = () => (
   <div className="content-wrapper">
     <h2>Welcome to Phisiolog</h2>
@@ -32,6 +36,10 @@ const Home = () => (
         <em>Join us today and start your journey toward better health and well-being.</em>
       </p>
     </section>
+
+    <Link to="/health-record" className="nav-link-page">
+      View Health Records
+    </Link>
   </div>
 );
 
