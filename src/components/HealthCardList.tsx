@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import HealthCard from "./HealthCard";
+import HealthModal from "./HealthModal.tsx";
+import HealthTable from "./HealthTable";
 
 import type { HealthRecord } from "~/types";
 
 const HealthCardList = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("../db.json")
@@ -12,14 +14,34 @@ const HealthCardList = () => {
       .then((data) => setRecords(data["health-records"]));
   }, []);
 
+  const handleNext = () => {
+    setSelectedIndex((prev) => (prev !== null ? (prev + 1) % records.length : null));
+  };
+
+  const handlePrev = () => {
+    setSelectedIndex((prev) => (prev !== null ? (prev - 1 + records.length) % records.length : null));
+  };
+
+  const handleRecordClick = (record: HealthRecord) => {
+    const index = records.findIndex((r) => r.id === record.id);
+    setSelectedIndex(index);
+  };
+
   return (
     <div className="home">
       <h2>Health Records</h2>
-      <ul className="health-records-list">
-        {records.map((record) => (
-          <HealthCard key={record.id} record={record} />
-        ))}
-      </ul>
+      <div className="health-records-grid">
+        <HealthTable records={records} onClick={handleRecordClick} />
+      </div>
+
+      {selectedIndex !== null && (
+        <HealthModal
+          record={records[selectedIndex]}
+          onClose={() => setSelectedIndex(null)}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+      )}
     </div>
   );
 };
