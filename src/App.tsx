@@ -6,6 +6,7 @@ import BodyMap from "~/pages/BodyMap";
 import HealthRecord from "~/pages/HealthRecord";
 import Home from "~/pages/Home";
 import Reports from "~/pages/Reports";
+import HealthRecordForm from "~/components/HealthRecordForm";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/health-record" element={<HealthRecord />} />
+          <Route path="/health-record/new" element={<HealthRecordForm />} />
           <Route path="/body-map" element={<BodyMap />} />
           <Route path="/reports" element={<Reports />} />
         </Routes>

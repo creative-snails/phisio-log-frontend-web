@@ -12,6 +12,11 @@ const SideNavBar = () => {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/health-record/new" className="nav-link">
+            Add Record
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/body-map" className="nav-link">
             Body Map
           </NavLink>
