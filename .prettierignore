@@ -1,3 +1,33 @@
-node_modules
+# Build outputs
 dist
+dist-ssr
+
+# Dependencies
+node_modules
+
+# Package management
 package-lock.json
+yarn.lock
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Generated files
+*.tsbuildinfo
+*.local
+
+# IDE/OS specific
+.vscode/*
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

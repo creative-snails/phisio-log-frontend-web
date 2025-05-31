@@ -5,7 +5,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.validate": ["typescript", "typescriptreact"],
+  "eslint.validate": ["typescript", "typescriptreact", "javascript", "javascriptreact"],
   "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "editor.tabSize": 2,
