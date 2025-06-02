@@ -1,4 +1,4 @@
-### Description
+### Summary
 
 Please include a summary of the changes and the related issue. Be concise but informative.
 
@@ -8,6 +8,6 @@ If your changes are not obvious, please provide a brief description of how to te
 
 ### Checklist
 
-- [ ] I have performed a self-review of my code.
 - [ ] My code is up-to-date with the `main` branch.
 - [ ] My code has no merge conflicts.
+- [ ] I have performed a self-review of my code.
