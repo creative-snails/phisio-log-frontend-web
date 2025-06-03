@@ -6,6 +6,7 @@
   background-color: #26435a;
   color: white;
   padding: 12px 24px;
+  min-width: 660px;
 }
 
 .top-left .home-button {
@@ -65,6 +66,7 @@
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .content-wrapper {

@@ -1,8 +1,8 @@
+import { IoClose } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+
 import "./HealthModal.css";
 import body from "~/assets/img/body.png";
-import close from "~/assets/img/close.png";
-import nextArrow from "~/assets/img/next.png";
-import prevArrow from "~/assets/img/prev.png";
 import type { HealthRecord } from "~/types";
 
 const HealthModal = ({
@@ -22,11 +22,11 @@ const HealthModal = ({
     <div className="modal-overlay">
       <div className="modal-content">
         <button className="close-button" onClick={onClose}>
-          <img src={close} alt="Next" width={30} height={30} />
+          <IoClose size={30} />
         </button>
         <div className="modal-body">
           <button className="nav-button next" onClick={onNext}>
-            <img src={prevArrow} alt="Next" width={120} height={60} />
+            <IoChevronBack size={40} />
           </button>
           <div className="health-record-details">
             <h2>{record.description}</h2>
@@ -56,7 +56,7 @@ const HealthModal = ({
             </div>
           </div>
           <button className="nav-button prev" onClick={onPrev}>
-            <img src={nextArrow} alt="Next" width={120} height={60} />
+            <IoChevronForward size={40} />
           </button>
         </div>
       </div>

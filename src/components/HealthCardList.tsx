@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import HealthCard from "./HealthCard.tsx";
 import HealthModal from "./HealthModal.tsx";
-import HealthTable from "./HealthTable";
 
 import type { HealthRecord } from "~/types";
 
@@ -31,7 +31,7 @@ const HealthCardList = () => {
     <div className="home">
       <h2>Health Records</h2>
       <div className="health-records-grid">
-        <HealthTable records={records} onClick={handleRecordClick} />
+        <HealthCard records={records} onClick={handleRecordClick} />
       </div>
 
       {selectedIndex !== null && (

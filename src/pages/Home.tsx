@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
-
 import "./Home.css";
+import HealthCardList from "~/components/HealthCardList";
 
 const Home = () => (
   <div className="content-wrapper">
@@ -37,9 +36,7 @@ const Home = () => (
       </p>
     </section>
 
-    <Link to="/health-record" className="nav-link-page">
-      View Health Records
-    </Link>
+    <HealthCardList />
   </div>
 );
 
