@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import "./HealthCard.css";
 import type { HealthRecord } from "~/types";
+import "./HealthCard.css";
 
 const HealthCard = ({ record }: { record: HealthRecord }) => {
   const [isExpanded, setIsExpanded] = useState(false);
