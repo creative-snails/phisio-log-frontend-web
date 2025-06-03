@@ -12,8 +12,8 @@ const SideNavBar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/health-record/new" className="nav-link">
-            Add Record
+          <NavLink to="/health-record/form" className="nav-link">
+            Health Record Form
           </NavLink>
         </li>
         <li>
