@@ -8,33 +8,28 @@ import HealthRecord from "~/pages/HealthRecord";
 import Home from "~/pages/Home";
 import Reports from "~/pages/Reports";
 import HealthRecordForm from "~/components/HealthRecordForm";
-import type { HealthRecord as HealthRecordType } from "~/types";
+import type { RecordFormData } from "~/types";
 
 function App() {
-  const [recordData, setRecordData] = useState<HealthRecordType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [recordFormData, setRecordFormData] = useState<RecordFormData>({
+    data: null,
+    loading: true,
+    error: "",
+  });
 
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         const res = await fetch("http://localhost:4444/health-records/1");
-        if (!res.ok) throw new Error("Health record not found");
-        const data: HealthRecordType = await res.json();
-        setRecordData(data);
+        const data = await res.json();
+        setRecordFormData({ data, loading: false, error: "" });
       } catch (err: any) {
-        setError(err.message || "Unexpected error");
-      } finally {
-        setLoading(false);
+        setRecordFormData({ data: null, loading: false, error: err.message || "Unexpected error" });
       }
     };
 
     fetchRecord();
   }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
-  if (!recordData) return <div>No data found</div>;
 
   return (
     <BrowserRouter>
@@ -44,14 +39,7 @@ function App() {
           <Route path="/health-record" element={<HealthRecord />} />
           <Route
             path="/health-record/form"
-            element={
-              <HealthRecordForm
-                description={recordData.description}
-                treatments={recordData.treatmentsTried}
-                createdAt={new Date(recordData.createdAt)}
-                updatedAt={new Date(recordData.updatedAt)}
-              />
-            }
+            element={<HealthRecordForm recordFormData={recordFormData} setRecordFormData={setRecordFormData} />}
           />
           <Route path="/body-map" element={<BodyMap />} />
           <Route path="/reports" element={<Reports />} />

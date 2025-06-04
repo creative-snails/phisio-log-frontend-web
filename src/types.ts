@@ -37,3 +37,8 @@ export interface HealthRecord {
   createdAt: string;
   updatedAt: string;
 }
+export interface RecordFormData {
+  data: HealthRecord | null;
+  loading: boolean;
+  error: string;
+}

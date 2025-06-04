@@ -1,35 +1,47 @@
 import { useState } from "react";
+import type { RecordFormData } from "~/types";
+
 interface HealthRecordFormProps {
-  description: string;
-  treatments: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  recordFormData: RecordFormData;
+  setRecordFormData: React.Dispatch<React.SetStateAction<RecordFormData>>;
 }
 
-const HealthRecordForm = ({ description, treatments, createdAt, updatedAt }: HealthRecordFormProps) => {
-  const [formData, setFormData] = useState({
-    description,
-    treatments,
-  });
+const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFormProps) => {
+  const { data, loading, error } = recordFormData;
 
   const [newTreatment, setNewTreatment] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
+  if (!data) return <div>No data found</div>;
+
+  const handleDescriptionChange = (value: string) => {
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: prev.data ? { ...prev.data, description: value } : null,
+    }));
+  };
+
   const handleAddOrUpdateTreatment = () => {
     const trimmed = newTreatment.trim();
-    if (!trimmed) return;
+    if (!trimmed || !data) return;
 
-    setFormData((prev) => {
-      const updatedTreatments = [...prev.treatments];
-
+    setRecordFormData((prev) => {
+      if (!prev.data) return prev;
+      const updatedTreatments = [...prev.data.treatmentsTried];
       if (editIndex !== null) {
         updatedTreatments[editIndex] = trimmed;
       } else {
         updatedTreatments.push(trimmed);
       }
+
       return {
         ...prev,
-        treatments: updatedTreatments,
+        data: {
+          ...prev.data,
+          treatmentsTried: updatedTreatments,
+        },
       };
     });
 
@@ -39,16 +51,17 @@ const HealthRecordForm = ({ description, treatments, createdAt, updatedAt }: Hea
 
   const handleEditTreatment = (index: number) => {
     setEditIndex(index);
-    setNewTreatment(formData.treatments[index]);
+    setNewTreatment(data.treatmentsTried[index]);
   };
 
   const handleRemoveTreatment = (index: number) => {
-    setFormData((prev) => {
-      const updated = [...prev.treatments];
+    setRecordFormData((prev) => {
+      if (!prev.data) return prev;
+      const updated = [...prev.data.treatmentsTried];
       updated.splice(index, 1);
       return {
         ...prev,
-        treatments: updated,
+        data: { ...prev.data, treatmentsTried: updated },
       };
     });
 
@@ -60,23 +73,24 @@ const HealthRecordForm = ({ description, treatments, createdAt, updatedAt }: Hea
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!data) return;
+
     console.log("Submitted record:", {
-      ...formData,
-      createdAt,
-      updatedAt: new Date(),
+      description: data.description,
+      treatmentsTried: data.treatmentsTried,
     });
   };
 
   return (
     <form className="form-wrapper" onSubmit={handleSubmit}>
-      <h2>Add / Edit Health Record</h2>
+      <h2>Edit Health Record</h2>
       <div className="form-group">
         <label htmlFor="description">Description</label>
         <textarea
           id="description"
           rows={4}
-          value={formData.description}
-          onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+          value={data.description}
+          onChange={(e) => handleDescriptionChange(e.target.value)}
           placeholder="Describe symptoms, context, or notes..."
         />
       </div>
@@ -89,19 +103,28 @@ const HealthRecordForm = ({ description, treatments, createdAt, updatedAt }: Hea
             onChange={(e) => setNewTreatment(e.target.value)}
             placeholder="Enter a treatment"
           />
-          <button type="button" className="details-toggle" onClick={handleAddOrUpdateTreatment}>
+          <button
+            type="button"
+            className={editIndex !== null ? "update-button" : "add-button"}
+            onClick={handleAddOrUpdateTreatment}
+          >
             {editIndex !== null ? "Update" : "Add"}
           </button>
         </div>
         <ul className="treatment-list">
-          {formData.treatments.map((treatment, i) => (
+          {data.treatmentsTried.map((treatment, i) => (
             <li key={i}>
               {treatment}
               <div>
-                <button type="button" className="details-toggle" onClick={() => handleEditTreatment(i)}>
+                <button
+                  type="button"
+                  className="edit-button"
+                  style={{ marginRight: "0.5rem" }}
+                  onClick={() => handleEditTreatment(i)}
+                >
                   Edit
                 </button>
-                <button type="button" className="edit-button" onClick={() => handleRemoveTreatment(i)}>
+                <button type="button" className="remove-button" onClick={() => handleRemoveTreatment(i)}>
                   Remove
                 </button>
               </div>
@@ -111,13 +134,13 @@ const HealthRecordForm = ({ description, treatments, createdAt, updatedAt }: Hea
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         <p>
-          <strong>Created:</strong> {createdAt.toLocaleString()}
+          <strong>Created:</strong> {new Date(data.createdAt).toLocaleString()}
         </p>
         <p>
-          <strong>Updated:</strong> {updatedAt.toLocaleString()}
+          <strong>Updated:</strong> {new Date(data.updatedAt).toLocaleString()}
         </p>
       </div>
-      <button type="submit" className="details-toggle">
+      <button type="submit" className="submit-button">
         Submit
       </button>
     </form>
