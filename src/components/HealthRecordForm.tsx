@@ -13,9 +13,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
   const [newTreatment, setNewTreatment] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
-
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
       ...prev,
