@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import type { RecordFormData } from "~/types";
 
 interface HealthRecordFormProps {
@@ -14,12 +15,11 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
-  if (!data) return <div>No data found</div>;
 
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
       ...prev,
-      data: prev.data ? { ...prev.data, description: value } : null,
+      data: { ...prev.data, description: value },
     }));
   };
 
@@ -59,6 +59,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       if (!prev.data) return prev;
       const updated = [...prev.data.treatmentsTried];
       updated.splice(index, 1);
+
       return {
         ...prev,
         data: { ...prev.data, treatmentsTried: updated },
@@ -81,7 +82,11 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     });
   };
 
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : error ? (
+    <div style={{ color: "red" }}>Error: {error}</div>
+  ) : (
     <form className="form-wrapper" onSubmit={handleSubmit}>
       <h2>Edit Health Record</h2>
       <div className="form-group">
@@ -133,12 +138,16 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
         </ul>
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
-        <p>
-          <strong>Created:</strong> {new Date(data.createdAt).toLocaleString()}
-        </p>
-        <p>
-          <strong>Updated:</strong> {new Date(data.updatedAt).toLocaleString()}
-        </p>
+        {data.createdAt && (
+          <p>
+            <strong>Created:</strong> {new Date(data.createdAt).toLocaleString()}
+          </p>
+        )}
+        {data.updatedAt && (
+          <p>
+            <strong>Updated:</strong> {new Date(data.updatedAt).toLocaleString()}
+          </p>
+        )}
       </div>
       <button type="submit" className="submit-button">
         Submit

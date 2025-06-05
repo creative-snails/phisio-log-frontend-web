@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "~/App.css";
+import HealthRecordForm from "~/components/HealthRecordForm";
 import Layout from "~/components/Layout";
 import BodyMap from "~/pages/BodyMap";
 import HealthRecord from "~/pages/HealthRecord";
 import Home from "~/pages/Home";
 import Reports from "~/pages/Reports";
-import HealthRecordForm from "~/components/HealthRecordForm";
 import type { RecordFormData } from "~/types";
 
 function App() {
   const [recordFormData, setRecordFormData] = useState<RecordFormData>({
-    data: null,
+    data: {
+      description: "",
+      treatmentsTried: [],
+    },
     loading: true,
     error: "",
   });
@@ -23,8 +26,12 @@ function App() {
         const res = await fetch("http://localhost:4444/health-records/1");
         const data = await res.json();
         setRecordFormData({ data, loading: false, error: "" });
-      } catch (err: any) {
-        setRecordFormData({ data: null, loading: false, error: err.message || "Unexpected error" });
+      } catch (err) {
+        setRecordFormData({
+          ...recordFormData,
+          loading: false,
+          error: err instanceof Error ? err.message : "Unexpected error",
+        });
       }
     };
 
