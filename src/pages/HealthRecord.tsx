@@ -1,5 +1,3 @@
-import HealthCardList from "~/components/HealthCardList";
-
 const HealthRecord = () => (
   <div className="content-wrapper">
     <h2>Add a Health Record</h2>
@@ -36,8 +34,6 @@ const HealthRecord = () => (
         <em>A healthier future starts with clear records. Start logging today!</em>
       </p>
     </section>
-
-    <HealthCardList />
   </div>
 );
 

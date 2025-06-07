@@ -8,7 +8,8 @@ const SideNavBar = () => {
       <ul className="nav-list">
         <li>
           <NavLink to="/health-record" className="nav-link">
-            Health Record
+            {/* need to be replaced later */}
+            Health Record Editor
           </NavLink>
         </li>
         <li>
