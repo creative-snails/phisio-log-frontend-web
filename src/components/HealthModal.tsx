@@ -5,17 +5,14 @@ import "./HealthModal.css";
 import body from "~/assets/img/body.png";
 import type { HealthRecord } from "~/types";
 
-const HealthModal = ({
-  record,
-  onClose,
-  onNext,
-  onPrev,
-}: {
+interface HealthModalProps {
   record: HealthRecord;
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
-}) => {
+}
+
+const HealthModal = ({ record, onClose, onNext, onPrev }: HealthModalProps) => {
   const latestConsultation = record.medicalConsultations[record.medicalConsultations.length - 1];
 
   return (
@@ -32,6 +29,13 @@ const HealthModal = ({
             <h2>{record.description}</h2>
             <div className="details-container">
               <div className="details-text">
+                <p>
+                  <strong>Date:</strong> {new Date(record.createdAt).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Symptoms:</strong> {record.symptoms.map((s) => s.name).join(", ")}
+                </p>
+                <div className="detail-separator-line" />
                 <p>
                   <strong>Doctor:</strong> {latestConsultation?.consultant}
                 </p>

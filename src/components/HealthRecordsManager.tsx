@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import HealthCard from "./HealthCard.tsx";
+import HealthCardGrid from "./HealthCardGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
 import type { HealthRecord } from "~/types";
@@ -9,9 +9,9 @@ const HealthCardList = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("../db.json")
+    fetch("http://localhost:4444/health-records")
       .then((response) => response.json())
-      .then((data) => setRecords(data["health-records"]));
+      .then((data) => setRecords(data));
   }, []);
 
   const handleNext = () => {
@@ -31,7 +31,7 @@ const HealthCardList = () => {
     <div className="home">
       <h2>Health Records</h2>
       <div className="health-records-grid">
-        <HealthCard records={records} onClick={handleRecordClick} />
+        <HealthCardGrid records={records} onClick={handleRecordClick} />
       </div>
 
       {selectedIndex !== null && (

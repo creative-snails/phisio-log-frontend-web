@@ -7,8 +7,11 @@
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
   z-index: 1000;
+  /* Modified position modal with fixed distance from top */
+  /* This to avoid that details are longer modal do not move around */
+  align-items: flex-start;
+  padding-top: 200px;
 }
 
 .modal-content {
@@ -53,6 +56,18 @@
   align-items: center;
   justify-content: center;
   padding: 10px;
+  /* nav- button have now a fixed position to avoid changing position based on lebght of the details*/
+  position: absolute;
+  top: 0;
+  margin-top: 80px;
+}
+
+.nav-button.next {
+  left: 0;
+}
+
+.nav-button.prev {
+  right: 0;
 }
 
 .nav-button:hover {
@@ -68,12 +83,21 @@
 
 .details-img {
   background: none;
+  margin-top: 20px; /* aggiunge uno spazio costante dall'alto */
 }
 
 .details-container {
   display: flex;
   align-items: flex-start;
   gap: 20px;
+  justify-content: space-between; /* Add to avoid moving alien left/right during scrolling*/
+}
+
+.detail-separator-line {
+  width: 600px;
+  height: 1px;
+  background-color: #ccc;
+  margin: 15px 0;
 }
 
 .health-record-details h2 {
@@ -81,6 +105,8 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 20px;
+  min-height: 130px; /* Add fix height to avoid the details to move up and down during carousel*/
+  line-height: 50px; /* spacing between line*/
 }
 
 .health-record-details {

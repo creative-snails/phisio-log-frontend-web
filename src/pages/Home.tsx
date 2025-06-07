@@ -1,5 +1,4 @@
-import "./Home.css";
-import HealthCardList from "~/components/HealthCardList";
+import HealthRecordsManager from "~/components/HealthRecordsManager";
 
 const Home = () => (
   <div className="content-wrapper">
@@ -36,7 +35,7 @@ const Home = () => (
       </p>
     </section>
 
-    <HealthCardList />
+    <HealthRecordsManager />
   </div>
 );
 

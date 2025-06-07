@@ -1,7 +1,12 @@
-import "./HealthCard.css";
+import "./HealthCardGrid.css";
 import type { HealthRecord } from "~/types";
 
-const HealthCard = ({ records, onClick }: { records: HealthRecord[]; onClick: (record: HealthRecord) => void }) => {
+interface HealthCardGridProps {
+  records: HealthRecord[];
+  onClick: (record: HealthRecord) => void;
+}
+
+const HealthCard = ({ records, onClick }: HealthCardGridProps) => {
   return (
     <div className="grid-container">
       <div className="grid">
