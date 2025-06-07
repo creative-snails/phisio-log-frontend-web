@@ -1,4 +1,5 @@
 import HealthCardList from "~/components/HealthCardList";
+import SymptomFormSection from "~/components/SymptomFormSection";
 
 const HealthRecord = () => (
   <div className="content-wrapper">
@@ -38,6 +39,7 @@ const HealthRecord = () => (
     </section>
 
     <HealthCardList />
+    <SymptomFormSection />
   </div>
 );
 
