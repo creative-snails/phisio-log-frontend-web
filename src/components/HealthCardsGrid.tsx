@@ -1,12 +1,12 @@
-import "./HealthCardGrid.css";
+import "./HealthCardsGrid.css";
 import type { HealthRecord } from "~/types";
 
-interface HealthCardGridProps {
+interface HealthCardsGridProps {
   records: HealthRecord[];
   onClick: (record: HealthRecord) => void;
 }
 
-const HealthCard = ({ records, onClick }: HealthCardGridProps) => {
+const HealthsCardsGrid = ({ records, onClick }: HealthCardsGridProps) => {
   return (
     <div className="grid-container">
       <div className="grid">
@@ -41,4 +41,4 @@ const HealthCard = ({ records, onClick }: HealthCardGridProps) => {
   );
 };
 
-export default HealthCard;
+export default HealthsCardsGrid;

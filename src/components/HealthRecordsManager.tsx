@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import HealthCardGrid from "./HealthCardGrid.tsx";
+import HealthCardGrid from "./HealthCardsGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
 import type { HealthRecord } from "~/types";
 
-const HealthCardList = () => {
+const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -46,4 +46,4 @@ const HealthCardList = () => {
   );
 };
 
-export default HealthCardList;
+export default HealthRecordsManager;
