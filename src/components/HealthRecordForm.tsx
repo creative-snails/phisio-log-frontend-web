@@ -22,7 +22,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
 
   const handleAddOrUpdateTreatment = () => {
     const trimmed = newTreatment.trim();
-    if (!trimmed || !data) return;
+    if (!trimmed) return;
 
     setRecordFormData((prev) => {
       if (!prev.data) return prev;
@@ -71,7 +71,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!data) return;
 
     console.log("Submitted record:", {
       description: data.description,

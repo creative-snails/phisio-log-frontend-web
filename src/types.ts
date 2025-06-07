@@ -29,10 +29,10 @@ export interface HealthRecord {
   id?: number;
   user?: string;
   description: string;
-  symptoms?: Symptom[];
-  status?: Status;
+  symptoms: Symptom[];
+  status: Status;
   treatmentsTried: string[];
-  medicalConsultations?: MedicalConsultation[];
+  medicalConsultations: MedicalConsultation[];
   updates?: Update[];
   createdAt?: string;
   updatedAt?: string;

@@ -14,7 +14,14 @@ function App() {
   const [recordFormData, setRecordFormData] = useState<RecordFormData>({
     data: {
       description: "",
+      symptoms: [],
+      status: {
+        stage: "",
+        progression: "",
+        severity: "",
+      },
       treatmentsTried: [],
+      medicalConsultations: [],
     },
     loading: true,
     error: "",
