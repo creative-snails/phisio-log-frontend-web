@@ -25,7 +25,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     if (!trimmed) return;
 
     setRecordFormData((prev) => {
-      if (!prev.data) return prev;
       const updatedTreatments = [...prev.data.treatmentsTried];
       if (editIndex !== null) {
         updatedTreatments[editIndex] = trimmed;
@@ -53,7 +52,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
 
   const handleRemoveTreatment = (index: number) => {
     setRecordFormData((prev) => {
-      if (!prev.data) return prev;
       const updated = [...prev.data.treatmentsTried];
       updated.splice(index, 1);
 
