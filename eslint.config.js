@@ -1,12 +1,12 @@
 import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import prettier from "eslint-plugin-prettier";
 import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
@@ -34,11 +34,15 @@ export default tseslint.config(
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ["**/*.{ts,tsx}"],
+    files: ["**/*.{ts,tsx,js,jsx}"],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
+    // Plugins registrations
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
@@ -48,6 +52,7 @@ export default tseslint.config(
       "simple-import-sort": simpleImportSort,
     },
     rules: {
+      // Enforce absolute imports over relative
       "no-restricted-imports": [
         "error",
         {
@@ -59,8 +64,13 @@ export default tseslint.config(
           ],
         },
       ],
+      // Apply React Hooks recommendations
       ...reactHooks.configs.recommended.rules,
+      // Warn on non-component exports and permit constant exports
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      // Enforce blank lines between statements
+      "padding-line-between-statements": ["error", { blankLine: "always", prev: "*", next: "return" }],
+      // Import sorting config
       "simple-import-sort/imports": [
         "error",
         {
@@ -77,7 +87,9 @@ export default tseslint.config(
           ],
         },
       ],
+      // React-specific rules
       "react-hooks/rules-of-hooks": ["error"],
+      "react-hooks/exhaustive-deps": "off",
       "react/jsx-key": ["error"],
       "react/jsx-tag-spacing": [
         "error",
@@ -89,6 +101,12 @@ export default tseslint.config(
         },
       ],
       "prettier/prettier": "error",
+    },
+    // Plugin settings
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   }
 );
