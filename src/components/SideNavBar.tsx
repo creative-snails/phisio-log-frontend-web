@@ -13,6 +13,11 @@ const SideNavBar = () => {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/health-record/form" className="nav-link">
+            Health Record Form
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/body-map" className="nav-link">
             Body Map
           </NavLink>

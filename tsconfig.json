@@ -1,15 +1,6 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    //"baseUrl": "src",
-    "paths": {
-      //"~/*": ["*"]
-      "~/*": ["./src/*"]
-    }
+    "composite": true
   },
   "files": [],
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
