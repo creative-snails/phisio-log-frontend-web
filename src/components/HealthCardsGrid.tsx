@@ -16,7 +16,7 @@ const HealthsCardsGrid = ({ records, onClick }: HealthCardsGridProps) => {
               <h3>{record.description}</h3>
               <div className="card-content">
                 <p>
-                  <strong>Date:</strong> {new Date(record.createdAt).toLocaleDateString()}
+                  <strong>Date:</strong> {new Date(record.createdAt!).toLocaleDateString()}
                 </p>
                 <p>
                   <strong>Symptoms:</strong> {record.symptoms.map((s) => s.name).join(", ")}

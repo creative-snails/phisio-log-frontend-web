@@ -30,7 +30,7 @@ const HealthModal = ({ record, onClose, onNext, onPrev }: HealthModalProps) => {
             <div className="details-container">
               <div className="details-text">
                 <p>
-                  <strong>Date:</strong> {new Date(record.createdAt).toLocaleDateString()}
+                  <strong>Date:</strong> {new Date(record.createdAt!).toLocaleDateString()}
                 </p>
                 <p>
                   <strong>Symptoms:</strong> {record.symptoms.map((s) => s.name).join(", ")}

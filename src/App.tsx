@@ -22,7 +22,6 @@ function App() {
       },
       treatmentsTried: [],
       medicalConsultations: [],
-      createdAt: new Date().toISOString(),
     },
     loading: true,
     error: "",

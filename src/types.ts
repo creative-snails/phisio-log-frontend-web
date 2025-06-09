@@ -34,7 +34,7 @@ export interface HealthRecord {
   treatmentsTried: string[];
   medicalConsultations: MedicalConsultation[];
   updates?: Update[];
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
 }
 export interface RecordFormData {
