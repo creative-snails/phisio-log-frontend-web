@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SymptomFormSection from "./SymptomFormSection";
 
 import type { RecordFormData } from "~/types";
 
@@ -130,6 +131,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             </li>
           ))}
         </ul>
+        <SymptomFormSection />
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         {data.createdAt && (

@@ -32,7 +32,7 @@ const SymptomFormSection = () => {
 
   const handleChange = (index: number, field: keyof Symptom, value: string) => {
     const update = [...symptoms];
-    (update[index] as any)[field] = value;
+    update[index] = { ...update[index], [field]: value };
     setSymptoms(update);
   };
 
