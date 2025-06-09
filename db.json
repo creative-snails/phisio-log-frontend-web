@@ -97,6 +97,116 @@
       ],
       "createdAt": "2025-02-10T08:30:00.000Z",
       "updatedAt": "2025-02-22T12:45:00.000Z"
+    },
+    {
+      "id": 3,
+      "user": "me",
+      "description": "Seasonal allergies with severe symptoms",
+      "symptoms": [
+        {
+          "name": "Sneezing",
+          "startDate": "2025-05-01"
+        },
+        {
+          "name": "Itchy eyes",
+          "startDate": "2025-05-01"
+        },
+        {
+          "name": "Runny nose",
+          "startDate": "2025-05-02"
+        }
+      ],
+      "status": {
+        "stage": "active",
+        "severity": "moderate",
+        "progression": "fluctuating"
+      },
+      "treatmentsTried": ["Antihistamines", "Nasal spray", "Air purifier"],
+      "medicalConsultations": [
+        {
+          "consultant": "Dr. Johnson",
+          "date": "2025-05-03",
+          "diagnosis": "Seasonal rhinitis",
+          "followUpActions": ["Continue medication", "Monitor pollen levels"]
+        }
+      ],
+      "updates": [],
+      "createdAt": "2025-05-01T09:15:00.000Z",
+      "updatedAt": "2025-05-03T14:20:00.000Z"
+    },
+    {
+      "id": 4,
+      "user": "me",
+      "description": "Knee pain after sports injury",
+      "symptoms": [
+        {
+          "name": "Joint pain",
+          "startDate": "2025-04-15"
+        },
+        {
+          "name": "Swelling",
+          "startDate": "2025-04-15"
+        }
+      ],
+      "status": {
+        "stage": "in-progress",
+        "severity": "moderate",
+        "progression": "improving"
+      },
+      "treatmentsTried": [
+        "RICE method",
+        "Anti-inflammatory medication",
+        "Physical therapy,RICE method",
+        "Anti-inflammatory medication",
+        "Physical therapy,RICE method",
+        "Anti-inflammatory medication",
+        "Physical therapy,RICE method",
+        "Anti-inflammatory medication",
+        "Physical therapy"
+      ],
+      "medicalConsultations": [
+        {
+          "consultant": "Dr. Martinez",
+          "date": "2025-04-16",
+          "diagnosis": "Minor ligament sprain",
+          "followUpActions": ["Continue RICE", "Gradual return to activity"]
+        }
+      ],
+      "updates": [],
+      "createdAt": "2025-04-15T16:45:00.000Z",
+      "updatedAt": "2025-04-16T10:30:00.000Z"
+    },
+    {
+      "id": 5,
+      "user": "me",
+      "description": "Persistent digestive issues",
+      "symptoms": [
+        {
+          "name": "Bloating",
+          "startDate": "2025-03-10"
+        },
+        {
+          "name": "Acid reflux",
+          "startDate": "2025-03-11"
+        }
+      ],
+      "status": {
+        "stage": "under-observation",
+        "severity": "mild",
+        "progression": "stable"
+      },
+      "treatmentsTried": ["Dietary changes", "Probiotics", "Antacids"],
+      "medicalConsultations": [
+        {
+          "consultant": "Dr. Wilson",
+          "date": "2025-03-15",
+          "diagnosis": "Acid reflux",
+          "followUpActions": ["Food diary", "Lifestyle modifications"]
+        }
+      ],
+      "updates": [],
+      "createdAt": "2025-03-10T11:20:00.000Z",
+      "updatedAt": "2025-03-15T13:45:00.000Z"
     }
   ]
 }
