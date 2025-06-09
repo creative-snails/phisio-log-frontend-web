@@ -26,14 +26,19 @@ interface Update {
 }
 
 export interface HealthRecord {
-  id: number;
-  user: string;
+  id?: number;
+  user?: string;
   description: string;
   symptoms: Symptom[];
   status: Status;
   treatmentsTried: string[];
   medicalConsultations: MedicalConsultation[];
-  updates: Update[];
-  createdAt: string;
-  updatedAt: string;
+  updates?: Update[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+export interface RecordFormData {
+  data: HealthRecord;
+  loading: boolean;
+  error: string;
 }
