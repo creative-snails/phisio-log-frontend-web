@@ -1,5 +1,4 @@
 import HealthCardList from "~/components/HealthCardList";
-import MedicalConsultationsForm from "~/components/MedicalConsultationsForm";
 
 const HealthRecord = () => (
   <div className="content-wrapper">
@@ -39,7 +38,6 @@ const HealthRecord = () => (
     </section>
 
     <HealthCardList />
-    <MedicalConsultationsForm/>
   </div>
 );
 
