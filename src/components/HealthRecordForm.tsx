@@ -1,6 +1,7 @@
 import { useState } from "react";
+import HealthStatusForm from "./HealthStatusForm";
 
-import type { RecordFormData } from "~/types";
+import type { RecordFormData, Status } from "~/types";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -17,6 +18,19 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     setRecordFormData((prev) => ({
       ...prev,
       data: { ...prev.data, description: value },
+    }));
+  };
+
+  const setStatus = (field: keyof Status, value: string) => {
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        status: {
+          ...prev.data.status,
+          [field]: value,
+        },
+      },
     }));
   };
 
@@ -93,6 +107,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           placeholder="Describe symptoms, context, or notes..."
         />
       </div>
+      <HealthStatusForm status={data.status} setStatus={setStatus} />
       <div className="form-group">
         <label>Treatments Tried</label>
         <div className="treatment-input">
