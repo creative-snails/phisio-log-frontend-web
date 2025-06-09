@@ -12,7 +12,7 @@ const HealthCard = ({ record }: { record: HealthRecord }) => {
       {/* High-level information always visible */}
       <div className="health-card-header">
         <h3>{record.description}</h3>
-        <span className="date">{new Date(record.createdAt).toLocaleDateString()}</span>
+        <span className="date">{new Date(record.createdAt!).toLocaleDateString()}</span>
       </div>
       <div className="health-card-summary">
         <p>

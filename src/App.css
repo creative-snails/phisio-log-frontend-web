@@ -126,3 +126,117 @@
 .nav-link:hover {
   font-weight: bold;
 }
+
+/* HealthRecordForm */
+.form-wrapper {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 2rem auto;
+  color: black;
+}
+
+.form-wrapper h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: black;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+textarea,
+input[type="text"] {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: black;
+  background-color: #f9f9f9;
+}
+
+.treatment-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.treatment-list {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.treatment-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  color: black;
+}
+
+/* Button Styles */
+.update-button,
+.add-button,
+.submit-button,
+.edit-button {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.remove-button {
+  padding: 0.49rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.update-button,
+.add-button,
+.submit-button {
+  background-color: #007bff;
+  color: white;
+}
+.update-button:hover,
+.add-button:hover,
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.edit-button {
+  background-color: #f0ad4e;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.edit-button:hover {
+  background-color: #ec971f;
+}
+
+.remove-button {
+  background-color: #d9534f;
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: #c9302c;
+}
