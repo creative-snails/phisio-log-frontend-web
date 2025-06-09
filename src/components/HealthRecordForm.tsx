@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MedicalConsultationsForm from "./MedicalConsultationsForm";
 
 import type { RecordFormData } from "~/types";
 
@@ -131,6 +132,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           ))}
         </ul>
       </div>
+      <MedicalConsultationsForm />
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         {data.createdAt && (
           <p>
