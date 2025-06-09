@@ -1,6 +1,8 @@
 import { FaUserDoctor } from "react-icons/fa6";
 import { SlArrowDown, SlArrowUp } from "react-icons/sl";
 
+import "./ChatWidget.css";
+
 const ChatWidget = () => {
   return (
     <div className="container">
@@ -8,10 +10,10 @@ const ChatWidget = () => {
         {/* Chat Header */}
         <div className="chat-header">
           <div className="header-info">
-            <FaUserDoctor /> {/* placeholder logo */}
-            <h2 className="logo-text">PhisioLog Assistant</h2>
+            <FaUserDoctor className="logo-icon" /> {/* placeholder logo */}
+            <h2 className="logo-text">PhisioLog</h2>
           </div>
-          <button className="arrow">
+          <button>
             <SlArrowDown />
           </button>
         </div>
