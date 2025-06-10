@@ -46,7 +46,7 @@
   box-shadow: 12px 12px 10px 0 rgba(255, 255, 255, 0.3);
 }
 
-.container.show-chat .chat-popup {
+.show-chat-popup .chat-popup {
   opacity: 1;
   pointer-events: auto;
 }

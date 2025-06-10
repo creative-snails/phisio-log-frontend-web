@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { IoMdArrowUp } from "react-icons/io";
 import { IoChatbubbleEllipses, IoCloseCircle } from "react-icons/io5";
@@ -6,9 +7,11 @@ import { SlArrowDown } from "react-icons/sl";
 import "./ChatWidget.css";
 
 const ChatWidget = () => {
+  const [showChatPopup, setShowChatPopup] = useState(false);
+
   return (
-    <div className="container">
-      <button id="chat-popup-toggler">
+    <div className={`${showChatPopup ? "show-chat-popup" : ""}`}>
+      <button onClick={() => setShowChatPopup((prev) => !prev)} id="chat-popup-toggler">
         <span>
           <IoChatbubbleEllipses className="chat-bubble" />
         </span>
