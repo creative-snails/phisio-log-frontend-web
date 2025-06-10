@@ -1,5 +1,6 @@
 import { FaUserDoctor } from "react-icons/fa6";
 import { IoMdArrowUp } from "react-icons/io";
+import { IoChatbubbleEllipses, IoCloseCircle } from "react-icons/io5";
 import { SlArrowDown } from "react-icons/sl";
 
 import "./ChatWidget.css";
@@ -7,6 +8,14 @@ import "./ChatWidget.css";
 const ChatWidget = () => {
   return (
     <div className="container">
+      <button id="chat-popup-toggler">
+        <span>
+          <IoChatbubbleEllipses className="chat-bubble" />
+        </span>
+        <span>
+          <IoCloseCircle className="chat-bubble-close" />
+        </span>
+      </button>
       <div className="chat-popup">
         {/* Chat Header */}
         <div className="chat-header">
