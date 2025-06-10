@@ -10,45 +10,47 @@
   right: 35px;
   border: none;
   border-radius: 50%;
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   background: #06579a;
-}
-
-#chat-popup-toggler span {
-  position: absolute;
-  color: #fff;
+  transition: all 0.2s ease;
 }
 
 .chat-bubble {
-  font-size: 1.7rem;
-}
-
-.chat-bubble-close {
-  font-size: 1.5rem;
-  display: none;
+  font-size: 2.2rem;
+  position: absolute;
+  color: #fff;
 }
 
 .chat-popup {
   position: fixed;
   opacity: 0;
   pointer-events: none;
-  bottom: 90px;
+  bottom: 100px;
   right: 50px;
   width: 420px;
   overflow: hidden;
   background: #fff;
   border-radius: 15px;
   box-shadow: 12px 12px 10px 0 rgba(255, 255, 255, 0.3);
+  transform: scale(0.2);
+  transform-origin: bottom right;
+  transition: all 0.2s ease;
 }
 
 .show-chat-popup .chat-popup {
   opacity: 1;
   pointer-events: auto;
+  transform: scale(1);
+}
+
+.show-chat-popup #chat-popup-toggler {
+  transform: rotate(90deg);
+  opacity: 0;
 }
 
 .chat-header {

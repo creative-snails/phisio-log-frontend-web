@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { IoMdArrowUp } from "react-icons/io";
-import { IoChatbubbleEllipses, IoCloseCircle } from "react-icons/io5";
+import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 
 import "./ChatWidget.css";
@@ -12,12 +12,7 @@ const ChatWidget = () => {
   return (
     <div className={`${showChatPopup ? "show-chat-popup" : ""}`}>
       <button onClick={() => setShowChatPopup((prev) => !prev)} id="chat-popup-toggler">
-        <span>
-          <IoChatbubbleEllipses className="chat-bubble" />
-        </span>
-        <span>
-          <IoCloseCircle className="chat-bubble-close" />
-        </span>
+        <MdChat className="chat-bubble" />
       </button>
       <div className="chat-popup">
         {/* Chat Header */}
