@@ -1,5 +1,6 @@
 import { FaUserDoctor } from "react-icons/fa6";
-import { SlArrowDown, SlArrowUp } from "react-icons/sl";
+import { IoMdArrowUp } from "react-icons/io";
+import { SlArrowDown } from "react-icons/sl";
 
 import "./ChatWidget.css";
 
@@ -35,8 +36,8 @@ const ChatWidget = () => {
         <div className="chat-footer"></div>
         <form action="#" className="chat-form">
           <input type="text" placeholder="Message..." className="message-input" required />
-          <button className="arrow">
-            <SlArrowUp />
+          <button>
+            <IoMdArrowUp className="btn-arrow" />
           </button>
         </form>
       </div>
