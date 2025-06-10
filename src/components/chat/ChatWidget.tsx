@@ -21,12 +21,12 @@ const ChatWidget = () => {
         {/* Chat Body */}
         <div className="chat-body">
           <div className="message bot-message">
-            <FaUserDoctor />
+            <FaUserDoctor className="logo-icon" />
             <p className="message-text">
               Hey there!!! <br /> How can I help you today?
             </p>
           </div>
-          <div className="message bot-message">
+          <div className="message user-message">
             <p className="message-text">Great, thanks for asking. Who am I chatting with?</p>
           </div>
         </div>
