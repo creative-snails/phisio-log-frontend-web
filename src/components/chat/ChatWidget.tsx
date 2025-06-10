@@ -21,7 +21,7 @@ const ChatWidget = () => {
             <FaUserDoctor className="logo-icon" /> {/* placeholder logo */}
             <h2 className="logo-text">PhisioLog</h2>
           </div>
-          <button>
+          <button onClick={() => setShowChatPopup((prev) => !prev)}>
             <SlArrowDown />
           </button>
         </div>

@@ -17,6 +17,7 @@
   justify-content: center;
   cursor: pointer;
   background: #06579a;
+  box-shadow: 6px 6px 10px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.2s ease;
 }
 
@@ -51,6 +52,7 @@
 .show-chat-popup #chat-popup-toggler {
   transform: rotate(90deg);
   opacity: 0;
+  pointer-events: none;
 }
 
 .chat-header {
