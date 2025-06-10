@@ -18,7 +18,7 @@
   box-shadow: 12px 12px 10px 0 rgba(255, 255, 255, 0.3);
 }
 
-.chat-popup .chat-header {
+.chat-header {
   display: flex;
   padding: 5px 22px;
   align-items: center;
@@ -26,13 +26,13 @@
   background: #06579a;
 }
 
-.chat-header .header-info {
+.header-info {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-.header-info .logo-icon {
+.logo-icon {
   height: 30px;
   width: 30px;
 }
