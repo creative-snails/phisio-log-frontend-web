@@ -11,7 +11,7 @@ type Symptom = {
 
 const SymptomFormSection = () => {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState<boolean[]>([]);
 
   useEffect(() => {
     fetch("/db.json")
@@ -23,6 +23,7 @@ const SymptomFormSection = () => {
           ...s,
           isOpen: true,
         }));
+        setUpdateSuccess(new Array(loadedSymptoms.length).fill(false));
         setSymptoms(loadedSymptoms);
       })
       .catch((error) => {
@@ -36,16 +37,23 @@ const SymptomFormSection = () => {
     setSymptoms(update);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (index: number) => {
     console.log("Updated Symptoms:", symptoms);
-    setSuccessMessage("Symptoms successfully updated");
+    const newSuccess = [...updateSuccess];
+    newSuccess[index] = true;
+    setUpdateSuccess(newSuccess);
+    setTimeout(() => {
+      const clear = [...newSuccess];
+      clear[index] = false;
+      setUpdateSuccess(clear);
+    }, 3000);
   };
 
   const isValid = () => {
     return symptoms.every((s) => s.name.trim() && s.startDate.trim());
   };
 
-  const toggleCol = (index: number) => {
+  const toggleSymptom = (index: number) => {
     const update = [...symptoms];
     update[index].isOpen = !update[index].isOpen;
     setSymptoms(update);
@@ -59,8 +67,10 @@ const SymptomFormSection = () => {
   };
 
   const removeSymptom = (index: number) => {
-    const update = symptoms.filter((_, i) => i !== index);
-    setSymptoms(update);
+    if (window.confirm("Are you sure you want to remove this symptom?")) {
+      const update = symptoms.filter((_, i) => i !== index);
+      setSymptoms(update);
+    }
   };
 
   return (
@@ -68,11 +78,12 @@ const SymptomFormSection = () => {
       <h2>Symptoms</h2>
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
-          <div className="symptom-header" onClick={() => toggleCol(index)}>
+          <div className="symptom-header" onClick={() => toggleSymptom(index)}>
             <h4>Symptom {index + 1}</h4>
-            <button className="update-button" onClick={handleUpdate} disabled={!isValid()}>
+            <button className="update-button" onClick={() => handleUpdate(index)} disabled={!isValid()}>
               Update Symptoms
             </button>
+            {updateSuccess[index] && <div className="success-message">Symptom updated</div>}
           </div>
 
           {symptom.isOpen && (
@@ -112,7 +123,6 @@ const SymptomFormSection = () => {
         {" "}
         + Add Symptom
       </button>
-      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
   );
 };
