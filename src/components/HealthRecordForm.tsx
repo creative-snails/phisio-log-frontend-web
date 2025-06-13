@@ -87,6 +87,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     console.log("Submitted record:", {
       description: data.description,
       treatmentsTried: data.treatmentsTried,
+      status: data.status,
     });
   };
 

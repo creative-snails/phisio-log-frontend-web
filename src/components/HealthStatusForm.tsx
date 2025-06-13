@@ -7,15 +7,33 @@ interface HealthStatusFormProps {
 }
 
 const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
-  const stageOptions = ["open", "closed", "in-progress"];
-  const severityOptions = ["mild", "moderate", "severe", "variable"];
-  const progressionOptions = ["improving", "stable", "worsening", "variable"];
-
-  const handleCancel = () => {
-    console.log("Cancelled changes");
-    setStatus("stage", "");
-    setStatus("severity", "");
-    setStatus("progression", "");
+  const statusOptions = {
+    stage: {
+      options: [
+        { display: "Open", value: "open" },
+        { display: "Closed", value: "closed" },
+        { display: "In-progress", value: "in-progress" },
+      ],
+      default: "open",
+    },
+    severity: {
+      options: [
+        { display: "Mild", value: "mild" },
+        { display: "Moderate", value: "moderate" },
+        { display: "Severe", value: "severe" },
+        { display: "Variable", value: "variable" },
+      ],
+      default: "variable",
+    },
+    progression: {
+      options: [
+        { display: "Improving", value: "improving" },
+        { display: "Stable", value: "stable" },
+        { display: "Worsening", value: "worsening" },
+        { display: "Variable", value: "variable" },
+      ],
+      default: "stable",
+    },
   };
 
   return (
@@ -23,50 +41,42 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
       <h2>Status</h2>
       <div className="form-group">
         <label>Stage:</label>
-        <select value={status.stage} onChange={(e) => setStatus("stage", e.target.value)}>
-          <option value="">Select</option>
-          {stageOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+        <select
+          value={status.stage || statusOptions.stage.default}
+          onChange={(e) => setStatus("stage", e.target.value)}
+        >
+          {statusOptions.stage.options.map(({ display, value }) => (
+            <option key={value} value={value}>
+              {display}
             </option>
           ))}
         </select>
       </div>
       <div className="form-group">
         <label>Severity:</label>
-        <select value={status.severity} onChange={(e) => setStatus("severity", e.target.value)}>
-          <option value="">Select</option>
-          {severityOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+        <select
+          value={status.severity || statusOptions.severity.default}
+          onChange={(e) => setStatus("severity", e.target.value)}
+        >
+          {statusOptions.severity.options.map(({ display, value }) => (
+            <option key={value} value={value}>
+              {display}
             </option>
           ))}
         </select>
       </div>
       <div className="form-group">
         <label>Progression:</label>
-        <select value={status.progression} onChange={(e) => setStatus("progression", e.target.value)}>
-          <option value="">Select</option>
-          {progressionOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+        <select
+          value={status.progression || statusOptions.progression.default}
+          onChange={(e) => setStatus("progression", e.target.value)}
+        >
+          {statusOptions.progression.options.map(({ display, value }) => (
+            <option key={value} value={value}>
+              {display}
             </option>
           ))}
         </select>
-      </div>
-      <div className="button-group">
-        <button
-          type="submit"
-          className="save-button"
-          onClick={() => {
-            console.log("Saved status:", status);
-          }}
-        >
-          Save
-        </button>
-        <button type="button" onClick={handleCancel} className="cancel-button">
-          Cancel
-        </button>
       </div>
     </div>
   );
