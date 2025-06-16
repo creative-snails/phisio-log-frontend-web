@@ -10,7 +10,7 @@ const ChatWidget = () => {
   const [showChatPopup, setShowChatPopup] = useState(false);
 
   return (
-    <div className={`${showChatPopup ? "show-chat-popup" : ""}`}>
+    <div className={showChatPopup ? "show-chat-popup" : ""}>
       <button onClick={() => setShowChatPopup((prev) => !prev)} id="chat-popup-toggler">
         <MdChat className="chat-bubble" />
       </button>
