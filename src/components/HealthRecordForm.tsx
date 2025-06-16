@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import HealthStatusForm from "./HealthStatusForm";
 import SymptomFormSection from "./SymptomFormSection";
 
-import type { RecordFormData } from "~/types";
+import type { RecordFormData, Status, SymptomUI } from "~/types";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -14,10 +15,36 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
   const [newTreatment, setNewTreatment] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
+  const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
+  const [updateSuccess, setUpdateSuccess] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
+      ...s,
+      affectedParts: "Placeholder: affected parts coming soon",
+      isOpen: true,
+    }));
+    setSymptoms(loadedSymptoms);
+    setUpdateSuccess(new Array(loadedSymptoms.length).fill(false));
+  }, [data.symptoms]);
+
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
       ...prev,
       data: { ...prev.data, description: value },
+    }));
+  };
+
+  const setStatus = (field: keyof Status, value: string) => {
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        status: {
+          ...prev.data.status,
+          [field]: value,
+        },
+      },
     }));
   };
 
@@ -68,12 +95,57 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     }
   };
 
+  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
+    const update = [...symptoms];
+    if (field === "name" || field === "startDate" || field === "affectedParts") {
+      update[index][field] = value;
+    }
+    setSymptoms(update);
+  };
+
+  const handleSymptomUpdate = (index: number) => {
+    const newSuccess = [...updateSuccess];
+    newSuccess[index] = true;
+    setUpdateSuccess(newSuccess);
+    setTimeout(() => {
+      const clear = [...newSuccess];
+      clear[index] = false;
+      setUpdateSuccess(clear);
+    }, 3000);
+  };
+
+  const toggleSymptom = (index: number) => {
+    const update = [...symptoms];
+    update[index].isOpen = !update[index].isOpen;
+    setSymptoms(update);
+  };
+
+  const addSymptom = () => {
+    setSymptoms([
+      ...symptoms,
+      { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
+    ]);
+  };
+
+  const removeSymptom = (index: number) => {
+    if (window.confirm("Are you sure you want to remove this symptom?")) {
+      const update = symptoms.filter((_, i) => i !== index);
+      setSymptoms(update);
+    }
+  };
+
+  const isSymptomValid = () => {
+    return symptoms.every((s) => s.name.trim() && s.startDate.trim());
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log("Submitted record:", {
       description: data.description,
       treatmentsTried: data.treatmentsTried,
+      status: data.status,
+      symptoms,
     });
   };
 
@@ -94,6 +166,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           placeholder="Describe symptoms, context, or notes..."
         />
       </div>
+      <HealthStatusForm status={data.status} setStatus={setStatus} />
       <div className="form-group">
         <label>Treatments Tried</label>
         <div className="treatment-input">
@@ -131,7 +204,16 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             </li>
           ))}
         </ul>
-        <SymptomFormSection />
+        <SymptomFormSection
+          symptoms={symptoms}
+          onSymptomChange={handleSymptomChange}
+          onSymptomUpdate={handleSymptomUpdate}
+          toggleSymptom={toggleSymptom}
+          addSymptom={addSymptom}
+          removeSymptom={removeSymptom}
+          updateSuccess={updateSuccess}
+          isValid={isSymptomValid()}
+        />
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         {data.createdAt && (

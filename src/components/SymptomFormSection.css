@@ -100,8 +100,17 @@ button.remove-button:hover {
 }
 
 .update-button:disabled {
-  cursor: none;
+  cursor: not-allowed;
   opacity: 0.5;
+}
+
+.update-button:disabled::after {
+  content: "⛔";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 1.2rem;
+  color: red;
 }
 
 .update-button:hover{
