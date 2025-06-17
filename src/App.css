@@ -40,12 +40,12 @@
 }
 
 .sign-out-button {
-  background-color: #26435a;
+  background-color: #956969;
   color: #121212;
 }
 
 .sign-out-button:hover {
-  background-color: #956969;
+  background-color: #946464;
 }
 
 /* Layout */
@@ -68,11 +68,13 @@
 }
 
 .content-wrapper {
-  max-width: 700px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
   color: #e0e0e0;
+  min-width: 400px;
+  overflow-x: auto;
 }
 
 .content-wrapper h2 {
@@ -117,13 +119,24 @@
   margin-bottom: 16px;
 }
 
+.nav-link-page {
+  text-decoration: none;
+  font-size: 16px;
+  color: rgb(247, 86, 12);
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+
 .nav-link {
   text-decoration: none;
   color: #090d11;
   font-size: 16px;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link-page:hover {
   font-weight: bold;
 }
 
