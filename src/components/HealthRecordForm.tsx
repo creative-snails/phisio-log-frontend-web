@@ -1,7 +1,8 @@
 import { useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
+import MedicalConsultationsForm from "./MedicalConsultationsForm";
 
-import type { RecordFormData, Status } from "~/types";
+import type { HealthRecord, RecordFormData, Status } from "~/types";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -30,6 +31,16 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           ...prev.data.status,
           [field]: value,
         },
+      },
+    }));
+  };
+
+  const updateConsultations = (newConsultations: HealthRecord["medicalConsultations"]) => {
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        medicalConsultations: newConsultations,
       },
     }));
   };
@@ -88,6 +99,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       description: data.description,
       treatmentsTried: data.treatmentsTried,
       status: data.status,
+      medicalConsultations: data.medicalConsultations,
     });
   };
 
@@ -147,6 +159,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           ))}
         </ul>
       </div>
+      <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         {data.createdAt && (
           <p>
