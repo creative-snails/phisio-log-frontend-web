@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
-import { IoMdArrowUp } from "react-icons/io";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
+import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
 
@@ -40,13 +40,9 @@ const ChatWidget = () => {
         </div>
 
         {/* Chat Footer */}
-        <div className="chat-footer"></div>
-        <form action="#" className="chat-form">
-          <input type="text" placeholder="Message..." className="message-input" required />
-          <button>
-            <IoMdArrowUp className="btn-arrow" />
-          </button>
-        </form>
+        <div className="chat-footer">
+          <ChatForm />
+        </div>
       </div>
     </div>
   );
