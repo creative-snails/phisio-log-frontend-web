@@ -42,3 +42,8 @@ export interface RecordFormData {
   loading: boolean;
   error: string;
 }
+
+export interface ChatHistoryType {
+  role: "user" | "bot";
+  message: string;
+}

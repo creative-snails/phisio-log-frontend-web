@@ -5,9 +5,13 @@ import { SlArrowDown } from "react-icons/sl";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
+import type { ChatHistoryType } from "~/types";
 
 const ChatWidget = () => {
   const [showChatPopup, setShowChatPopup] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
+
+  console.log(chatHistory);
 
   return (
     <div className={showChatPopup ? "show-chat-popup" : ""}>
@@ -41,7 +45,7 @@ const ChatWidget = () => {
 
         {/* Chat Footer */}
         <div className="chat-footer">
-          <ChatForm />
+          <ChatForm setChatHistory={setChatHistory} />
         </div>
       </div>
     </div>
