@@ -1,12 +1,13 @@
-import { type Dispatch, type SetStateAction, useRef } from "react";
+import { type Dispatch, type FormEvent, type SetStateAction, useRef } from "react";
 import { IoMdArrowUp } from "react-icons/io";
+import { response } from "./mockChatService";
 
 import type { ChatHistoryType } from "~/types";
 
 const ChatForm = ({ setChatHistory }: { setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>> }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!inputRef.current?.value) return;
@@ -16,6 +17,7 @@ const ChatForm = ({ setChatHistory }: { setChatHistory: Dispatch<SetStateAction<
     inputRef.current.value = "";
     inputRef.current.focus();
     setChatHistory((history: ChatHistoryType[]) => [...history, { role: "user", message: userMessage }]);
+    setChatHistory((history: ChatHistoryType[]) => [...history, { role: "assistant", message: response() }]);
   };
 
   return (
