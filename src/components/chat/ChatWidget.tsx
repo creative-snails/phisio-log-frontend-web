@@ -10,7 +10,7 @@ import type { ChatHistoryType } from "~/types";
 const ChatWidget = () => {
   const [showChatPopup, setShowChatPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
-    { role: "assistant", message: " Hey there!!!\n How can I help you today?" },
+    { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
