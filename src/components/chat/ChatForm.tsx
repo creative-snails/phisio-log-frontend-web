@@ -6,31 +6,30 @@ import type { ChatHistoryType } from "~/types";
 
 type ChatFormProps = {
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
-  setIsTyping: Dispatch<SetStateAction<boolean>>;
+  setIsThinking: Dispatch<SetStateAction<boolean>>;
 };
 
-const ChatForm = ({ setChatHistory, setIsTyping }: ChatFormProps) => {
+const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!inputRef.current?.value) return;
-
     const userMessage = inputRef.current.value.trim();
-
     inputRef.current.value = "";
     inputRef.current.focus();
+
     setChatHistory((history: ChatHistoryType[]) => [...history, { role: "user", message: userMessage }]);
+    setIsThinking(true);
 
-    setIsTyping(true);
-
+    // Get assistant response with simulated delay
     setTimeout(() => {
       setChatHistory((history: ChatHistoryType[]) => [
         ...history,
         { role: "assistant", message: getAssistantResponse() },
       ]);
-      setIsTyping(false);
+      setIsThinking(false);
     }, 2000);
   };
 

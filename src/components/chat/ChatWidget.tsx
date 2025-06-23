@@ -12,7 +12,7 @@ const ChatWidget = () => {
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
     { role: "assistant", message: " Hey there!!!\n How can I help you today?" },
   ]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,10 +46,10 @@ const ChatWidget = () => {
               <p className="message-text">{chat.message}</p>
             </div>
           ))}
-          {isTyping && (
-            <div className="message assistant-message typing">
+          {isThinking && (
+            <div className="message assistant-message">
               <FaUserDoctor className="logo-icon" />
-              <p className="message-text typing-dots">
+              <p className="message-text thinking-dots">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -60,7 +60,7 @@ const ChatWidget = () => {
 
         {/* Chat Footer */}
         <div className="chat-footer">
-          <ChatForm setChatHistory={setChatHistory} setIsTyping={setIsTyping} />
+          <ChatForm setChatHistory={setChatHistory} setIsThinking={setIsThinking} />
         </div>
       </div>
     </div>
