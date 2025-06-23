@@ -115,7 +115,7 @@
   align-items: center;
 }
 
-.bot-message .logo-icon {
+.assistant-message .logo-icon {
   height: 35px;
   width: 35px;
   align-self: flex-end;
@@ -136,7 +136,7 @@
   text-align: left;
 }
 
-.bot-message .message-text {
+.assistant-message .message-text {
   background: #2d6e9a17;
   border-radius: 13px 13px 13px 3px;
 }

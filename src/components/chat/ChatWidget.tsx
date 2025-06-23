@@ -10,7 +10,7 @@ import type { ChatHistoryType } from "~/types";
 const ChatWidget = () => {
   const [showChatPopup, setShowChatPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
-    { role: "bot", message: " Hey there!!!\n How can I help you today?" },
+    { role: "assistant", message: " Hey there!!!\n How can I help you today?" },
   ]);
 
   return (
@@ -34,7 +34,7 @@ const ChatWidget = () => {
         <div className="chat-body">
           {chatHistory.map((chat, index) => (
             <div key={index} className={`message ${chat.role}-message`}>
-              {chat.role === "bot" && <FaUserDoctor className="logo-icon" />}
+              {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
               <p className="message-text">{chat.message}</p>
             </div>
           ))}
