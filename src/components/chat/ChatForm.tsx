@@ -27,7 +27,7 @@ const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
     setTimeout(() => {
       setChatHistory((history: ChatHistoryType[]) => [
         ...history,
-        { role: "assistant", message: getAssistantResponse() },
+        { role: "assistant", message: getAssistantResponse(userMessage) },
       ]);
       setIsThinking(false);
     }, 2000);
