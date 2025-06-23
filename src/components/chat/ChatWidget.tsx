@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
@@ -13,6 +13,13 @@ const ChatWidget = () => {
     { role: "assistant", message: " Hey there!!!\n How can I help you today?" },
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const chatBodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!chatBodyRef.current) return;
+    // Scroll to the bottom of the chat body when chat history changes
+    chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
+  }, [chatHistory]);
 
   return (
     <div className={showChatPopup ? "show-chat-popup" : ""}>
@@ -32,7 +39,7 @@ const ChatWidget = () => {
         </div>
 
         {/* Chat Body */}
-        <div className="chat-body">
+        <div ref={chatBodyRef} className="chat-body">
           {chatHistory.map((chat, index) => (
             <div key={index} className={`message ${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
