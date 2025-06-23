@@ -49,7 +49,11 @@ const ChatWidget = () => {
           {isTyping && (
             <div className="message assistant-message typing">
               <FaUserDoctor className="logo-icon" />
-              <p className="message-text">typing...</p>
+              <p className="message-text typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </p>
             </div>
           )}
         </div>
