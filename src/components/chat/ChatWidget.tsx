@@ -12,6 +12,7 @@ const ChatWidget = () => {
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
     { role: "assistant", message: " Hey there!!!\n How can I help you today?" },
   ]);
+  const [isTyping, setIsTyping] = useState(false);
 
   return (
     <div className={showChatPopup ? "show-chat-popup" : ""}>
@@ -38,11 +39,17 @@ const ChatWidget = () => {
               <p className="message-text">{chat.message}</p>
             </div>
           ))}
+          {isTyping && (
+            <div className="message assistant-message typing">
+              <FaUserDoctor className="logo-icon" />
+              <p className="message-text">typing...</p>
+            </div>
+          )}
         </div>
 
         {/* Chat Footer */}
         <div className="chat-footer">
-          <ChatForm setChatHistory={setChatHistory} />
+          <ChatForm setChatHistory={setChatHistory} setIsTyping={setIsTyping} />
         </div>
       </div>
     </div>
