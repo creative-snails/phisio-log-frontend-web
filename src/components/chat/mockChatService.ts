@@ -5,7 +5,7 @@ const mockResponses = [
   "Have you tried any treatments on your own to manage your condition? If yes, please share the details.\n\nThis could include:\n* Over-the-counter medications\n* Home remedies\n* Lifestyle changes\n* Exercises or stretches",
 ];
 
-export const response = () => {
+export const getAssistantResponse = () => {
   const responseMessage = mockResponses[Math.floor(Math.random() * mockResponses.length)];
 
   return responseMessage;
