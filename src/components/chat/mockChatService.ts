@@ -1,13 +1,17 @@
 const mockResponses = [
-  "I can assist you in **creating a new health journal entry**, **updating existing records**, or **navigating the app**. To get started, could you tell me a bit about your current health concern or goal?",
   "Thank you for sharing that information. You mentioned only one symptom. Are there any **additional symptoms** you would like to add to your health record?",
-  `Have you tried any treatments on your own to manage your condition? If yes, please share the details.
-  This could include:
+  `Have you tried any treatments on your own to manage your condition?
+  ##### This could include:
   - Over-the-counter medications
   - Home remedies
   - Lifestyle changes
   - Exercises or stretches`,
-  "Would you like me to **summarize** what you've told me so far about your condition?",
+  `You can ~ignore~ skip this step if you're not in pain.`,
+  `#### Weekly Summary
+  1. [x] Daily walk
+  2. [x] Stretching
+  3. [x] Hydration reminder
+  \nYou’ve completed all your goals this week 🎉`,
 ];
 
 let conversationTurn = 0;
@@ -22,5 +26,7 @@ export const getAssistantResponse = (userMessage: string): string => {
   }
 
   // Fallback response
-  return `I understand you mentioned: *${userMessage?.substring(0, 30)}${userMessage && userMessage.length > 30 ? "..." : ""}*. How else can I assist you with your health tracking?`;
+  return `I understand you mentioned:
+  *${userMessage?.substring(0, 30)}${userMessage && userMessage.length > 30 ? "..." : ""}.*
+  I'm sorry, I couldn't process your request at the moment. You can learn more by visiting our [official website](https://media.gifdb.com/sticking-tongue-out-blah-pygmy-fq25s691x5suwkue.gif)!`;
 };
