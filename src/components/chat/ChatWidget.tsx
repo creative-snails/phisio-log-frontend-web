@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
+import ReactMarkdown from "react-markdown";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
@@ -43,7 +44,9 @@ const ChatWidget = () => {
           {chatHistory.map((chat, index) => (
             <div key={index} className={`message ${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
-              <p className="message-text">{chat.message}</p>
+              <p className="message-text">
+                <ReactMarkdown>{chat.message}</ReactMarkdown>
+              </p>
             </div>
           ))}
           {isThinking && (
