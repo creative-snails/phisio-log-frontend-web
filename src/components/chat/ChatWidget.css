@@ -253,3 +253,38 @@
     opacity: 1;
   }
 }
+
+/* Message Markdown Styles */
+.message-text ul {
+  padding-left: 1rem;
+  list-style-type: disc;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-text ol {
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-text blockquote {
+  padding: 0 0.75rem;
+  border-left: 4px solid #58a6ff;
+  background-color: rgba(0, 0, 0, 0.05);
+  font-style: italic;
+  border-radius: 8px;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+
+.message-text a {
+  color: #06579a;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  word-break: break-word;
+}
+
+.message-text a:hover {
+  color: #58a6ff;
+}

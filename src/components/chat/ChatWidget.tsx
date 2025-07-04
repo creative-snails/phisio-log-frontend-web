@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
@@ -43,17 +45,24 @@ const ChatWidget = () => {
           {chatHistory.map((chat, index) => (
             <div key={index} className={`message ${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
-              <p className="message-text">{chat.message}</p>
+              <div className="message-text">
+                <ReactMarkdown
+                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {chat.message}
+                </ReactMarkdown>
+              </div>
             </div>
           ))}
           {isThinking && (
             <div className="message assistant-message">
               <FaUserDoctor className="logo-icon" />
-              <p className="message-text thinking-dots">
+              <div className="message-text thinking-dots">
                 <span></span>
                 <span></span>
                 <span></span>
-              </p>
+              </div>
             </div>
           )}
         </div>
