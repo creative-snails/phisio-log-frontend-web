@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
-import SymptomFormSection from "./SymptomFormSection";
+import SymptomFormSection from "./SymptomForm";
 
 import type { RecordFormData, Status, SymptomUI } from "~/types";
 
@@ -16,16 +16,14 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
   const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
-  const [updateSuccess, setUpdateSuccess] = useState<boolean[]>([]);
 
   useEffect(() => {
     const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
       ...s,
       affectedParts: "Placeholder: affected parts coming soon",
-      isOpen: true,
+      isOpen: false,
     }));
     setSymptoms(loadedSymptoms);
-    setUpdateSuccess(new Array(loadedSymptoms.length).fill(false));
   }, [data.symptoms]);
 
   const handleDescriptionChange = (value: string) => {
@@ -103,39 +101,24 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     setSymptoms(update);
   };
 
-  const handleSymptomUpdate = (index: number) => {
-    const newSuccess = [...updateSuccess];
-    newSuccess[index] = true;
-    setUpdateSuccess(newSuccess);
-    setTimeout(() => {
-      const clear = [...newSuccess];
-      clear[index] = false;
-      setUpdateSuccess(clear);
-    }, 3000);
-  };
-
   const toggleSymptom = (index: number) => {
     const update = [...symptoms];
     update[index].isOpen = !update[index].isOpen;
     setSymptoms(update);
   };
 
-  const addSymptom = () => {
+  const handleAddSymptom = () => {
     setSymptoms([
       ...symptoms,
       { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
     ]);
   };
 
-  const removeSymptom = (index: number) => {
+  const handleRemoveSymptom = (index: number) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
       const update = symptoms.filter((_, i) => i !== index);
       setSymptoms(update);
     }
-  };
-
-  const isSymptomValid = () => {
-    return symptoms.every((s) => s.name.trim() && s.startDate.trim());
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -207,12 +190,9 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
         <SymptomFormSection
           symptoms={symptoms}
           onSymptomChange={handleSymptomChange}
-          onSymptomUpdate={handleSymptomUpdate}
           toggleSymptom={toggleSymptom}
-          addSymptom={addSymptom}
-          removeSymptom={removeSymptom}
-          updateSuccess={updateSuccess}
-          isValid={isSymptomValid()}
+          addSymptom={handleAddSymptom}
+          removeSymptom={handleRemoveSymptom}
         />
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
