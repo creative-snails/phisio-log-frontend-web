@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
-import { IoMdArrowUp } from "react-icons/io";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
+import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
+import type { ChatHistoryType } from "~/types";
 
 const ChatWidget = () => {
   const [showChatPopup, setShowChatPopup] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
+    { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+  ]);
+  const [isThinking, setIsThinking] = useState(false);
+  const chatBodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!chatBodyRef.current) return;
+    // Scroll to the bottom of the chat body when chat history changes
+    chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
+  }, [chatHistory, showChatPopup]);
 
   return (
     <div className={showChatPopup ? "show-chat-popup" : ""}>
@@ -27,26 +39,29 @@ const ChatWidget = () => {
         </div>
 
         {/* Chat Body */}
-        <div className="chat-body">
-          <div className="message bot-message">
-            <FaUserDoctor className="logo-icon" />
-            <p className="message-text">
-              Hey there!!! <br /> How can I help you today?
-            </p>
-          </div>
-          <div className="message user-message">
-            <p className="message-text">Great, thanks for asking. Who am I chatting with?</p>
-          </div>
+        <div ref={chatBodyRef} className="chat-body">
+          {chatHistory.map((chat, index) => (
+            <div key={index} className={`message ${chat.role}-message`}>
+              {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
+              <p className="message-text">{chat.message}</p>
+            </div>
+          ))}
+          {isThinking && (
+            <div className="message assistant-message">
+              <FaUserDoctor className="logo-icon" />
+              <p className="message-text thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Chat Footer */}
-        <div className="chat-footer"></div>
-        <form action="#" className="chat-form">
-          <input type="text" placeholder="Message..." className="message-input" required />
-          <button>
-            <IoMdArrowUp className="btn-arrow" />
-          </button>
-        </form>
+        <div className="chat-footer">
+          <ChatForm setChatHistory={setChatHistory} setIsThinking={setIsThinking} />
+        </div>
       </div>
     </div>
   );
