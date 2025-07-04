@@ -47,7 +47,7 @@ const ChatWidget = () => {
               {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
               <div className="message-text">
                 <ReactMarkdown
-                  components={{ a: ({ ...props }) => <a {...props} target="_blank" /> }}
+                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
                   remarkPlugins={[remarkGfm]}
                 >
                   {chat.message}
