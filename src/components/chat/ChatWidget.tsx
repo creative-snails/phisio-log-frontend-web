@@ -21,7 +21,7 @@ const ChatWidget = () => {
     if (!chatBodyRef.current) return;
     // Scroll to the bottom of the chat body when chat history changes
     chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [chatHistory]);
+  }, [chatHistory, showChatPopup]);
 
   return (
     <div className={showChatPopup ? "show-chat-popup" : ""}>
