@@ -6,11 +6,11 @@
 .symptom-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: #fafafa;
   transition: box-shadow 0.4s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin: 1rem; 
+  margin: 0.75rem; 
 }
 
 .symptom-header {
@@ -18,12 +18,12 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  border-bottom: 1px solid #ccc;
   padding: 1rem;
 }
 
 .symptom-header:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-decoration: underline;
 }
 
 .symptom-header h4 {
@@ -64,8 +64,7 @@
   color: #555;
 }
 
-button.add-button,
-button.remove-button {
+button.add-button {
   padding: 0.4rem 0.8rem;
   border: none;
   border-radius: 4px;
@@ -84,10 +83,14 @@ button.add-button:hover {
   background-color: #0056b3;
 }
 
-button.remove-button {
-  background-color: #dc3545;
+.trash-icon {
+  color: #dc3545;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 1rem;
+  margin-left: auto;
 }
 
-button.remove-button:hover {
-  background-color: #c82333;
+.trash-icon:hover {
+  color: #a71d2a;
 }

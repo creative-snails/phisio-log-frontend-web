@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
-import SymptomFormSection from "./SymptomForm";
+import SymptomsFormSection from "./SymptomsForm";
 
 import type { RecordFormData, Status, SymptomUI } from "~/types";
 
@@ -187,7 +187,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             </li>
           ))}
         </ul>
-        <SymptomFormSection
+        <SymptomsFormSection
           symptoms={symptoms}
           onSymptomChange={handleSymptomChange}
           toggleSymptom={toggleSymptom}
