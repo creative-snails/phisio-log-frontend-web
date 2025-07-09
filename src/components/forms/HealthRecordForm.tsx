@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
+import SymptomsFormSection from "./SymptomsForm";
 
-import type { RecordFormData, Status } from "~/types";
+import type { RecordFormData, Status, SymptomUI } from "~/types";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -13,6 +14,17 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
 
   const [newTreatment, setNewTreatment] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
+
+  const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
+
+  useEffect(() => {
+    const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
+      ...s,
+      affectedParts: "Placeholder: affected parts coming soon",
+      isOpen: false,
+    }));
+    setSymptoms(loadedSymptoms);
+  }, [data.symptoms]);
 
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
@@ -81,6 +93,34 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     }
   };
 
+  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
+    const update = [...symptoms];
+    if (field === "name" || field === "startDate" || field === "affectedParts") {
+      update[index][field] = value;
+    }
+    setSymptoms(update);
+  };
+
+  const toggleSymptom = (index: number) => {
+    const update = [...symptoms];
+    update[index].isOpen = !update[index].isOpen;
+    setSymptoms(update);
+  };
+
+  const handleAddSymptom = () => {
+    setSymptoms([
+      ...symptoms,
+      { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
+    ]);
+  };
+
+  const handleRemoveSymptom = (index: number) => {
+    if (window.confirm("Are you sure you want to remove this symptom?")) {
+      const update = symptoms.filter((_, i) => i !== index);
+      setSymptoms(update);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,6 +128,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       description: data.description,
       treatmentsTried: data.treatmentsTried,
       status: data.status,
+      symptoms,
     });
   };
 
@@ -146,6 +187,13 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             </li>
           ))}
         </ul>
+        <SymptomsFormSection
+          symptoms={symptoms}
+          onSymptomChange={handleSymptomChange}
+          toggleSymptom={toggleSymptom}
+          addSymptom={handleAddSymptom}
+          removeSymptom={handleRemoveSymptom}
+        />
       </div>
       <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
         {data.createdAt && (
