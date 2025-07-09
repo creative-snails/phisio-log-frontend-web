@@ -1,4 +1,4 @@
-import { FaTrash } from "react-icons/fa";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 import "./SymptomsForm.css";
 import type { SymptomUI } from "~/types";
@@ -24,15 +24,15 @@ const SymptomsFormSection = ({
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
-            <div className="symptom-title">{!symptom.isOpen && <h4>{symptom.name || "Unnamed Symptom"}</h4>}</div>
-            <FaTrash
-              className="trash-icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                removeSymptom(index);
-              }}
-            />
+            <h4>{symptom.name}</h4>
           </div>
+          <FaRegTrashAlt
+            className="trash-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeSymptom(index);
+            }}
+          />
 
           {symptom.isOpen && (
             <div className="symptom-body">

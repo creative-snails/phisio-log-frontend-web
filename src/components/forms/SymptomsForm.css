@@ -11,14 +11,12 @@
   transition: box-shadow 0.4s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   margin: 0.75rem; 
+  position: relative;
 }
 
 .symptom-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   cursor: pointer;
-  padding: 1rem;
+  text-align: center;
 }
 
 .symptom-header:hover {
@@ -84,13 +82,18 @@ button.add-button:hover {
 }
 
 .trash-icon {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
   color: #dc3545;
   cursor: pointer;
-  transition: color 0.2s ease;
-  font-size: 1rem;
-  margin-left: auto;
+  font-size: 1.4em;
+  padding: 3px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .trash-icon:hover {
-  color: #a71d2a;
+  color: white;
+  background-color: #dc3545;
 }
