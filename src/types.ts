@@ -1,7 +1,12 @@
-interface Symptom {
+export interface Symptom {
   name: string;
   startDate: string;
+  affectedParts: string;
 }
+
+export type SymptomUI = Symptom & {
+  isOpen?: boolean;
+};
 
 export interface Status {
   stage: string;
