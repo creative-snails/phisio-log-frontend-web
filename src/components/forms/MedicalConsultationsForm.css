@@ -14,12 +14,9 @@
 }
 
 .consultation-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    text-align: center;
     cursor: pointer;
-    border-bottom: 1px solid #ccc;
-    padding: 1rem;
+    position: relative;
 }
 
 .consultation-header:hover{
@@ -71,7 +68,7 @@
     align-items: center;
 }
 
-button.add-button, button.remove-button,
+button.add-button,
 .update-button{
     padding: 0.4rem 0.8rem;
     border: none;
@@ -89,14 +86,6 @@ button.add-button:hover{
     background-color: #0056b3;
 }
 
-button.remove-button{
-    background-color: #dc3545;
-}
-
-button.remove-button:hover{
-    background-color: #c82333;
-}
-
 .update-button{
     background-color: #4CAF50;
     color: white;
@@ -111,17 +100,9 @@ button.remove-button:hover{
     opacity: 0.3;
 }
 
-.update-button:disabled::after {
-  content: "⛔";
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 1.2rem;
-  color: red;
-}
-
 .update-button:hover{
     background-color: #45a049;
+    content: "⛔";
 }
 
 .success-message{
@@ -131,4 +112,21 @@ button.remove-button:hover{
   border: 1px solid #c3e6cb;
   border-radius: 4px;
   font-weight: bold;
+}
+
+.bin-icon {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1.4em;
+  padding: 3px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.bin-icon:hover {
+  color: white;
+  background-color: #dc3545;
 }

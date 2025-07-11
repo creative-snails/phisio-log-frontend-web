@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 import "./MedicalConsultationsForm.css";
 
@@ -8,6 +9,7 @@ type Consultation = {
   diagnosis: string;
   followUpActions: string[];
   isOpen?: boolean;
+  isNew?: boolean;
 };
 
 type MedicalConsultationsFormProps = {
@@ -27,6 +29,7 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
         diagnosis: "",
         followUpActions: [""],
         isOpen: true,
+        isNew: true,
       },
     ]);
   };
@@ -66,9 +69,13 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
     setSuccessMessage("");
   };
 
-  const isValid = () => {
-    return consultations.every(
-      (c) => c.consultant.trim() && c.date.trim() && c.diagnosis.trim() && c.followUpActions.length > 0
+  const isConsultationsValid = (c: Consultation) => {
+    return (
+      c.consultant.trim() !== "" &&
+      c.date.trim() !== "" &&
+      c.diagnosis.trim() !== "" &&
+      c.followUpActions.length > 0 &&
+      c.followUpActions.every((a) => a.trim() !== "")
     );
   };
 
@@ -81,6 +88,8 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
   const handleUpdate = () => {
     console.log("Consultations update:", consultations);
     setSuccessMessage("Consultation saved");
+    const update = consultations.map((c) => ({ ...c, isNew: false }));
+    setConsultations(update);
   };
 
   return (
@@ -88,10 +97,19 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>
-            <h4>Consultation {i + 1}</h4>
-            <button className="update-button" onClick={handleUpdate} disabled={!isValid()}>
-              Update Consultations
-            </button>
+            <h4>{c.consultant}</h4>
+            <FaRegTrashAlt
+              className="bin-icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeConsultation(i);
+              }}
+            />
+            {!c.isNew && (
+              <button className="update-button" onClick={handleUpdate} disabled={!isConsultationsValid(c)}>
+                Update Consultations
+              </button>
+            )}
           </div>
           {c.isOpen && (
             <div className="consultation-body">
@@ -124,15 +142,6 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
                 ))}
                 <button type="button" className="add-button" onClick={() => addAction(i)}>
                   + Add Action
-                </button>
-                <button
-                  className="remove-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeConsultation(i);
-                  }}
-                >
-                  Remove
                 </button>
                 {successMessage && <div className="success-message">{successMessage}</div>}
               </div>
