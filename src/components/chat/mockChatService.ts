@@ -1,7 +1,7 @@
 const mockResponses = [
   "Thank you for sharing that information. You mentioned only one symptom. Are there any **additional symptoms** you would like to add to your health record?",
   `Have you tried any treatments on your own to manage your condition?
-  ##### This could include:
+  #### This could include:
   - Over-the-counter medications
   - Home remedies
   - Lifestyle changes

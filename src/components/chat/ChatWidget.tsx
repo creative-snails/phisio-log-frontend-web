@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
@@ -22,16 +24,16 @@ const ChatWidget = () => {
   }, [chatHistory, showChatPopup]);
 
   return (
-    <div className={showChatPopup ? "show-chat-popup" : ""}>
+    <div className={showChatPopup ? "chat-show-popup" : ""}>
       <button onClick={() => setShowChatPopup((prev) => !prev)} id="chat-popup-toggler">
         <MdChat className="chat-bubble" />
       </button>
       <div className="chat-popup">
         {/* Chat Header */}
         <div className="chat-header">
-          <div className="header-info">
-            <FaUserDoctor className="logo-icon" /> {/* placeholder logo */}
-            <h2 className="logo-text">PhisioLog</h2>
+          <div className="chat-header-info">
+            <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
+            <h2 className="chat-logo-text">PhisioLog</h2>
           </div>
           <button onClick={() => setShowChatPopup((prev) => !prev)}>
             <SlArrowDown />
@@ -41,19 +43,26 @@ const ChatWidget = () => {
         {/* Chat Body */}
         <div ref={chatBodyRef} className="chat-body">
           {chatHistory.map((chat, index) => (
-            <div key={index} className={`message ${chat.role}-message`}>
-              {chat.role === "assistant" && <FaUserDoctor className="logo-icon" />}
-              <p className="message-text">{chat.message}</p>
+            <div key={index} className={`chat-message chat-${chat.role}-message`}>
+              {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
+              <div className="chat-message-text">
+                <ReactMarkdown
+                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {chat.message}
+                </ReactMarkdown>
+              </div>
             </div>
           ))}
           {isThinking && (
-            <div className="message assistant-message">
-              <FaUserDoctor className="logo-icon" />
-              <p className="message-text thinking-dots">
+            <div className="chat-message chat-assistant-message">
+              <FaUserDoctor className="chat-logo-icon" />
+              <div className="chat-message-text chat-thinking-dots">
                 <span></span>
                 <span></span>
                 <span></span>
-              </p>
+              </div>
             </div>
           )}
         </div>

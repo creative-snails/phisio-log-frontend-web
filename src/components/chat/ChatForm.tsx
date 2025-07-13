@@ -32,9 +32,9 @@ const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
 
   return (
     <form className="chat-form" onSubmit={handleSendMessage}>
-      <input ref={inputRef} type="text" placeholder="Message..." className="message-input" required />
+      <input ref={inputRef} type="text" placeholder="Message..." className="chat-message-input" required />
       <button>
-        <IoMdArrowUp className="btn-arrow" />
+        <IoMdArrowUp className="chat-btn-arrow" />
       </button>
     </form>
   );
