@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
-import type { ChatHistoryType } from "~/types";
+import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [showChatPopup, setShowChatPopup] = useState(false);
@@ -16,17 +16,43 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   ]);
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
+  const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
+
+  if (healthRecord) console.log("Fetched Health Record:", healthRecord);
 
   useEffect(() => {
-    if (healthRecordId) {
-      setChatHistory([
-        {
-          role: "assistant",
-          message: `I see you're working with **#${healthRecordId}** record. How can I help you update it?`,
-        },
-      ]);
+    if (showChatPopup && healthRecordId! > 0) {
+      const fetchRecord = async () => {
+        setIsThinking(true);
+        try {
+          const res = await fetch(`http://localhost:4444/health-records/${healthRecordId}`);
+          if (!res.ok) throw new Error("Failed to fetch health record");
+          const data = await res.json();
+          setHealthRecord(data);
+          setChatHistory([
+            {
+              role: "assistant",
+              message: `I see you're working with **${data.title}** record. How can I help you update it?`,
+            },
+          ]);
+        } catch (error) {
+          console.error("Error fetching health record:", error);
+          setChatHistory([
+            ...chatHistory,
+            {
+              role: "assistant",
+              message:
+                "Hmm, I wasn’t able to load your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
+            },
+          ]);
+          setHealthRecord(null);
+        } finally {
+          setIsThinking(false);
+        }
+      };
+      fetchRecord();
     }
-  }, [healthRecordId]);
+  }, [showChatPopup, healthRecordId]);
 
   useEffect(() => {
     if (!chatBodyRef.current) return;
