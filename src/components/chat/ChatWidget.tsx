@@ -70,7 +70,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         <div className="chat-header">
           <div className="chat-header-info">
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
-            <h2 className="chat-logo-text">PhisioLog</h2>
+            <div className="chat-logo-text">PhisioLog</div>
           </div>
           <button onClick={() => setShowChatPopup((prev) => !prev)}>
             <SlArrowDown />
