@@ -10,18 +10,16 @@ import "./ChatWidget.css";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
+  const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatPopup, setShowChatPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
-  const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
-
-  if (healthRecord) console.log("Fetched Health Record:", healthRecord);
 
   useEffect(() => {
-    if (showChatPopup && healthRecordId !== undefined && healthRecordId > 0) {
+    if (showChatPopup && healthRecordId !== undefined && healthRecordId > 0 && !healthRecord) {
       const fetchRecord = async () => {
         setIsThinking(true);
         try {
@@ -37,8 +35,8 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           ]);
         } catch (error) {
           console.error("Error fetching health record:", error);
-          setChatHistory([
-            ...chatHistory,
+          setChatHistory((prev) => [
+            ...prev,
             {
               role: "assistant",
               message:
