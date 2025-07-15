@@ -16,6 +16,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
+  const [interactionTypeSelected, setInteractionTypeSelected] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,31 +77,38 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-        <div ref={chatBodyRef} className="chat-body">
-          {chatHistory.map((chat, index) => (
-            <div key={index} className={`chat-message chat-${chat.role}-message`}>
-              {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
-              <div className="chat-message-text">
-                <ReactMarkdown
-                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {chat.message}
-                </ReactMarkdown>
+        {interactionTypeSelected || healthRecordId ? (
+          <div ref={chatBodyRef} className="chat-body">
+            {chatHistory.map((chat, index) => (
+              <div key={index} className={`chat-message chat-${chat.role}-message`}>
+                {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
+                <div className="chat-message-text">
+                  <ReactMarkdown
+                    components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {chat.message}
+                  </ReactMarkdown>
+                </div>
               </div>
-            </div>
-          ))}
-          {isThinking && (
-            <div className="chat-message chat-assistant-message">
-              <FaUserDoctor className="chat-logo-icon" />
-              <div className="chat-message-text chat-thinking-dots">
-                <span></span>
-                <span></span>
-                <span></span>
+            ))}
+            {isThinking && (
+              <div className="chat-message chat-assistant-message">
+                <FaUserDoctor className="chat-logo-icon" />
+                <div className="chat-message-text chat-thinking-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <div className="chat-body">
+            <button onClick={() => setInteractionTypeSelected(true)}>Create New Interaction</button>
+            <button onClick={() => setInteractionTypeSelected(true)}>Edit Existing Interaction</button>
+          </div>
+        )}
 
         {/* Chat Footer */}
         <div className="chat-footer">
