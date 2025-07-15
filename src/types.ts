@@ -28,7 +28,7 @@ interface Update {
 export interface HealthRecord {
   id?: number;
   user?: string;
-  title: string;
+  title?: string;
   description: string;
   symptoms: Symptom[];
   status: Status;

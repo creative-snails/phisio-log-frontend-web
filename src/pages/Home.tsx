@@ -37,7 +37,7 @@ const Home = () => (
     </section>
 
     <HealthRecordsManager />
-    <ChatWidget />
+    <ChatWidget healthRecordId={1} />
   </div>
 );
 

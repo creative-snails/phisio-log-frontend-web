@@ -9,13 +9,24 @@ import ChatForm from "./ChatForm";
 import "./ChatWidget.css";
 import type { ChatHistoryType } from "~/types";
 
-const ChatWidget = () => {
+const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [showChatPopup, setShowChatPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (healthRecordId) {
+      setChatHistory([
+        {
+          role: "assistant",
+          message: `I see you're working with **#${healthRecordId}** record. How can I help you update it?`,
+        },
+      ]);
+    }
+  }, [healthRecordId]);
 
   useEffect(() => {
     if (!chatBodyRef.current) return;
