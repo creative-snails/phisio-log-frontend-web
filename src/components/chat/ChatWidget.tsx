@@ -21,7 +21,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   if (healthRecord) console.log("Fetched Health Record:", healthRecord);
 
   useEffect(() => {
-    if (showChatPopup && healthRecordId! > 0) {
+    if (showChatPopup && healthRecordId !== undefined && healthRecordId > 0) {
       const fetchRecord = async () => {
         setIsThinking(true);
         try {
@@ -42,7 +42,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             {
               role: "assistant",
               message:
-                "Hmm, I wasn’t able to load your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
+                "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
             },
           ]);
           setHealthRecord(null);
