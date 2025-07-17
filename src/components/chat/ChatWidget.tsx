@@ -115,7 +115,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           <ChatForm
             setChatHistory={setChatHistory}
             setIsThinking={setIsThinking}
-            disabled={!isChatEnabled}
+            disabled={!isChatEnabled && healthRecordId == null}
             showChatPopup={showChatPopup}
           />
         </div>
