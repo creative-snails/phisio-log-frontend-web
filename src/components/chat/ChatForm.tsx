@@ -7,9 +7,10 @@ import type { ChatHistoryType } from "~/types";
 interface ChatFormProps {
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
+  disabled: boolean;
 }
 
-const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
+const ChatForm = ({ setChatHistory, setIsThinking, disabled }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
@@ -32,7 +33,14 @@ const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
 
   return (
     <form className="chat-form" onSubmit={handleSendMessage}>
-      <input ref={inputRef} type="text" placeholder="Message..." className="chat-message-input" required />
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Message..."
+        className="chat-message-input"
+        disabled={disabled}
+        required
+      />
       <button>
         <IoMdArrowUp className="chat-btn-arrow" />
       </button>

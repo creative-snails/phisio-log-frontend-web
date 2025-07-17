@@ -16,7 +16,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
-  const [interactionTypeSelected, setInteractionTypeSelected] = useState(false);
+  const [isChatEnabled, setInteractionTypeSelected] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-        {interactionTypeSelected || healthRecordId ? (
+        {isChatEnabled || healthRecordId ? (
           <div ref={chatBodyRef} className="chat-body">
             {chatHistory.map((chat, index) => (
               <div key={index} className={`chat-message chat-${chat.role}-message`}>
@@ -112,7 +112,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
         {/* Chat Footer */}
         <div className="chat-footer">
-          <ChatForm setChatHistory={setChatHistory} setIsThinking={setIsThinking} />
+          <ChatForm setChatHistory={setChatHistory} setIsThinking={setIsThinking} disabled={!isChatEnabled} />
         </div>
       </div>
     </div>

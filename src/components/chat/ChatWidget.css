@@ -188,6 +188,12 @@
   font-size: 0.95rem;
 }
 
+.chat-form .chat-message-input:disabled {
+  background: linear-gradient(135deg, #0339647e, #06579a8b);
+  border-radius: 32px;
+  cursor: not-allowed;
+}
+
 .chat-form button {
   display: none;
   align-items: center;
