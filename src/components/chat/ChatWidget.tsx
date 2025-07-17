@@ -104,7 +104,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             )}
           </div>
         ) : (
-          <div className="chat-body">
+          <div className="chat-body-onboarding">
             <button onClick={() => setInteractionTypeSelected(true)}>Create New Interaction</button>
             <button onClick={() => setInteractionTypeSelected(true)}>Edit Existing Interaction</button>
           </div>
@@ -112,7 +112,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
         {/* Chat Footer */}
         <div className="chat-footer">
-          <ChatForm setChatHistory={setChatHistory} setIsThinking={setIsThinking} disabled={!isChatEnabled} />
+          <ChatForm
+            setChatHistory={setChatHistory}
+            setIsThinking={setIsThinking}
+            disabled={!isChatEnabled}
+            showChatPopup={showChatPopup}
+          />
         </div>
       </div>
     </div>

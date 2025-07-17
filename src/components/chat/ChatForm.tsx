@@ -1,4 +1,4 @@
-import { type Dispatch, type FormEvent, type SetStateAction, useRef } from "react";
+import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useRef } from "react";
 import { IoMdArrowUp } from "react-icons/io";
 import { getAssistantResponse } from "./mockChatService";
 
@@ -8,10 +8,15 @@ interface ChatFormProps {
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
   disabled: boolean;
+  showChatPopup: boolean;
 }
 
-const ChatForm = ({ setChatHistory, setIsThinking, disabled }: ChatFormProps) => {
+const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatPopup }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [disabled, showChatPopup]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
