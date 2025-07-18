@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
@@ -19,8 +19,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
+  const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
+
   useEffect(() => {
-    if (showChatPopup && healthRecordId !== undefined && healthRecordId > 0 && !healthRecord) {
+    if (showChatPopup && isValidRecordId && !healthRecord) {
       const fetchRecord = async () => {
         setIsThinking(true);
         try {
@@ -61,7 +63,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   useEffect(() => {
     if (!showChatPopup && !isChatEnabled) return;
-    if (healthRecordId && healthRecordId > 0) {
+    if (isValidRecordId) {
       localStorage.setItem(`chat-session-record-${healthRecordId}`, JSON.stringify(chatHistory));
     } else {
       localStorage.setItem("chat-session-general", JSON.stringify(chatHistory));
@@ -75,12 +77,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     if (!confirm) return;
 
     setIsChatEnabled(true);
-    localStorage.removeItem(healthRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general");
+    localStorage.removeItem(isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general");
   };
 
   const handleContinueChat = () => {
     const chatHistoryString = localStorage.getItem(
-      healthRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
+      isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
     );
     console.log(JSON.parse(chatHistoryString!));
     if (chatHistoryString) setChatHistory(JSON.parse(chatHistoryString));
