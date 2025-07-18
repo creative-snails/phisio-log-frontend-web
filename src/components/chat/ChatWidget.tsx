@@ -21,8 +21,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
 
+  // Fetch health record
   useEffect(() => {
-    if (showChatPopup && isValidRecordId && !healthRecord) {
+    const existingChatSession = localStorage.getItem(`chat-session-record-${healthRecordId}`);
+
+    if (showChatPopup && isValidRecordId && !healthRecord && !existingChatSession) {
       const fetchRecord = async () => {
         setIsThinking(true);
         try {
@@ -30,6 +33,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           if (!res.ok) throw new Error("Failed to fetch health record");
           const data = await res.json();
           setHealthRecord(data);
+
           setChatHistory([
             {
               role: "assistant",
@@ -55,12 +59,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     }
   }, [showChatPopup, healthRecordId]);
 
+  // Scroll to the bottom of the chat body
   useEffect(() => {
     if (!chatBodyRef.current) return;
-    // Scroll to the bottom of the chat body when chat history changes
     chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
   }, [chatHistory, showChatPopup]);
 
+  // Save chat history to localStorage
   useEffect(() => {
     if (!showChatPopup && !isChatEnabled) return;
     if (isValidRecordId) {
