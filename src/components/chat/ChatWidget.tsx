@@ -16,7 +16,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
-  const [isChatEnabled, setInteractionTypeSelected] = useState(false);
+  const [isChatEnabled, setIsChatEnabled] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,6 +58,15 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     // Scroll to the bottom of the chat body when chat history changes
     chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
   }, [chatHistory, showChatPopup]);
+
+  useEffect(() => {
+    if (!showChatPopup) return;
+    if (healthRecordId && healthRecordId > 0) {
+      localStorage.setItem("chat_session_record", JSON.stringify(chatHistory));
+    } else {
+      localStorage.setItem("chat_session_general", JSON.stringify(chatHistory));
+    }
+  }, [chatHistory]);
 
   return (
     <div className={showChatPopup ? "chat-show-popup" : ""}>
@@ -105,8 +114,8 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           </div>
         ) : (
           <div className="chat-body-onboarding">
-            <button onClick={() => setInteractionTypeSelected(true)}>Create New Interaction</button>
-            <button onClick={() => setInteractionTypeSelected(true)}>Edit Existing Interaction</button>
+            <button onClick={() => setIsChatEnabled(true)}>Create New Interaction</button>
+            <button onClick={() => setIsChatEnabled(true)}>Edit Existing Interaction</button>
           </div>
         )}
 
