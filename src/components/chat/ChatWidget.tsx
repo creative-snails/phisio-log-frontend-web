@@ -12,11 +12,11 @@ import { type ChatHistoryType, type HealthRecord } from "~/types";
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatPopup, setShowChatPopup] = useState(false);
+  const [isChatEnabled, setIsChatEnabled] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
     { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
   ]);
   const [isThinking, setIsThinking] = useState(false);
-  const [isChatEnabled, setIsChatEnabled] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   }, [chatHistory, showChatPopup]);
 
   useEffect(() => {
-    if (!showChatPopup) return;
+    if (!showChatPopup && !isChatEnabled) return;
     if (healthRecordId && healthRecordId > 0) {
       localStorage.setItem(`chat-session-record-${healthRecordId}`, JSON.stringify(chatHistory));
     } else {
@@ -68,18 +68,23 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     }
   }, [chatHistory]);
 
-  const handleNewChat = (mode?: string) => {
+  const handleNewChat = () => {
     const confirm = window.confirm(
       "Starting a new chat will erase your previous chat session! Do you want to continue?"
     );
     if (!confirm) return;
 
     setIsChatEnabled(true);
-    if (mode === "editMode") {
-      localStorage.removeItem(`chat-session-record-${healthRecordId}`);
-    } else {
-      localStorage.removeItem("chat-session-general");
-    }
+    localStorage.removeItem(healthRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general");
+  };
+
+  const handleContinueChat = () => {
+    const chatHistoryString = localStorage.getItem(
+      healthRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
+    );
+    console.log(JSON.parse(chatHistoryString!));
+    if (chatHistoryString) setChatHistory(JSON.parse(chatHistoryString));
+    setIsChatEnabled(true);
   };
 
   return (
@@ -100,7 +105,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-        {isChatEnabled || healthRecordId ? (
+        {isChatEnabled ? (
           <div ref={chatBodyRef} className="chat-body">
             {chatHistory.map((chat, index) => (
               <div key={index} className={`chat-message chat-${chat.role}-message`}>
@@ -129,11 +134,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         ) : (
           <div className="chat-body-onboarding">
             <div className="chat-body-onboarding-section">
-              <button onClick={() => handleNewChat()}>Start New Chat</button>
+              <button onClick={handleNewChat}>Start New Chat</button>
               <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
             </div>
             <div className="chat-body-onboarding-section">
-              <button onClick={() => handleNewChat("editMode")}>Continue Chat</button>
+              <button onClick={handleContinueChat}>Continue Chat</button>
               <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
             </div>
           </div>
