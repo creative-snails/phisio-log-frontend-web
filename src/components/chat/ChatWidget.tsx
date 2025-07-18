@@ -114,8 +114,14 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           </div>
         ) : (
           <div className="chat-body-onboarding">
-            <button onClick={() => setIsChatEnabled(true)}>Create New Interaction</button>
-            <button onClick={() => setIsChatEnabled(true)}>Edit Existing Interaction</button>
+            <div className="chat-body-onboarding-section">
+              <button onClick={() => setIsChatEnabled(true)}>Start New Chat</button>
+              <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
+            </div>
+            <div className="chat-body-onboarding-section">
+              <button onClick={() => setIsChatEnabled(true)}>Continue Chat</button>
+              <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
+            </div>
           </div>
         )}
 
