@@ -21,9 +21,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
 
-  // Fetch health record
+  // Health record fetching and chat initialization
   useEffect(() => {
-    const existingChatSession = localStorage.getItem(`chat-session-record-${healthRecordId}`);
+    const existingChatSession = localStorage.getItem(
+      isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
+    );
+    if (!existingChatSession) setIsChatEnabled(true);
 
     if (showChatPopup && isValidRecordId && !healthRecord && !existingChatSession) {
       const fetchRecord = async () => {
