@@ -62,11 +62,25 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   useEffect(() => {
     if (!showChatPopup) return;
     if (healthRecordId && healthRecordId > 0) {
-      localStorage.setItem("chat_session_record", JSON.stringify(chatHistory));
+      localStorage.setItem(`chat-session-record-${healthRecordId}`, JSON.stringify(chatHistory));
     } else {
-      localStorage.setItem("chat_session_general", JSON.stringify(chatHistory));
+      localStorage.setItem("chat-session-general", JSON.stringify(chatHistory));
     }
   }, [chatHistory]);
+
+  const handleNewChat = (mode?: string) => {
+    const confirm = window.confirm(
+      "Starting a new chat will erase your previous chat session! Do you want to continue?"
+    );
+    if (!confirm) return;
+
+    setIsChatEnabled(true);
+    if (mode === "editMode") {
+      localStorage.removeItem(`chat-session-record-${healthRecordId}`);
+    } else {
+      localStorage.removeItem("chat-session-general");
+    }
+  };
 
   return (
     <div className={showChatPopup ? "chat-show-popup" : ""}>
@@ -115,11 +129,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         ) : (
           <div className="chat-body-onboarding">
             <div className="chat-body-onboarding-section">
-              <button onClick={() => setIsChatEnabled(true)}>Start New Chat</button>
+              <button onClick={() => handleNewChat()}>Start New Chat</button>
               <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
             </div>
             <div className="chat-body-onboarding-section">
-              <button onClick={() => setIsChatEnabled(true)}>Continue Chat</button>
+              <button onClick={() => handleNewChat("editMode")}>Continue Chat</button>
               <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
             </div>
           </div>
