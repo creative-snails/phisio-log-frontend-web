@@ -11,7 +11,7 @@ import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
-  const [showChatPopup, setShowChatPopup] = useState(false);
+  const [showChatWidget, setShowChatWidget] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
   const [isThinking, setIsThinking] = useState(false);
 
@@ -51,7 +51,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   // Chat initialization
   useEffect(() => {
-    if (!showChatPopup) return;
+    if (!showChatWidget) return;
 
     const initializeChat = async () => {
       const existingChatSession = localStorage.getItem(sessionKey);
@@ -74,17 +74,17 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     };
 
     initializeChat();
-  }, [showChatPopup, healthRecordId]);
+  }, [showChatWidget, healthRecordId]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
     if (!chatBodyRef.current) return;
     chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [chatHistory, showChatPopup]);
+  }, [chatHistory, showChatWidget]);
 
   // Save chat history to localStorage
   useEffect(() => {
-    if (showChatPopup && chatHistory.length > 0) {
+    if (showChatWidget && chatHistory.length > 0) {
       try {
         localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
       } catch (error) {
@@ -133,18 +133,18 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   };
 
   return (
-    <div className={showChatPopup ? "chat-show-popup" : ""}>
-      <button onClick={() => setShowChatPopup((prev) => !prev)} id="chat-popup-toggler">
+    <div className={showChatWidget ? "chat-show-widget" : ""}>
+      <button onClick={() => setShowChatWidget((prev) => !prev)} id="chat-widget-toggler">
         <MdChat className="chat-bubble" />
       </button>
-      <div className="chat-popup">
+      <div className="chat-widget">
         {/* Chat Header */}
         <div className="chat-header">
           <div className="chat-header-info">
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
             <div className="chat-logo-text">PhisioLog</div>
           </div>
-          <button onClick={() => setShowChatPopup((prev) => !prev)}>
+          <button onClick={() => setShowChatWidget((prev) => !prev)}>
             <SlArrowDown />
           </button>
         </div>
@@ -195,7 +195,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             setChatHistory={setChatHistory}
             setIsThinking={setIsThinking}
             disabled={chatHistory.length === 0}
-            showChatPopup={showChatPopup}
+            showChatWidget={showChatWidget}
           />
         </div>
       </div>

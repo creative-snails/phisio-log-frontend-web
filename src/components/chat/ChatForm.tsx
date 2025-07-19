@@ -8,15 +8,15 @@ interface ChatFormProps {
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
   disabled: boolean;
-  showChatPopup: boolean;
+  showChatWidget: boolean;
 }
 
-const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatPopup }: ChatFormProps) => {
+const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatWidget }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, [disabled, showChatPopup]);
+  }, [disabled, showChatWidget]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

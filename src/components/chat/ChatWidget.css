@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-#chat-popup-toggler {
+#chat-widget-toggler {
   position: fixed;
   bottom: 30px;
   right: 40px;
@@ -27,7 +27,7 @@
   color: #fff;
 }
 
-.chat-popup {
+.chat-widget {
   position: fixed;
   opacity: 0;
   pointer-events: none;
@@ -41,15 +41,16 @@
   transform: scale(0.2);
   transform-origin: bottom right;
   transition: all 0.2s ease;
+  border: 1px solid #00000039;
 }
 
-.chat-show-popup .chat-popup {
+.chat-show-widget .chat-widget {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
 }
 
-.chat-show-popup #chat-popup-toggler {
+.chat-show-widget #chat-widget-toggler {
   transform: rotate(90deg);
   opacity: 0;
   pointer-events: none;
