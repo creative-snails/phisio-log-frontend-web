@@ -23,9 +23,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   // Health record fetching and chat initialization
   useEffect(() => {
+    if (!showChatPopup) return;
     const existingChatSession = localStorage.getItem(sessionKey);
 
-    if (showChatPopup && isValidRecordId && !healthRecord && !existingChatSession) {
+    if (isValidRecordId && !healthRecord && !existingChatSession) {
       const fetchRecord = async () => {
         setIsThinking(true);
         try {
