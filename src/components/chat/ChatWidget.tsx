@@ -80,9 +80,19 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     );
     if (!confirm) return;
     localStorage.removeItem(sessionKey);
-    setChatHistory([
-      { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-    ]);
+
+    if (isValidRecordId && healthRecord) {
+      setChatHistory([
+        {
+          role: "assistant",
+          message: `I see you're working with **${healthRecord.title}** record. How can I help you update it?`,
+        },
+      ]);
+    } else {
+      setChatHistory([
+        { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+      ]);
+    }
   };
 
   const handleContinueChat = () => {
@@ -137,12 +147,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         ) : (
           <div className="chat-body-onboarding">
             <div className="chat-body-onboarding-section">
-              <button onClick={handleNewChat}>Start New Chat</button>
-              <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
-            </div>
-            <div className="chat-body-onboarding-section">
               <button onClick={handleContinueChat}>Continue Chat</button>
               <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
+            </div>
+            <div className="chat-body-onboarding-section">
+              <button onClick={handleNewChat}>Start New Chat</button>
+              <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
             </div>
           </div>
         )}
