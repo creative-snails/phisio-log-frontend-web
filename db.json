@@ -3,6 +3,7 @@
     {
       "id": 1,
       "user": "me",
+      "title": "Severe Migraine",
       "description": "Severe migraine lasting for days",
       "symptoms": [
         {
@@ -55,6 +56,7 @@
     {
       "id": 2,
       "user": "me",
+      "title": "Lower Back Pain",
       "description": "Persistent lower back pain affecting mobility",
       "symptoms": [
         {
@@ -101,6 +103,7 @@
     {
       "id": 3,
       "user": "me",
+      "title": "Seasonal Allergies",
       "description": "Seasonal allergies with severe symptoms",
       "symptoms": [
         {
@@ -137,6 +140,7 @@
     {
       "id": 4,
       "user": "me",
+      "title": "Knee Pain",
       "description": "Knee pain after sports injury",
       "symptoms": [
         {
@@ -179,6 +183,7 @@
     {
       "id": 5,
       "user": "me",
+      "title": "Digestive Problems",
       "description": "Persistent digestive issues",
       "symptoms": [
         {
