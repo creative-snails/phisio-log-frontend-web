@@ -14,7 +14,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [showChatPopup, setShowChatPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
   const [isThinking, setIsThinking] = useState(false);
+
   const chatBodyRef = useRef<HTMLDivElement>(null);
+
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
   const sessionKey = useMemo(
     () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
@@ -117,9 +119,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   const handleContinueChat = () => {
     try {
-      const chatHistoryString = localStorage.getItem(sessionKey);
-      if (chatHistoryString) {
-        const parsedChatHistory = JSON.parse(chatHistoryString);
+      const savedSession = localStorage.getItem(sessionKey);
+      if (savedSession) {
+        const parsedChatHistory = JSON.parse(savedSession);
         setChatHistory(parsedChatHistory);
       }
     } catch (error) {
