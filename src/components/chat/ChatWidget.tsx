@@ -12,21 +12,18 @@ import { type ChatHistoryType, type HealthRecord } from "~/types";
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatPopup, setShowChatPopup] = useState(false);
-  const [isChatEnabled, setIsChatEnabled] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([
-    { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-  ]);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
   const [isThinking, setIsThinking] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
-
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
+  const sessionKey = useMemo(
+    () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
+    [healthRecordId]
+  );
 
   // Health record fetching and chat initialization
   useEffect(() => {
-    const existingChatSession = localStorage.getItem(
-      isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
-    );
-    if (!existingChatSession) setIsChatEnabled(true);
+    const existingChatSession = localStorage.getItem(sessionKey);
 
     if (showChatPopup && isValidRecordId && !healthRecord && !existingChatSession) {
       const fetchRecord = async () => {
@@ -59,6 +56,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         }
       };
       fetchRecord();
+    } else if (showChatPopup && !isValidRecordId && !existingChatSession) {
+      setChatHistory([
+        { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+      ]);
     }
   }, [showChatPopup, healthRecordId]);
 
@@ -70,12 +71,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   // Save chat history to localStorage
   useEffect(() => {
-    if (!showChatPopup && !isChatEnabled) return;
-    if (isValidRecordId) {
-      localStorage.setItem(`chat-session-record-${healthRecordId}`, JSON.stringify(chatHistory));
-    } else {
-      localStorage.setItem("chat-session-general", JSON.stringify(chatHistory));
-    }
+    if (showChatPopup && chatHistory.length > 0) localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
   }, [chatHistory]);
 
   const handleNewChat = () => {
@@ -83,18 +79,15 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
       "Starting a new chat will erase your previous chat session! Do you want to continue?"
     );
     if (!confirm) return;
-
-    setIsChatEnabled(true);
-    localStorage.removeItem(isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general");
+    localStorage.removeItem(sessionKey);
+    setChatHistory([
+      { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+    ]);
   };
 
   const handleContinueChat = () => {
-    const chatHistoryString = localStorage.getItem(
-      isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"
-    );
-    console.log(JSON.parse(chatHistoryString!));
+    const chatHistoryString = localStorage.getItem(sessionKey);
     if (chatHistoryString) setChatHistory(JSON.parse(chatHistoryString));
-    setIsChatEnabled(true);
   };
 
   return (
@@ -115,7 +108,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-        {isChatEnabled ? (
+        {chatHistory.length > 0 ? (
           <div ref={chatBodyRef} className="chat-body">
             {chatHistory.map((chat, index) => (
               <div key={index} className={`chat-message chat-${chat.role}-message`}>
@@ -159,7 +152,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
           <ChatForm
             setChatHistory={setChatHistory}
             setIsThinking={setIsThinking}
-            disabled={!isChatEnabled && healthRecordId == null}
+            disabled={chatHistory.length === 0}
             showChatPopup={showChatPopup}
           />
         </div>
