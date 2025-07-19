@@ -21,47 +21,57 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     [healthRecordId]
   );
 
-  // Health record fetching and chat initialization
+  // Health record fetching
+  const fetchHealthRecord = async () => {
+    setIsThinking(true);
+    try {
+      const res = await fetch(`http://localhost:4444/health-records/${healthRecordId}`);
+      if (!res.ok) throw new Error("Failed to fetch health record");
+      const data = await res.json();
+      setHealthRecord(data);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching health record:", error);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          message:
+            "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
+        },
+      ]);
+      setHealthRecord(null);
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
+  // Chat initialization
   useEffect(() => {
     if (!showChatPopup) return;
-    const existingChatSession = localStorage.getItem(sessionKey);
 
-    if (isValidRecordId && !healthRecord && !existingChatSession) {
-      const fetchRecord = async () => {
-        setIsThinking(true);
-        try {
-          const res = await fetch(`http://localhost:4444/health-records/${healthRecordId}`);
-          if (!res.ok) throw new Error("Failed to fetch health record");
-          const data = await res.json();
-          setHealthRecord(data);
+    const initializeChat = async () => {
+      const existingChatSession = localStorage.getItem(sessionKey);
 
+      if (isValidRecordId && !healthRecord && !existingChatSession) {
+        const record = await fetchHealthRecord();
+        if (record) {
           setChatHistory([
             {
               role: "assistant",
-              message: `I see you're working with **${data.title}** record. How can I help you update it?`,
+              message: `I see you're working with **${record.title}** record. How can I help you update it?`,
             },
           ]);
-        } catch (error) {
-          console.error("Error fetching health record:", error);
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              role: "assistant",
-              message:
-                "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
-            },
-          ]);
-          setHealthRecord(null);
-        } finally {
-          setIsThinking(false);
         }
-      };
-      fetchRecord();
-    } else if (showChatPopup && !isValidRecordId && !existingChatSession) {
-      setChatHistory([
-        { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-      ]);
-    }
+      } else if (!isValidRecordId && !existingChatSession) {
+        setChatHistory([
+          { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+        ]);
+      }
+    };
+
+    initializeChat();
   }, [showChatPopup, healthRecordId]);
 
   // Scroll to the bottom of the chat body
@@ -81,20 +91,23 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     }
   }, [chatHistory]);
 
-  const handleNewChat = () => {
+  const handleNewChat = async () => {
     const confirm = window.confirm(
       "Starting a new chat will erase your previous chat session! Do you want to continue?"
     );
     if (!confirm) return;
     localStorage.removeItem(sessionKey);
 
-    if (isValidRecordId && healthRecord) {
-      setChatHistory([
-        {
-          role: "assistant",
-          message: `I see you're working with **${healthRecord.title}** record. How can I help you update it?`,
-        },
-      ]);
+    if (isValidRecordId) {
+      const record = healthRecord || (await fetchHealthRecord());
+      if (record) {
+        setChatHistory([
+          {
+            role: "assistant",
+            message: `I see you're working with **${record.title}** record. How can I help you update it?`,
+          },
+        ]);
+      }
     } else {
       setChatHistory([
         { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
