@@ -71,7 +71,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   // Save chat history to localStorage
   useEffect(() => {
-    if (showChatPopup && chatHistory.length > 0) localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
+    if (showChatPopup && chatHistory.length > 0) {
+      try {
+        localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
+      } catch (error) {
+        console.error("Failed to save chat session:", error);
+      }
+    }
   }, [chatHistory]);
 
   const handleNewChat = () => {
@@ -96,8 +102,18 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   };
 
   const handleContinueChat = () => {
-    const chatHistoryString = localStorage.getItem(sessionKey);
-    if (chatHistoryString) setChatHistory(JSON.parse(chatHistoryString));
+    try {
+      const chatHistoryString = localStorage.getItem(sessionKey);
+      if (chatHistoryString) {
+        const parsedChatHistory = JSON.parse(chatHistoryString);
+        setChatHistory(parsedChatHistory);
+      }
+    } catch (error) {
+      console.error("Failed to load chat session:", error);
+      setChatHistory([
+        { role: "assistant", message: "I couldn't retrieve your previous conversation! Let's start a new chat!" },
+      ]);
+    }
   };
 
   return (
