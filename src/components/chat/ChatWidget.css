@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-#chat-popup-toggler {
+#chat-widget-toggler {
   position: fixed;
   bottom: 30px;
   right: 40px;
@@ -27,7 +27,7 @@
   color: #fff;
 }
 
-.chat-popup {
+.chat-widget {
   position: fixed;
   opacity: 0;
   pointer-events: none;
@@ -41,15 +41,16 @@
   transform: scale(0.2);
   transform-origin: bottom right;
   transition: all 0.2s ease;
+  border: 1px solid #00000039;
 }
 
-.chat-show-popup .chat-popup {
+.chat-show-widget .chat-widget {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
 }
 
-.chat-show-popup #chat-popup-toggler {
+.chat-show-widget #chat-widget-toggler {
   transform: rotate(90deg);
   opacity: 0;
   pointer-events: none;
@@ -67,6 +68,8 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  text-align: center;
+  color: #fff;
 }
 
 .chat-logo-icon {
@@ -79,6 +82,7 @@
   font-size: 1.3rem;
   font-weight: 600;
   padding-top: 14px;
+  margin-bottom: 1rem;
 }
 
 .chat-header button {
@@ -126,6 +130,7 @@
   margin-bottom: 2px;
   border-radius: 50%;
   background-color: #06579a;
+  box-shadow: 0.2rem 0.2rem 0.4rem #000;
 }
 
 .chat-message-text {
@@ -136,6 +141,7 @@
   white-space: pre-line;
   font-size: 0.95rem;
   text-align: left;
+  box-shadow: 0.2rem 0.2rem 0.5rem #000;
 }
 
 .chat-assistant-message .chat-message-text {
@@ -167,7 +173,7 @@
   border-radius: 32px;
   outline: 1px solid #cccce5;
   margin: 0 15px 15px 15px;
-  box-shadow: 0 0 8px rgba(17, 72, 161, 0.3);
+  box-shadow: 0.6rem 0.6rem 1rem rgba(17, 72, 161, 0.3);
   transition: 0.1s ease;
 }
 
@@ -183,6 +189,12 @@
   height: 47px;
   padding: 0 17px;
   font-size: 0.95rem;
+}
+
+.chat-form .chat-message-input:disabled {
+  background: #afb5b8af;
+  border-radius: 32px;
+  cursor: not-allowed;
 }
 
 .chat-form button {
@@ -295,4 +307,47 @@
 
 .chat-message-text a:hover {
   color: #58a6ff;
+}
+
+/* Onboarding buttons */
+.chat-body-onboarding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  height: 300px;
+  margin: 50px 0;
+}
+
+.chat-body-onboarding .chat-body-onboarding-section:first-child {
+  margin-bottom: 30px;
+}
+
+.chat-body-onboarding-section {
+  margin-top: 0px;
+  width: 220px;
+}
+
+.chat-body-onboarding button {
+  background: linear-gradient(135deg, #06579a, #06579a8b);
+  font-size: 1.1rem;
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  border: solid 1px #000;
+  box-shadow: 0.5rem 0.5rem 1rem #000;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.chat-body-onboarding button:hover {
+  box-shadow: 0.1rem 0.1rem 1.2rem #000;
+}
+
+.chat-onboarding-btn-subtext {
+  margin-top: 15px;
+  color: #000;
+  text-align: center;
 }
