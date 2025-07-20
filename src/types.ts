@@ -3,7 +3,7 @@ interface Symptom {
   startDate: string;
 }
 
-interface Status {
+export interface Status {
   stage: string;
   severity: string;
   progression: string;
