@@ -1,5 +1,4 @@
-import { IoClose } from "react-icons/io5";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward, IoClose } from "react-icons/io5";
 
 import "./HealthModal.css";
 import body from "~/assets/img/body.png";

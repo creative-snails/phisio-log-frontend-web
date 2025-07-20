@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "~/App.css";
-import HealthRecordForm from "~/components/HealthRecordForm";
+import HealthRecordForm from "~/components/forms/HealthRecordForm";
 import Layout from "~/components/Layout";
 import BodyMap from "~/pages/BodyMap";
 import HealthRecord from "~/pages/HealthRecord";
