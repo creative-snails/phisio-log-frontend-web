@@ -1,4 +1,4 @@
-import { type Dispatch, type FormEvent, type SetStateAction, useRef } from "react";
+import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useRef } from "react";
 import { IoMdArrowUp } from "react-icons/io";
 import { getAssistantResponse } from "./mockChatService";
 
@@ -7,10 +7,16 @@ import type { ChatHistoryType } from "~/types";
 interface ChatFormProps {
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
+  disabled: boolean;
+  showChatWidget: boolean;
 }
 
-const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
+const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatWidget }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [disabled, showChatWidget]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +38,14 @@ const ChatForm = ({ setChatHistory, setIsThinking }: ChatFormProps) => {
 
   return (
     <form className="chat-form" onSubmit={handleSendMessage}>
-      <input ref={inputRef} type="text" placeholder="Message..." className="chat-message-input" required />
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Message..."
+        className="chat-message-input"
+        disabled={disabled}
+        required
+      />
       <button>
         <IoMdArrowUp className="chat-btn-arrow" />
       </button>
