@@ -1,3 +1,4 @@
+import ChatWidget from "~/components/chat/ChatWidget";
 import HealthRecordsManager from "~/components/HealthRecordsManager";
 
 const Home = () => (
@@ -36,6 +37,7 @@ const Home = () => (
     </section>
 
     <HealthRecordsManager />
+    <ChatWidget />
   </div>
 );
 
