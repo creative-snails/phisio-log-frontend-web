@@ -69,35 +69,20 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
     setSuccessMessage("");
   };
 
-  const isConsultationsValid = (c: Consultation) => {
-    return (
-      c.consultant.trim() !== "" &&
-      c.date.trim() !== "" &&
-      c.diagnosis.trim() !== "" &&
-      c.followUpActions.length > 0 &&
-      c.followUpActions.every((a) => a.trim() !== "")
-    );
-  };
-
   const toggleCol = (index: number) => {
     const update = [...consultations];
     update[index].isOpen = !update[index].isOpen;
     setConsultations(update);
   };
 
-  const handleUpdate = () => {
-    console.log("Consultations update:", consultations);
-    setSuccessMessage("Consultation saved");
-    const update = consultations.map((c) => ({ ...c, isNew: false }));
-    setConsultations(update);
-  };
-
   return (
     <div className="Consultations-form-container">
+      <h2>Medical Consultations</h2>
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>
             <h4>{c.consultant}</h4>
+            <p className="diagnosis-summary">{c.diagnosis}</p>
             <FaRegTrashAlt
               className="bin-icon"
               onClick={(e) => {
@@ -105,11 +90,6 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
                 removeConsultation(i);
               }}
             />
-            {!c.isNew && (
-              <button className="update-button" onClick={handleUpdate} disabled={!isConsultationsValid(c)}>
-                Update Consultations
-              </button>
-            )}
           </div>
           {c.isOpen && (
             <div className="consultation-body">

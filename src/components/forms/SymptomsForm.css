@@ -19,11 +19,6 @@
   text-align: center;
 }
 
-.symptom-header:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  text-decoration: underline;
-}
-
 .symptom-header h4 {
   margin: 0;
   font-size: 1.2rem;
