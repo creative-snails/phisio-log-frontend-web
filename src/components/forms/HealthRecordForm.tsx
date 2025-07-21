@@ -173,17 +173,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
               onChange={(e) => setNewTreatment(e.target.value)}
               placeholder="Enter a treatment"
             />
-          </div>
-        </div>
-        <div className="form-group">
-          <label>Treatments Tried</label>
-          <div className="treatment-input">
-            <input
-              type="text"
-              value={newTreatment}
-              onChange={(e) => setNewTreatment(e.target.value)}
-              placeholder="Enter a treatment"
-            />
             <button
               type="button"
               className={editIndex !== null ? "update-button" : "add-button"}
