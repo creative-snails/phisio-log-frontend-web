@@ -33,6 +33,7 @@ interface Update {
 export interface HealthRecord {
   id?: number;
   user?: string;
+  title?: string;
   description: string;
   symptoms: Symptom[];
   status: Status;
@@ -46,4 +47,9 @@ export interface RecordFormData {
   data: HealthRecord;
   loading: boolean;
   error: string;
+}
+
+export interface ChatHistoryType {
+  role: "user" | "assistant";
+  message: string;
 }
