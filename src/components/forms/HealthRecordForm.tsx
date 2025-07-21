@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
+import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsFormSection from "./SymptomsForm";
 
 import ChatWidget from "~/components/chat/ChatWidget";
-import type { RecordFormData, Status, SymptomUI } from "~/types";
+import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -43,6 +44,16 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           ...prev.data.status,
           [field]: value,
         },
+      },
+    }));
+  };
+
+  const updateConsultations = (newConsultations: HealthRecord["medicalConsultations"]) => {
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        medicalConsultations: newConsultations,
       },
     }));
   };
@@ -129,6 +140,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       description: data.description,
       treatmentsTried: data.treatmentsTried,
       status: data.status,
+      medicalConsultations: data.medicalConsultations,
       symptoms,
     });
   };
@@ -152,17 +164,6 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           />
         </div>
         <HealthStatusForm status={data.status} setStatus={setStatus} />
-        <div className="form-group">
-          <label>Treatments Tried</label>
-          <div className="treatment-input">
-            <input
-              type="text"
-              value={newTreatment}
-              onChange={(e) => setNewTreatment(e.target.value)}
-              placeholder="Enter a treatment"
-            />
-          </div>
-        </div>
         <div className="form-group">
           <label>Treatments Tried</label>
           <div className="treatment-input">
@@ -208,6 +209,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             removeSymptom={handleRemoveSymptom}
           />
         </div>
+        <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
         <div className="form-group" style={{ fontSize: "0.7rem", color: "#555" }}>
           {data.createdAt && (
             <p>
