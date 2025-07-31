@@ -1,15 +1,19 @@
 services:
   frontend-web:
     build: .
+    restart: unless-stopped
     ports:
       - "5173:5173"
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
+    depends_on:
+      - mock-api
 
   mock-api:
     build: .
+    restart: unless-stopped
     ports:
       - "4444:4444"
     volumes:

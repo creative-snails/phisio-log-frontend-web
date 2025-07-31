@@ -1,1 +1,34 @@
-node*modules
+node_modules
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+compose.yml
+
+# Build outputs
+dist
+dist-ssr
+
+# Logs
+*.log
+logs
+
+# IDE/Editor files
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env.local
+.env.*.local
+
+# Cache directories
+.npm
+.cache
+
+# TypeScript build info
+*.tsbuildinfo
