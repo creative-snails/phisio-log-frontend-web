@@ -8,5 +8,3 @@ RUN npm ci
 COPY . .
 
 EXPOSE 5173 4444
-
-CMD ["sh", "-c", "npm run start:mock & npm run dev"]
