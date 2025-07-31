@@ -1,0 +1,17 @@
+services:
+  frontend-web:
+    build: .
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  mock-api:
+    build: .
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./db.json:/app/db.json
+    command: npm run start:mock
