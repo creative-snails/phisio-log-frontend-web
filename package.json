@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "start:mock": "json-server --watch db.json --port 4444",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
