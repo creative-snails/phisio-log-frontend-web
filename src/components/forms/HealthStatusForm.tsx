@@ -38,7 +38,7 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
 
   return (
     <div className="health-status-form">
-      <h2>Status</h2>
+      <h3>Status</h3>
       <div className="form-group">
         <label>Stage:</label>
         <select
