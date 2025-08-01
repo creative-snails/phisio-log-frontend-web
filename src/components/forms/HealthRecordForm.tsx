@@ -103,6 +103,20 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     <>
       <form className="form-wrapper" onSubmit={handleSubmit}>
         <h2>Edit Health Record</h2>
+        <div className="timestamps-container">
+          {data.createdAt && (
+            <p>
+              <strong>Created: </strong>
+              {new Date(data.createdAt).toLocaleString()}
+            </p>
+          )}
+          {data.updatedAt && (
+            <p>
+              <strong>Updated: </strong>
+              {new Date(data.updatedAt).toLocaleString()}
+            </p>
+          )}
+        </div>
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
@@ -113,17 +127,21 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             placeholder="Describe symptoms, context, or notes..."
           />
         </div>
-        <HealthStatusForm status={data.status} setStatus={setStatus} />
-        <TreatmentsTried
-          treatments={data.treatmentsTried}
-          setTreatments={(updated) =>
-            setRecordFormData((prev) => ({
-              ...prev,
-              data: { ...prev.data, treatmentsTried: updated },
-            }))
-          }
-        />
-        <div className="form-group">
+        <div className="form-section">
+          <HealthStatusForm status={data.status} setStatus={setStatus} />
+        </div>
+        <div className="form-section">
+          <TreatmentsTried
+            treatments={data.treatmentsTried}
+            setTreatments={(updated) =>
+              setRecordFormData((prev) => ({
+                ...prev,
+                data: { ...prev.data, treatmentsTried: updated },
+              }))
+            }
+          />
+        </div>
+        <div className="form-section">
           <SymptomsFormSection
             symptoms={symptoms}
             onSymptomChange={handleSymptomChange}
@@ -132,23 +150,8 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             removeSymptom={handleRemoveSymptom}
           />
         </div>
-        <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
-        <div
-          className="timestamps-container"
-          style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#555" }}
-        >
-          {data.createdAt && (
-            <p>
-              <strong>Created:</strong>
-              {new Date(data.createdAt).toLocaleString()}
-            </p>
-          )}
-          {data.updatedAt && (
-            <p>
-              <strong>Updated:</strong>
-              {new Date(data.updatedAt).toLocaleString()}
-            </p>
-          )}
+        <div className="form-section">
+          <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
         </div>
         <button type="submit" className="submit-button">
           Submit
