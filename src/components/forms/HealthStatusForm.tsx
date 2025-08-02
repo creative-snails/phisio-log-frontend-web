@@ -37,46 +37,48 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
   };
 
   return (
-    <div className="health-status-form">
-      <h2>Status</h2>
-      <div className="form-group">
-        <label>Stage:</label>
-        <select
-          value={status.stage || statusOptions.stage.default}
-          onChange={(e) => setStatus("stage", e.target.value)}
-        >
-          {statusOptions.stage.options.map(({ display, value }) => (
-            <option key={value} value={value}>
-              {display}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="form-group">
-        <label>Severity:</label>
-        <select
-          value={status.severity || statusOptions.severity.default}
-          onChange={(e) => setStatus("severity", e.target.value)}
-        >
-          {statusOptions.severity.options.map(({ display, value }) => (
-            <option key={value} value={value}>
-              {display}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="form-group">
-        <label>Progression:</label>
-        <select
-          value={status.progression || statusOptions.progression.default}
-          onChange={(e) => setStatus("progression", e.target.value)}
-        >
-          {statusOptions.progression.options.map(({ display, value }) => (
-            <option key={value} value={value}>
-              {display}
-            </option>
-          ))}
-        </select>
+    <div className="health-status-section">
+      <h3 className="section-title">Status</h3>
+      <div className="health-status-form">
+        <div className="form-group">
+          <label>Stage:</label>
+          <select
+            value={status.stage || statusOptions.stage.default}
+            onChange={(e) => setStatus("stage", e.target.value)}
+          >
+            {statusOptions.stage.options.map(({ display, value }) => (
+              <option key={value} value={value}>
+                {display}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Severity:</label>
+          <select
+            value={status.severity || statusOptions.severity.default}
+            onChange={(e) => setStatus("severity", e.target.value)}
+          >
+            {statusOptions.severity.options.map(({ display, value }) => (
+              <option key={value} value={value}>
+                {display}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Progression:</label>
+          <select
+            value={status.progression || statusOptions.progression.default}
+            onChange={(e) => setStatus("progression", e.target.value)}
+          >
+            {statusOptions.progression.options.map(({ display, value }) => (
+              <option key={value} value={value}>
+                {display}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

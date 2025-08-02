@@ -20,7 +20,7 @@ const SymptomsFormSection = ({
 }: SymptomsFormSectionProps) => {
   return (
     <div className="symptom-form-container">
-      <h2>Symptoms</h2>
+      <h3>Symptoms</h3>
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
