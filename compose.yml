@@ -6,7 +6,7 @@ services:
       - "5173:5173"
     volumes:
       - .:/app
-      - /app/node_modules
+      - web_node_modules:/app/node_modules
     command: npm run dev
     depends_on:
       - mock-api
@@ -19,3 +19,6 @@ services:
     volumes:
       - ./db.json:/app/db.json
     command: npm run start:mock
+
+volumes:
+  web_node_modules:
