@@ -1,0 +1,22 @@
+services:
+  frontend-web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mock-api-web
+
+  mock-api-web:
+    image: node:22.13.1-alpine3.21
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./db.json:/app/db.json
+    working_dir: /app
+    command: sh -c "npm install -g json-server@1.0.0-beta.3 && json-server --watch db.json --port 4444 --host 0.0.0.0"
