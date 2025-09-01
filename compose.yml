@@ -1,5 +1,5 @@
 services:
-  frontend-web:
+  web:
     build: .
     restart: unless-stopped
     ports:
@@ -8,9 +8,9 @@ services:
       - .:/app
       - /app/node_modules
     depends_on:
-      - mock-api-web
+      - mock-api
 
-  mock-api-web:
+  mock-api:
     build:
       context: .
       dockerfile: Dockerfile.mock

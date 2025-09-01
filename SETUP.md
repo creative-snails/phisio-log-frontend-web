@@ -26,7 +26,7 @@
    Note that initial build will take longer since all base images and dependencies need to be pulled and installed. Subsequent runs will be much faster.
 
    ```bash
-   docker compose up -d   # -d = detached mode/optional (runs in the background leaving terminal free)
+   docker compose up   # add -d for detached mode (runs in the background leaving terminal free)
    ```
 
    - You can now access the application:
@@ -53,10 +53,10 @@
   docker compose up     # Start all containers (services) - must be used if 'docker compose down' was run
   ```
 
-Recommended usage:
+ℹ️ **Summary:**
 
-- use `docker compose stop` / `docker compose start` to stop/start services normally during development (faster)
-- use `docker compose down` to stop and remove services and their networks in case you need to free up resources (followed by `docker compose up`)
+- use `docker compose stop` / `docker compose start` (or `up`) to quickly stop/start services normally during development
+- use `docker compose down` to stop and remove services and their networks in case you need to free up resources (followed by `docker compose up` to start again)
 - use `docker compose restart` if you need to restart the services (e.g., after changing environment variables in compose.yml or running into issues)
 
 <br>
