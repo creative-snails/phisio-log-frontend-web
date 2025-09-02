@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
-import SymptomsFormSection from "./SymptomsForm";
+import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
 
 import ChatWidget from "~/components/chat/ChatWidget";
@@ -117,8 +117,11 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             </p>
           )}
         </div>
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
+        <div className="form-section">
+          <h3>Description</h3>
+          <label htmlFor="description" className="sr-only">
+            Description
+          </label>
           <textarea
             id="description"
             rows={4}
@@ -142,7 +145,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
           />
         </div>
         <div className="form-section">
-          <SymptomsFormSection
+          <SymptomsForm
             symptoms={symptoms}
             onSymptomChange={handleSymptomChange}
             toggleSymptom={toggleSymptom}
