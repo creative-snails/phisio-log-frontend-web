@@ -277,6 +277,12 @@ input[type="text"] {
   border-bottom: 1px solid #ddd;
 }
 
+.form-section h3 {
+  margin-bottom: 0.75rem; 
+  font-size: 1.2rem;
+  color: #333;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
