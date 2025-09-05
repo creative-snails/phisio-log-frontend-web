@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mock-api
+
+  mock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.mock
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./db.json:/app/db.json

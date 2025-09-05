@@ -1,0 +1,13 @@
+FROM node:22.13.1-alpine3.21
+
+WORKDIR /app
+
+# Install json-server globally
+RUN npm install -g json-server@1.0.0-beta.3
+
+COPY db.json ./
+
+EXPOSE 4444
+
+# Start mock JSON server
+CMD ["json-server", "--watch", "db.json", "--port", "4444", "--host", "0.0.0.0"]
