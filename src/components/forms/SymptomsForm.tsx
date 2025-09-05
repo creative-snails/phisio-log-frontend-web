@@ -3,7 +3,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import "./SymptomsForm.css";
 import type { SymptomUI } from "~/types";
 
-type SymptomsFormSectionProps = {
+type SymptomsFormProps = {
   symptoms: SymptomUI[];
   onSymptomChange: (index: number, field: keyof SymptomUI, value: string) => void;
   toggleSymptom: (index: number) => void;
@@ -11,16 +11,10 @@ type SymptomsFormSectionProps = {
   removeSymptom: (index: number) => void;
 };
 
-const SymptomsFormSection = ({
-  symptoms,
-  onSymptomChange,
-  toggleSymptom,
-  addSymptom,
-  removeSymptom,
-}: SymptomsFormSectionProps) => {
+const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, removeSymptom }: SymptomsFormProps) => {
   return (
     <div className="symptom-form-container">
-      <h2>Symptoms</h2>
+      <h3>Symptoms</h3>
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
@@ -64,4 +58,4 @@ const SymptomsFormSection = ({
   );
 };
 
-export default SymptomsFormSection;
+export default SymptomsForm;
