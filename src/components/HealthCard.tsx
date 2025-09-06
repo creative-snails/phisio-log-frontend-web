@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./HealthCard.css";
 import type { HealthRecord } from "~/types";
@@ -6,6 +7,7 @@ import type { HealthRecord } from "~/types";
 const HealthCard = ({ record }: { record: HealthRecord }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const latestConsultation = record.medicalConsultations[record.medicalConsultations.length - 1];
+  const navigate = useNavigate();
 
   return (
     <li className="health-card">
@@ -22,7 +24,7 @@ const HealthCard = ({ record }: { record: HealthRecord }) => {
           <button onClick={() => setIsExpanded(!isExpanded)} className="details-toggle">
             {isExpanded ? "Show Less" : "Show More"}
           </button>
-          <button className="edit-button" onClick={() => alert("This is a placeholder...")}>
+          <button className="edit-button" onClick={() => navigate(`/health-record/edit/${record.id}`)}>
             Edit
           </button>
         </div>

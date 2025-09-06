@@ -11,7 +11,13 @@ const HealthRecordsManager = () => {
   useEffect(() => {
     fetch("http://localhost:4444/health-records")
       .then((response) => response.json())
-      .then((data) => setRecords(data));
+      .then((data) => {
+        // if you want to test empty state comment line below
+        setRecords(data);
+
+        // and use this one:
+        //setRecords([]);
+      });
   }, []);
 
   const handleNext = () => {
@@ -31,7 +37,14 @@ const HealthRecordsManager = () => {
     <div className="home">
       <h2>Health Records</h2>
       <div className="health-records-grid">
-        <HealthCardGrid records={records} onClick={handleRecordClick} />
+        {records.length === 0 ? (
+          <div className="empty-state">
+            <p>No health records available.</p>
+            <p>This is a placeholder with instruction to create your first health record.</p>
+          </div>
+        ) : (
+          <HealthCardGrid records={records} onClick={handleRecordClick} />
+        )}
       </div>
 
       {selectedIndex !== null && (
