@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
+import { RiResetLeftLine } from "react-icons/ri";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -94,9 +95,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   }, [chatHistory]);
 
   const handleNewChat = async () => {
-    const confirm = window.confirm(
-      "Starting a new chat will erase your previous chat session! Do you want to continue?"
-    );
+    const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
     localStorage.removeItem(sessionKey);
 
@@ -144,6 +143,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
             <div className="chat-logo-text">PhisioLog</div>
           </div>
+          <button className="chat-reset-btn" onClick={handleNewChat}>
+            <RiResetLeftLine />
+          </button>
           <button onClick={() => setShowChatWidget((prev) => !prev)}>
             <SlArrowDown />
           </button>
