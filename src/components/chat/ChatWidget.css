@@ -102,16 +102,12 @@
 
 .chat-header button:hover {
   background: #044478;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
 }
 
 .chat-header .chat-reset-btn {
   margin-left: 8rem;
   transition: 0.2s ease;
-}
-
-.chat-header .chat-reset-btn:hover {
-  transform: rotate(-90deg);
 }
 
 .chat-body {

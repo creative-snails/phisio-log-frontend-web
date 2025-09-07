@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BsTrash } from "react-icons/bs";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
-import { RiResetLeftLine } from "react-icons/ri";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -143,10 +143,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
             <div className="chat-logo-text">PhisioLog</div>
           </div>
-          <button className="chat-reset-btn" onClick={handleNewChat}>
-            <RiResetLeftLine />
+          <button className="chat-reset-btn" onClick={handleNewChat} title="Reset Chat">
+            <BsTrash />
           </button>
-          <button onClick={() => setShowChatWidget((prev) => !prev)}>
+          <button onClick={() => setShowChatWidget((prev) => !prev)} title="Close Chat">
             <SlArrowDown />
           </button>
         </div>
