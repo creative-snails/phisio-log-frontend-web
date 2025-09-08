@@ -5,18 +5,18 @@ import { getAssistantResponse } from "./mockChatService";
 import type { ChatHistoryType } from "~/types";
 
 interface ChatFormProps {
+  chatHistory: ChatHistoryType[];
   setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
-  disabled: boolean;
   showChatWidget: boolean;
 }
 
-const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatWidget }: ChatFormProps) => {
+const ChatForm = ({ chatHistory, setChatHistory, setIsThinking, showChatWidget }: ChatFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, [disabled, showChatWidget]);
+  }, [showChatWidget, chatHistory]);
 
   const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +24,6 @@ const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatWidget }: C
     if (!inputRef.current?.value) return;
     const userMessage = inputRef.current.value.trim();
     inputRef.current.value = "";
-    inputRef.current.focus();
 
     setChatHistory((history) => [...history, { role: "user", message: userMessage }]);
     setIsThinking(true);
@@ -38,14 +37,7 @@ const ChatForm = ({ setChatHistory, setIsThinking, disabled, showChatWidget }: C
 
   return (
     <form className="chat-form" onSubmit={handleSendMessage}>
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder="Message..."
-        className="chat-message-input"
-        disabled={disabled}
-        required
-      />
+      <input ref={inputRef} type="text" placeholder="Message..." className="chat-message-input" required />
       <button>
         <IoMdArrowUp className="chat-btn-arrow" />
       </button>

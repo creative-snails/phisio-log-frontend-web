@@ -19,10 +19,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
-  const sessionKey = useMemo(
-    () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
-    [healthRecordId]
-  );
 
   // Health record fetching
   const fetchHealthRecord = async () => {
@@ -50,16 +46,20 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     }
   };
 
-  // Chat initialization
-  useEffect(() => {
-    if (!showChatWidget) return;
+  const initializeChat = async () => {
+    const existingChatSession = localStorage.getItem("chat_history");
+    const existingHealthRecord = localStorage.getItem("health_record");
 
-    const initializeChat = async () => {
-      const existingChatSession = localStorage.getItem(sessionKey);
-
-      if (isValidRecordId && !healthRecord && !existingChatSession) {
-        const record = await fetchHealthRecord();
+    if (existingChatSession && existingHealthRecord) {
+      const parsedChatHistory = JSON.parse(existingChatSession);
+      const parsedHealthRecord = JSON.parse(existingHealthRecord);
+      setChatHistory(parsedChatHistory);
+      setHealthRecord(parsedHealthRecord);
+    } else {
+      if (isValidRecordId) {
+        const record = healthRecord || (await fetchHealthRecord());
         if (record) {
+          localStorage.setItem("health_record", JSON.stringify(record));
           setChatHistory([
             {
               role: "assistant",
@@ -67,13 +67,17 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             },
           ]);
         }
-      } else if (!isValidRecordId && !existingChatSession) {
+      } else {
         setChatHistory([
           { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
         ]);
       }
-    };
+    }
+  };
 
+  // Chat initialization
+  useEffect(() => {
+    if (!showChatWidget) return;
     initializeChat();
   }, [showChatWidget, healthRecordId]);
 
@@ -87,48 +91,18 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   useEffect(() => {
     if (showChatWidget && chatHistory.length > 0) {
       try {
-        localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
+        localStorage.setItem("chat_history", JSON.stringify(chatHistory));
       } catch (error) {
         console.error("Failed to save chat session:", error);
       }
     }
   }, [chatHistory]);
 
-  const handleNewChat = async () => {
+  const handleResetChat = async () => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
-    localStorage.removeItem(sessionKey);
-
-    if (isValidRecordId) {
-      const record = healthRecord || (await fetchHealthRecord());
-      if (record) {
-        setChatHistory([
-          {
-            role: "assistant",
-            message: `I see you're working with **${record.title}** record. How can I help you update it?`,
-          },
-        ]);
-      }
-    } else {
-      setChatHistory([
-        { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-      ]);
-    }
-  };
-
-  const handleContinueChat = () => {
-    try {
-      const savedSession = localStorage.getItem(sessionKey);
-      if (savedSession) {
-        const parsedChatHistory = JSON.parse(savedSession);
-        setChatHistory(parsedChatHistory);
-      }
-    } catch (error) {
-      console.error("Failed to load chat session:", error);
-      setChatHistory([
-        { role: "assistant", message: "I couldn't retrieve your previous conversation! Let's start a new chat!" },
-      ]);
-    }
+    localStorage.removeItem("chat_history");
+    initializeChat();
   };
 
   return (
@@ -143,7 +117,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
             <div className="chat-logo-text">PhisioLog</div>
           </div>
-          <button className="chat-reset-btn" onClick={handleNewChat} title="Reset Chat">
+          <button className="chat-reset-btn" onClick={handleResetChat} title="Reset Chat">
             <BsTrash />
           </button>
           <button onClick={() => setShowChatWidget((prev) => !prev)} title="Close Chat">
@@ -152,51 +126,39 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-        {chatHistory.length > 0 ? (
-          <div ref={chatBodyRef} className="chat-body">
-            {chatHistory.map((chat, index) => (
-              <div key={index} className={`chat-message chat-${chat.role}-message`}>
-                {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
-                <div className="chat-message-text">
-                  <ReactMarkdown
-                    components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
-                    remarkPlugins={[remarkGfm]}
-                  >
-                    {chat.message}
-                  </ReactMarkdown>
-                </div>
+
+        <div ref={chatBodyRef} className="chat-body">
+          {chatHistory.map((chat, index) => (
+            <div key={index} className={`chat-message chat-${chat.role}-message`}>
+              {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
+              <div className="chat-message-text">
+                <ReactMarkdown
+                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {chat.message}
+                </ReactMarkdown>
               </div>
-            ))}
-            {isThinking && (
-              <div className="chat-message chat-assistant-message">
-                <FaUserDoctor className="chat-logo-icon" />
-                <div className="chat-message-text chat-thinking-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+            </div>
+          ))}
+          {isThinking && (
+            <div className="chat-message chat-assistant-message">
+              <FaUserDoctor className="chat-logo-icon" />
+              <div className="chat-message-text chat-thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="chat-body-onboarding">
-            <div className="chat-body-onboarding-section">
-              <button onClick={handleContinueChat}>Continue Chat</button>
-              <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
             </div>
-            <div className="chat-body-onboarding-section">
-              <button onClick={handleNewChat}>Start New Chat</button>
-              <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Chat Footer */}
         <div className="chat-footer">
           <ChatForm
+            chatHistory={chatHistory}
             setChatHistory={setChatHistory}
             setIsThinking={setIsThinking}
-            disabled={chatHistory.length === 0}
             showChatWidget={showChatWidget}
           />
         </div>
