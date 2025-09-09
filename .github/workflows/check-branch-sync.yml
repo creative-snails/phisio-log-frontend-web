@@ -13,16 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Fetch all branches
-        run: git fetch origin main
+      - name: Fetch latest main
+        run: git fetch origin main:main
 
       - name: Check if branch is behind main
         id: check
         run: |
-          git fetch origin main
-          if [ -z "$(git rev-list HEAD..origin/main)" ]; then
+          if [ -z "$(git rev-list HEAD..main)" ]; then
             echo "Branch is up-to-date"
             echo "behind=false" >> $GITHUB_OUTPUT
           else
