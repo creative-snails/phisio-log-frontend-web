@@ -22,7 +22,7 @@ jobs:
         id: check
         run: |
           git fetch origin main
-          if git merge-base --is-ancestor origin/main HEAD; then
+          if [ -z "$(git rev-list HEAD..origin/main)" ]; then
             echo "Branch is up-to-date"
             echo "behind=false" >> $GITHUB_OUTPUT
           else
