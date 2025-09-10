@@ -1,0 +1,45 @@
+name: Check if PR branch is behind main
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-behind-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch latest main
+        run: git fetch origin main:main
+
+      - name: Check if branch is behind main
+        id: check
+        run: |
+          if [ -z "$(git rev-list HEAD..main)" ]; then
+            echo "Branch is up-to-date"
+            echo "behind=false" >> $GITHUB_OUTPUT
+          else
+            echo "Branch is behind main"
+            echo "behind=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR if behind
+        if: steps.check.outputs.behind == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "⚠️ This branch is behind `main`. Please sync it to avoid merge conflicts and delays in review."
+            })
