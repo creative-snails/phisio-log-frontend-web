@@ -12,4 +12,4 @@ AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
 
 echo "Branch status compared to main:"
 echo "\033[33mBehind: $BEHIND commits"
-echo "Ahead: $AHEAD commits\033[0m"
+echo "Ahead: $AHEAD commits\033[0m\n"
