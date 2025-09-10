@@ -58,7 +58,7 @@ const HealthModal = ({ record, onClose, onNext, onPrev }: HealthModalProps) => {
                   <button
                     className="edit-modal-button"
                     onClick={() => {
-                      navigate(`/health-record/edit/${record.id}`);
+                      navigate(`/health-record/${record.id}/edit`);
                       onClose();
                     }}
                   >
