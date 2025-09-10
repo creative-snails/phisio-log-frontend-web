@@ -102,6 +102,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
     localStorage.removeItem("chat_history");
+    localStorage.removeItem("health_record");
     initializeChat();
   };
 
@@ -126,7 +127,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
         </div>
 
         {/* Chat Body */}
-
+        <div className="chat-context-indicator">
+          <div>{`Context: ${healthRecord?.title ?? "General"}`}</div>
+        </div>
         <div ref={chatBodyRef} className="chat-body">
           {chatHistory.map((chat, index) => (
             <div key={index} className={`chat-message chat-${chat.role}-message`}>
