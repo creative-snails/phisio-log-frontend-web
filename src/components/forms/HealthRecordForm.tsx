@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
@@ -7,14 +8,49 @@ import TreatmentsTried from "./TreatmentsTried";
 import ChatWidget from "~/components/chat/ChatWidget";
 import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 
-interface HealthRecordFormProps {
-  recordFormData: RecordFormData;
-  setRecordFormData: React.Dispatch<React.SetStateAction<RecordFormData>>;
-}
-
-const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFormProps) => {
-  const { data, loading, error } = recordFormData;
+const HealthRecordForm = () => {
+  const { id } = useParams<{ id: string }>();
+  const [recordFormData, setRecordFormData] = useState<RecordFormData>({
+    data: {
+      description: "",
+      symptoms: [],
+      status: {
+        stage: "",
+        progression: "",
+        severity: "",
+      },
+      treatmentsTried: [],
+      medicalConsultations: [],
+    },
+    loading: true,
+    error: "",
+  });
   const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
+
+  useEffect(() => {
+    const fetchRecord = async () => {
+      try {
+        if (id) {
+          const res = await fetch(`http://localhost:4444/health-records/${id}`);
+          const data = await res.json();
+          setRecordFormData({ data, loading: false, error: "" });
+        } else {
+          // Handle new record case
+          setRecordFormData((prev) => ({ ...prev, loading: false }));
+        }
+      } catch (err) {
+        setRecordFormData((prev) => ({
+          ...prev,
+          loading: false,
+          error: err instanceof Error ? err.message : "Unexpected error",
+        }));
+      }
+    };
+
+    fetchRecord();
+  }, [id]);
+
+  const { data, loading, error } = recordFormData;
 
   useEffect(() => {
     const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({

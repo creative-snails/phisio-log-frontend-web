@@ -31,7 +31,7 @@ const HealthsCardsGrid = ({ records, onClick }: HealthCardsGridProps) => {
                   className="edit-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/health-record/edit/${record.id}`);
+                    navigate(`/health-record/${record.id}/edit`);
                   }}
                 >
                   Edit
