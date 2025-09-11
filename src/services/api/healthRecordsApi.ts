@@ -18,7 +18,7 @@ export const getHealthRecords = async () => {
   try {
     const res = await axios.get(`${API_BASE_URL}`);
 
-    return res;
+    return res.data;
   } catch (err) {
     console.error("Error fetching health records!", err);
     throw err;
@@ -40,7 +40,7 @@ export const updateHealthRecord = async (id: number, data: HealthRecord) => {
   try {
     const res = await axios.put(`${API_BASE_URL}/${id}`, data);
 
-    return res;
+    return res.data;
   } catch (err) {
     console.error(`Error updating health record id=${id}!`, err);
     throw err;
@@ -51,7 +51,7 @@ export const deleteHealthRecord = async (id: number) => {
   try {
     const res = await axios.delete(`${API_BASE_URL}/${id}`);
 
-    return res;
+    return res.data;
   } catch (err) {
     console.error(`Error deleting health record id=${id}!`, err);
     throw err;
