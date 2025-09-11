@@ -2,9 +2,11 @@ import apiClient from "./apiClient";
 
 import type { HealthRecord } from "~/types";
 
+const resource = "/health-records";
+
 export const getHealthRecord = async (id: number | string) => {
   try {
-    const res = await apiClient.get(`/${id}`);
+    const res = await apiClient.get(`${resource}/${id}`);
 
     return res.data;
   } catch (err) {
@@ -15,7 +17,7 @@ export const getHealthRecord = async (id: number | string) => {
 
 export const getHealthRecords = async () => {
   try {
-    const res = await apiClient.get("");
+    const res = await apiClient.get(resource);
 
     return res.data;
   } catch (err) {
@@ -26,7 +28,7 @@ export const getHealthRecords = async () => {
 
 export const createHealthRecord = async (data: HealthRecord) => {
   try {
-    const res = await apiClient.post("", data);
+    const res = await apiClient.post(resource, data);
 
     return res.data;
   } catch (err) {
@@ -37,7 +39,7 @@ export const createHealthRecord = async (data: HealthRecord) => {
 
 export const updateHealthRecord = async (id: number | string, data: HealthRecord) => {
   try {
-    const res = await apiClient.put(`/${id}`, data);
+    const res = await apiClient.put(`${resource}/${id}`, data);
 
     return res.data;
   } catch (err) {
@@ -48,7 +50,7 @@ export const updateHealthRecord = async (id: number | string, data: HealthRecord
 
 export const deleteHealthRecord = async (id: number | string) => {
   try {
-    const res = await apiClient.delete(`${id}`);
+    const res = await apiClient.delete(`${resource}/${id}`);
 
     return res.data;
   } catch (err) {
