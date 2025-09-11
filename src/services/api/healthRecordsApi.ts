@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 import type { HealthRecord } from "~/types";
 
-export const getHealthRecord = async (id: number) => {
+export const getHealthRecord = async (id: number | string) => {
   try {
     const res = await apiClient.get(`/${id}`);
 
@@ -35,7 +35,7 @@ export const createHealthRecord = async (data: HealthRecord) => {
   }
 };
 
-export const updateHealthRecord = async (id: number, data: HealthRecord) => {
+export const updateHealthRecord = async (id: number | string, data: HealthRecord) => {
   try {
     const res = await apiClient.put(`/${id}`, data);
 
@@ -46,7 +46,7 @@ export const updateHealthRecord = async (id: number, data: HealthRecord) => {
   }
 };
 
-export const deleteHealthRecord = async (id: number) => {
+export const deleteHealthRecord = async (id: number | string) => {
   try {
     const res = await apiClient.delete(`${id}`);
 

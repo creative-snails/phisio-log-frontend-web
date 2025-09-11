@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
+import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
@@ -27,14 +28,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const fetchHealthRecord = async () => {
     setIsThinking(true);
     try {
-      const res = await fetch(`http://localhost:4444/health-records/${healthRecordId}`);
-      if (!res.ok) throw new Error("Failed to fetch health record");
-      const data = await res.json();
-      setHealthRecord(data);
+      const record = await getHealthRecord(healthRecordId!);
+      setHealthRecord(record);
 
-      return data;
+      return record;
     } catch (error) {
-      console.error("Error fetching health record:", error);
+      console.error(`ChatWidget: Error fetching health record id=${healthRecordId}!`, error);
       setChatHistory((prev) => [
         ...prev,
         {

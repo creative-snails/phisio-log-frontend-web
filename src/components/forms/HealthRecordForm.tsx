@@ -6,6 +6,7 @@ import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
 
 import ChatWidget from "~/components/chat/ChatWidget";
+import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 
 const HealthRecordForm = () => {
@@ -31,9 +32,8 @@ const HealthRecordForm = () => {
     const fetchRecord = async () => {
       try {
         if (id) {
-          const res = await fetch(`http://localhost:4444/health-records/${id}`);
-          const data = await res.json();
-          setRecordFormData({ data, loading: false, error: "" });
+          const record = await getHealthRecord(id);
+          setRecordFormData({ data: record, loading: false, error: "" });
         } else {
           // Handle new record case
           setRecordFormData((prev) => ({ ...prev, loading: false }));
