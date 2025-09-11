@@ -1,11 +1,10 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 
-import { API_BASE_URL } from "~/services/config.ts";
 import type { HealthRecord } from "~/types";
 
 export const getHealthRecord = async (id: number) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/${id}`);
+    const res = await apiClient.get(`/${id}`);
 
     return res.data;
   } catch (err) {
@@ -16,7 +15,7 @@ export const getHealthRecord = async (id: number) => {
 
 export const getHealthRecords = async () => {
   try {
-    const res = await axios.get(`${API_BASE_URL}`);
+    const res = await apiClient.get("");
 
     return res.data;
   } catch (err) {
@@ -27,7 +26,7 @@ export const getHealthRecords = async () => {
 
 export const createHealthRecord = async (data: HealthRecord) => {
   try {
-    const res = await axios.post(API_BASE_URL, data);
+    const res = await apiClient.post("", data);
 
     return res.data;
   } catch (err) {
@@ -38,7 +37,7 @@ export const createHealthRecord = async (data: HealthRecord) => {
 
 export const updateHealthRecord = async (id: number, data: HealthRecord) => {
   try {
-    const res = await axios.put(`${API_BASE_URL}/${id}`, data);
+    const res = await apiClient.put(`/${id}`, data);
 
     return res.data;
   } catch (err) {
@@ -49,7 +48,7 @@ export const updateHealthRecord = async (id: number, data: HealthRecord) => {
 
 export const deleteHealthRecord = async (id: number) => {
   try {
-    const res = await axios.delete(`${API_BASE_URL}/${id}`);
+    const res = await apiClient.delete(`${id}`);
 
     return res.data;
   } catch (err) {
