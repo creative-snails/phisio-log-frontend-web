@@ -8,7 +8,7 @@ import BodyMap from "~/pages/BodyMap";
 import HealthRecord from "~/pages/HealthRecord";
 import Home from "~/pages/Home";
 import Reports from "~/pages/Reports";
-import type { RecordFormData } from "~/types";
+import type { RecordFormData } from "~/types/types";
 
 function App() {
   const [recordFormData, setRecordFormData] = useState<RecordFormData>({

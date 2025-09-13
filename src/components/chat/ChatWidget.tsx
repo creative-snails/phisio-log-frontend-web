@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
-import { type ChatHistoryType, type HealthRecord } from "~/types";
+import { type ChatHistoryType, type HealthRecord } from "~/types/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);

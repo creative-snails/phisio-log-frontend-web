@@ -2,7 +2,7 @@ import { IoChevronBack, IoChevronForward, IoClose } from "react-icons/io5";
 
 import "./HealthModal.css";
 import body from "~/assets/img/body.png";
-import type { HealthRecord } from "~/types";
+import type { HealthRecord } from "~/types/types";
 
 interface HealthModalProps {
   record: HealthRecord;

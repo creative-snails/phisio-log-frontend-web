@@ -1,12 +1,15 @@
 import "./HealthStatusForm.css";
-import type { Status } from "~/types";
+import type { FormErrors } from "~/types/formErrors";
+import type { Status } from "~/types/types";
+import { renderErrors } from "~/utils/renderErrors";
 
 interface HealthStatusFormProps {
   status: Status;
   setStatus: (field: keyof Status, value: string) => void;
+  formErrors?: FormErrors<Status>;
 }
 
-const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
+const HealthStatusForm = ({ status, setStatus, formErrors }: HealthStatusFormProps) => {
   const statusOptions = {
     stage: {
       options: [
@@ -45,6 +48,7 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
           <select
             value={status.stage || statusOptions.stage.default}
             onChange={(e) => setStatus("stage", e.target.value)}
+            className={formErrors?.stage ? "input-error" : ""}
           >
             {statusOptions.stage.options.map(({ display, value }) => (
               <option key={value} value={value}>
@@ -52,12 +56,14 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
               </option>
             ))}
           </select>
+          {renderErrors(formErrors?.stage)}
         </div>
         <div className="form-group">
           <label>Severity:</label>
           <select
             value={status.severity || statusOptions.severity.default}
             onChange={(e) => setStatus("severity", e.target.value)}
+            className={formErrors?.severity ? "input-error" : ""}
           >
             {statusOptions.severity.options.map(({ display, value }) => (
               <option key={value} value={value}>
@@ -65,12 +71,14 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
               </option>
             ))}
           </select>
+          {renderErrors(formErrors?.severity)}
         </div>
         <div className="form-group">
           <label>Progression:</label>
           <select
             value={status.progression || statusOptions.progression.default}
             onChange={(e) => setStatus("progression", e.target.value)}
+            className={formErrors?.progression ? "input-error" : ""}
           >
             {statusOptions.progression.options.map(({ display, value }) => (
               <option key={value} value={value}>
@@ -78,8 +86,10 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
               </option>
             ))}
           </select>
+          {renderErrors(formErrors?.progression)}
         </div>
       </div>
+      {renderErrors(formErrors?._errors)}
     </div>
   );
 };

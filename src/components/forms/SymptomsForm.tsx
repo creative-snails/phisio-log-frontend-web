@@ -1,7 +1,9 @@
 import { FaRegTrashAlt } from "react-icons/fa";
 
 import "./SymptomsForm.css";
-import type { SymptomUI } from "~/types";
+import type { FormErrors } from "~/types/formErrors";
+import type { SymptomUI } from "~/types/types";
+import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
   symptoms: SymptomUI[];
@@ -9,9 +11,17 @@ type SymptomsFormProps = {
   toggleSymptom: (index: number) => void;
   addSymptom: () => void;
   removeSymptom: (index: number) => void;
+  formErrors?: FormErrors<SymptomUI[]>;
 };
 
-const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, removeSymptom }: SymptomsFormProps) => {
+const SymptomsForm = ({
+  symptoms,
+  onSymptomChange,
+  toggleSymptom,
+  addSymptom,
+  removeSymptom,
+  formErrors,
+}: SymptomsFormProps) => {
   return (
     <div className="symptom-form-container">
       <h3>Symptoms</h3>
@@ -36,17 +46,22 @@ const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, re
                 value={symptom.name}
                 onChange={(e) => onSymptomChange(index, "name", e.target.value)}
                 placeholder="Enter symptom name"
+                className={formErrors?.[index]?._errors ? "input-error" : ""}
               />
+              {renderErrors(formErrors?.[index]?.name)}
 
               <label>Start Date</label>
               <input
                 type="date"
                 value={symptom.startDate}
                 onChange={(e) => onSymptomChange(index, "startDate", e.target.value)}
+                className={formErrors?.[index]?._errors ? "input-error" : ""}
               />
+              {renderErrors(formErrors?.[index]?.startDate)}
 
               <label>Affected Parts</label>
               <div className="placeholder">{symptom.affectedParts}</div>
+              {renderErrors(formErrors?.[index]?.affectedParts)}
             </div>
           )}
         </div>
@@ -54,6 +69,7 @@ const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, re
       <button type="button" className="add-button" onClick={addSymptom}>
         + Add Symptom
       </button>
+      {renderErrors(formErrors?._errors)}
     </div>
   );
 };

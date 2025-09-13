@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import HealthCardGrid from "./HealthCardsGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
-import type { HealthRecord } from "~/types";
+import type { HealthRecord } from "~/types/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);

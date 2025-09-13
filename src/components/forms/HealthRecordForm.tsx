@@ -4,8 +4,12 @@ import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
 
+import "~/utils/renderErrors.css";
 import ChatWidget from "~/components/chat/ChatWidget";
-import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
+import type { FormErrors } from "~/types/formErrors";
+import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types/types";
+import { renderErrors } from "~/utils/renderErrors";
+import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
 interface HealthRecordFormProps {
   recordFormData: RecordFormData;
@@ -15,6 +19,8 @@ interface HealthRecordFormProps {
 const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFormProps) => {
   const { data, loading, error } = recordFormData;
   const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
+  const [formErrors, setFormErrors] = useState<FormErrors<HealthRecord>>({});
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
@@ -25,11 +31,16 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
     setSymptoms(loadedSymptoms);
   }, [data.symptoms]);
 
+  useEffect(() => {
+    validateForm();
+  }, [data, symptoms]);
+
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
       ...prev,
       data: { ...prev.data, description: value },
     }));
+    validateForm();
   };
 
   const setStatus = (field: keyof Status, value: string) => {
@@ -43,6 +54,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
         },
       },
     }));
+    validateForm();
   };
 
   const updateConsultations = (newConsultations: HealthRecord["medicalConsultations"]) => {
@@ -53,6 +65,7 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
         medicalConsultations: newConsultations,
       },
     }));
+    validateForm();
   };
 
   const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
@@ -61,12 +74,14 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       update[index][field] = value;
     }
     setSymptoms(update);
+    validateForm();
   };
 
   const toggleSymptom = (index: number) => {
     const update = [...symptoms];
     update[index].isOpen = !update[index].isOpen;
     setSymptoms(update);
+    validateForm();
   };
 
   const handleAddSymptom = () => {
@@ -74,18 +89,26 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       ...symptoms,
       { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
     ]);
+    validateForm();
   };
 
   const handleRemoveSymptom = (index: number) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
       const update = symptoms.filter((_, i) => i !== index);
       setSymptoms(update);
+      validateForm();
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const parseResult = Z_HealthRecord.safeParse({ ...data, symptoms });
+    if (!parseResult.success) {
+      setFormErrors(parseResult.error.format() as unknown as FormErrors<HealthRecord>);
+      setIsValid(false);
 
+      return;
+    }
     console.log("Submitted record:", {
       description: data.description,
       treatmentsTried: data.treatmentsTried,
@@ -93,6 +116,33 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
       medicalConsultations: data.medicalConsultations,
       symptoms,
     });
+  };
+
+  const validateForm = () => {
+    const normalizedSymptoms = symptoms.map((s) => ({
+      ...s,
+      startDate: s.startDate ? new Date(s.startDate) : undefined,
+    }));
+    const normalizedConsultations =
+      data.medicalConsultations?.map((c) => ({
+        ...c,
+        date: c.date ? new Date(c.date) : undefined,
+      })) ?? [];
+    const parseResult = Z_HealthRecord.safeParse({
+      ...data,
+      symptoms: normalizedSymptoms,
+      medicalConsultations: normalizedConsultations,
+    });
+
+    if (parseResult.success) {
+      setFormErrors({});
+      setIsValid(true);
+    } else {
+      const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
+      setFormErrors(formattedErrors);
+      console.log("Form validation errors:", parseResult.error.format);
+      setIsValid(false);
+    }
   };
 
   return loading ? (
@@ -128,20 +178,24 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             value={data.description}
             onChange={(e) => handleDescriptionChange(e.target.value)}
             placeholder="Describe symptoms, context, or notes..."
+            className={formErrors?.description ? "input-error" : ""}
           />
+          {renderErrors(formErrors.description)}
         </div>
         <div className="form-section">
-          <HealthStatusForm status={data.status} setStatus={setStatus} />
+          <HealthStatusForm status={data.status} setStatus={setStatus} formErrors={formErrors.status} />
         </div>
         <div className="form-section">
           <TreatmentsTried
             treatments={data.treatmentsTried}
-            setTreatments={(updated) =>
+            setTreatments={(updated) => {
               setRecordFormData((prev) => ({
                 ...prev,
                 data: { ...prev.data, treatmentsTried: updated },
-              }))
-            }
+              }));
+              validateForm();
+            }}
+            formErrors={formErrors.treatmentsTried}
           />
         </div>
         <div className="form-section">
@@ -151,12 +205,17 @@ const HealthRecordForm = ({ recordFormData, setRecordFormData }: HealthRecordFor
             toggleSymptom={toggleSymptom}
             addSymptom={handleAddSymptom}
             removeSymptom={handleRemoveSymptom}
+            formErrors={formErrors.symptoms}
           />
         </div>
         <div className="form-section">
-          <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
+          <MedicalConsultationsForm
+            consultations={data.medicalConsultations}
+            setConsultations={updateConsultations}
+            formErrors={formErrors.medicalConsultations}
+          />
         </div>
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" disabled={!isValid}>
           Submit
         </button>
       </form>
