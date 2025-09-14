@@ -1,3 +1,6 @@
+@import "./theme.css";
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
 html,
 body,
 #root {
@@ -5,10 +8,51 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: system-ui, sans-serif;
-  background-color: #121212;
+  background: rgb(253, 246, 234);
+  color: var(--text-body);
   box-sizing: border-box;
   min-width: 680px;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(
+    circle at 100% 0%,
+    rgba(145, 232, 209, 0.8) 0%,
+    rgba(179, 232, 217, 0.8) 20%,
+    rgba(224, 219, 151, 0.427) 30%,
+    rgba(214, 235, 156, 0.147) 60%,
+    rgba(254, 248, 240, 0.2) 10%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+body {
+  font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600; /* instead of 700 */
+  color: #2d2d2d; /* dark charcoal, not black */
+}
+
+p,
+span,
+li {
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 *,

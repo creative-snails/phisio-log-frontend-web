@@ -5,25 +5,30 @@ import "~/App.css";
 const SideNavBar = () => {
   return (
     <nav className="side-nav">
+      <div className="sidebar-brand">PhisioLog</div>
       <ul className="nav-list">
         <li>
-          <NavLink to="/health-record" className="nav-link">
-            {/* need to be replaced later */}
+          <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/health-record" end className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Health Record Editor
           </NavLink>
         </li>
         <li>
-          <NavLink to="/health-record/form" className="nav-link">
+          <NavLink to="/health-record/form" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Health Record Form
           </NavLink>
         </li>
         <li>
-          <NavLink to="/body-map" className="nav-link">
+          <NavLink to="/body-map" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Body Map
           </NavLink>
         </li>
         <li>
-          <NavLink to="/reports" className="nav-link">
+          <NavLink to="/reports" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Tracking & Reporting
           </NavLink>
         </li>

@@ -1,5 +1,5 @@
 .health-status-form {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .section-title {
@@ -9,48 +9,48 @@
 }
 
 .health-status-form {
-    border: none;
-    border-radius: 0;
-    color: black;
-    max-width: 700px;
-    margin-bottom: 1.5rem;
+  border: none;
+  border-radius: 0;
+  color: black;
+  max-width: 700px;
+  margin-bottom: 1.5rem;
 }
 
 .health-status-form h2 {
-    color: black;
-    margin-bottom: 1rem;
+  color: black;
+  margin-bottom: 1rem;
 }
 
 .health-status-form > div {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .health-status-form label {
-    margin-bottom: 0rem;
-    font-weight: 600;
-    color: #333;
+  margin-bottom: 0rem;
+  font-weight: 600;
+  color: #333;
 }
 
 .health-status-form select {
-    padding: 0.5rem 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    color: #222;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-    background-color: #fafafa;
+  padding: 0.5rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #222;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: #fafafa;
 }
 
 .health-status-form select:hover {
-    border-color: #007bff;
+  border-color: #007bff;
 }
 
 .health-status-form select:focus {
-    outline: none;
-    border-color: #0056b3;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }

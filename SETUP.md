@@ -18,6 +18,7 @@
    ```
 
    ⚠️ While dependencies are handled inside Docker, we recommend installing them locally too for IDE features like linting and autocomplete.
+
    - Use `npm ci` or `yarn install --immutable`
    - Avoid plain `npm install` or `yarn install`
 

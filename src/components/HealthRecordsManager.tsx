@@ -35,7 +35,7 @@ const HealthRecordsManager = () => {
 
   return (
     <div className="home">
-      <h2>Health Records</h2>
+      <h2 className="health-records-title">Your Health Records</h2>
       <div className="health-records-grid">
         {records.length === 0 ? (
           <div className="empty-state">

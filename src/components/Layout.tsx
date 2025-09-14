@@ -1,5 +1,4 @@
 import SideNavBar from "./SideNavBar";
-import TopNavBar from "./TopNavBar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,11 +6,8 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="layout">
-      <TopNavBar />
-      <div className="layout-body">
-        <SideNavBar />
-        <main className="page-content">{children}</main>
-      </div>
+      <SideNavBar />
+      <main className="page-content">{children}</main>
     </div>
   );
 };

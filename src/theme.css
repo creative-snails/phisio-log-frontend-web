@@ -1,0 +1,25 @@
+:root {
+  /* Color Palette */
+  /* --bg-gradient: linear-gradient(180deg, #f8d8b3 0%, #d2e6d7 50%, #c2d8f2 100%); */
+  --bg-white: #ffffff;
+
+  /* Accent Colors */
+  --accent-teal: #4ca7a2;
+  --accent-peach: #f8d8b3;
+  --accent-sage: #a8c8a7;
+  --accent-lavender: #cdb4db;
+
+  /* Text Colors */
+  --text-heading: rgb(44, 82, 82);
+  --text-subheading: #555555;
+  --text-body: #555555;
+  --text-white: #ffffff;
+  --text-sidebar-brand: rgb(50, 89, 85);
+
+  /* Gradients */
+  --gradient-sidebar: linear-gradient(135deg, #4ca7a2 0%, #a8c8a7 100%);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
