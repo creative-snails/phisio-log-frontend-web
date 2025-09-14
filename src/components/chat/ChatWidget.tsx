@@ -10,7 +10,7 @@ import "./ChatWidget.css";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
-const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
+const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
@@ -18,7 +18,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: number }) => {
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
-  const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId >= 0, [healthRecordId]);
+  const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId.trim() !== "", [healthRecordId]);
   const sessionKey = useMemo(
     () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
     [healthRecordId]
