@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import HealthCardGrid from "./HealthCardsGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
+import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
 import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
@@ -9,15 +10,15 @@ const HealthRecordsManager = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:4444/health-records")
-      .then((response) => response.json())
-      .then((data) => {
-        // if you want to test empty state comment line below
-        setRecords(data);
-
-        // and use this one:
-        //setRecords([]);
-      });
+    const fetchHealthRecords = async () => {
+      try {
+        const healthRecords = await getHealthRecords();
+        setRecords(healthRecords);
+      } catch (error) {
+        console.error("HealthRecordsManager: Error fetching health records!", error);
+      }
+    };
+    fetchHealthRecords();
   }, []);
 
   const handleNext = () => {
