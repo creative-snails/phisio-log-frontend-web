@@ -77,7 +77,7 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
 
   return (
     <div className="Consultations-form-container">
-      <h2>Medical Consultations</h2>
+      <h3>Medical Consultations</h3>
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>

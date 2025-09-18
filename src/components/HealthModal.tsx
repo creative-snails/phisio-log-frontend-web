@@ -1,4 +1,5 @@
 import { IoChevronBack, IoChevronForward, IoClose } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 import "./HealthModal.css";
 import body from "~/assets/img/body.png";
@@ -13,6 +14,7 @@ interface HealthModalProps {
 
 const HealthModal = ({ record, onClose, onNext, onPrev }: HealthModalProps) => {
   const latestConsultation = record.medicalConsultations[record.medicalConsultations.length - 1];
+  const navigate = useNavigate();
 
   return (
     <div className="modal-overlay">
@@ -52,6 +54,17 @@ const HealthModal = ({ record, onClose, onNext, onPrev }: HealthModalProps) => {
                     <strong>Follow-up Actions:</strong> {latestConsultation.followUpActions.join(", ")}
                   </p>
                 )}
+                <div className="modal-actions">
+                  <button
+                    className="edit-modal-button"
+                    onClick={() => {
+                      navigate(`/health-record/${record.id}/edit`);
+                      onClose();
+                    }}
+                  >
+                    Edit Record
+                  </button>
+                </div>
               </div>
               <div className="details-img">
                 <img src={body} alt="Next" width={90} height={210} /> {/* Placeholder for body map image */}

@@ -1,10 +1,18 @@
 .health-status-form {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.health-status-form {
+    border: none;
+    border-radius: 0;
     color: black;
     max-width: 700px;
-    background-color: #fff;
     margin-bottom: 1.5rem;
 }
 
@@ -21,19 +29,20 @@
 }
 
 .health-status-form label {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
     font-weight: 600;
     color: #333;
 }
 
 .health-status-form select {
-    padding: 0.5rem 0.7rem;
+    padding: 0.5rem 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
     color: #222;
     cursor: pointer;
     transition: border-color 0.3s ease;
+    background-color: #fafafa;
 }
 
 .health-status-form select:hover {

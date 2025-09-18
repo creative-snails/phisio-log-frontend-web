@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import HealthCardGrid from "./HealthCardsGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
+import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
 import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
@@ -9,9 +10,15 @@ const HealthRecordsManager = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:4444/health-records")
-      .then((response) => response.json())
-      .then((data) => setRecords(data));
+    const fetchHealthRecords = async () => {
+      try {
+        const healthRecords = await getHealthRecords();
+        setRecords(healthRecords);
+      } catch (error) {
+        console.error("HealthRecordsManager: Error fetching health records!", error);
+      }
+    };
+    fetchHealthRecords();
   }, []);
 
   const handleNext = () => {
@@ -31,7 +38,14 @@ const HealthRecordsManager = () => {
     <div className="home">
       <h2>Health Records</h2>
       <div className="health-records-grid">
-        <HealthCardGrid records={records} onClick={handleRecordClick} />
+        {records.length === 0 ? (
+          <div className="empty-state">
+            <p>No health records available.</p>
+            <p>This is a placeholder with instruction to create your first health record.</p>
+          </div>
+        ) : (
+          <HealthCardGrid records={records} onClick={handleRecordClick} />
+        )}
       </div>
 
       {selectedIndex !== null && (

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import "./HealthCardsGrid.css";
 import type { HealthRecord } from "~/types";
 
@@ -7,6 +9,8 @@ interface HealthCardsGridProps {
 }
 
 const HealthsCardsGrid = ({ records, onClick }: HealthCardsGridProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="grid-container">
       <div className="grid">
@@ -27,7 +31,7 @@ const HealthsCardsGrid = ({ records, onClick }: HealthCardsGridProps) => {
                   className="edit-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    alert("This is only a placeholder");
+                    navigate(`/health-record/${record.id}/edit`);
                   }}
                 >
                   Edit
