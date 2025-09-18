@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import HealthCardGrid from "./HealthCardsGrid.tsx";
+import BodyMapViewer from "./BodyMapViewer";
 import HealthModal from "./HealthModal.tsx";
 
+import HealthTimeline from "~/components/HealthTimeline";
 import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
@@ -35,16 +36,22 @@ const HealthRecordsManager = () => {
 
   return (
     <div className="home">
-      <h2 className="health-records-title">Your Health Records</h2>
-      <div className="health-records-grid">
-        {records.length === 0 ? (
-          <div className="empty-state">
-            <p>No health records available.</p>
-            <p>This is a placeholder with instruction to create your first health record.</p>
-          </div>
-        ) : (
-          <HealthCardGrid records={records} onClick={handleRecordClick} />
-        )}
+      <h2 className="health-records-title">Health Timeline</h2>
+      <div className="health-dashboard">
+        <div className="timeline-section">
+          {records.length === 0 ? (
+            <div className="empty-state">
+              <p>No health records available.</p>
+              <p>Create your first health record to start tracking your health journey.</p>
+            </div>
+          ) : (
+            <HealthTimeline records={records} onClick={handleRecordClick} />
+          )}
+        </div>
+        <div className="body-map-section">
+          {/* <h3>Body Overview</h3> */}
+          <BodyMapViewer />
+        </div>
       </div>
 
       {selectedIndex !== null && (

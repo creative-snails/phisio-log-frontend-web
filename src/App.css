@@ -3,7 +3,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--gradient-hero);
   color: var(--text-heading);
   padding: 16px 24px;
   box-shadow: var(--shadow-soft);
@@ -105,7 +104,7 @@
 /* SideNavBar */
 .side-nav {
   width: 280px;
-  background: rgb(211 236 233);
+  background: rgb(209, 224, 249);
   padding: 24px 16px;
   box-sizing: border-box;
 }
@@ -320,4 +319,41 @@ input[type="text"]:focus {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Health Dashboard Layout */
+.health-dashboard {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.timeline-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.body-map-section {
+  flex: 0 0 420px;
+  position: sticky;
+  top: 2rem;
+}
+
+.body-map-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: var(--text-heading);
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .health-dashboard {
+    flex-direction: column;
+  }
+  
+  .body-map-section {
+    flex: none;
+    position: static;
+  }
 }

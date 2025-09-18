@@ -1,5 +1,4 @@
 .hero-section {
-  background: var(--gradient-hero);
   padding: 3rem 2rem;
   margin: 0;
   position: relative;
@@ -14,7 +13,7 @@
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 700;
   color: rgb(46, 83, 82);
   margin: 0;
@@ -22,7 +21,7 @@
 }
 
 .sign-in-button {
-  background-color: rgba(255, 255, 255, 0.8);
+  background: rgb(209, 224, 249);
   color: #283132;
   padding: 12px 18px;
   border: solid rgba(208, 228, 230, 0.9) 2px;
@@ -37,7 +36,7 @@
 }
 
 .sign-in-button:hover {
-  background-color: var(--accent-primary-hover);
+  background: rgb(222, 232, 248);
   transform: translateY(-1px);
 }
 
@@ -114,7 +113,7 @@
 .shape-1 {
   width: 120px;
   height: 120px;
-  background: var(--accent-primary);
+  background: rgb(238, 145, 145);
   top: 20%;
   right: 10%;
   animation-delay: 0s;
