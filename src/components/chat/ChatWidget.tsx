@@ -19,6 +19,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     history: [],
   });
   const [isThinking, setIsThinking] = useState(false);
+  const [showContextButtons, setShowContextButtons] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +30,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     setIsThinking(true);
     try {
       const record = await getHealthRecord(healthRecordId!);
-      setHealthRecord(record);
 
       return record;
     } catch (error) {
@@ -54,15 +54,19 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const initializeChat = async () => {
     const existingChatSession = localStorage.getItem("chat_history");
 
+    // CHAT SESSION EXISTS
     if (existingChatSession) {
       const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
-      if (parsedChatHistory.id) setHealthRecord((await fetchHealthRecord()) || null);
+
+      // If context has changed (e.g. user opens chat within different health record that the one in session) -> show buttons and load chat history, otherwise just load chat history
+      if (parsedChatHistory.id !== healthRecordId) setShowContextButtons(true);
       setChatHistory(parsedChatHistory);
+      // NO CHAT SESSION
     } else {
       if (isValidRecordId) {
         const record = healthRecord || (await fetchHealthRecord());
+        setHealthRecord(record || null);
         if (record) {
-          localStorage.setItem("health_record", JSON.stringify(record));
           setChatHistory({
             id: healthRecordId,
             history: [
@@ -75,7 +79,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         }
       } else {
         setChatHistory({
-          id: undefined,
           history: [
             { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
           ],
@@ -165,14 +168,27 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         </div>
 
         {/* Chat Footer */}
-        <div className="chat-footer">
-          <ChatForm
-            chatHistory={chatHistory}
-            setChatHistory={setChatHistory}
-            setIsThinking={setIsThinking}
-            showChatWidget={showChatWidget}
-          />
-        </div>
+        {showContextButtons ? (
+          <div className="chat-context-section">
+            <div className="message">
+              I see you’re now viewing your Back Pain record. Would you like to switch focus to this, or continue where
+              we left off?
+            </div>
+            <div className="chat-context-buttons">
+              <button>Continue Chat</button>
+              <button>Switch to Back Pain</button>
+            </div>
+          </div>
+        ) : (
+          <div className="chat-input-form">
+            <ChatForm
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              setIsThinking={setIsThinking}
+              showChatWidget={showChatWidget}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
