@@ -59,7 +59,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
       const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
 
       // If context has changed (e.g. user opens chat within different health record that the one in session) -> show buttons and load chat history, otherwise just load chat history
-      if (parsedChatHistory.id !== healthRecordId) setShowContextButtons(true);
+      if (parsedChatHistory.id !== healthRecordId) {
+        setHealthRecord((await fetchHealthRecord()) || null);
+        setShowContextButtons(true);
+      }
       setChatHistory(parsedChatHistory);
       // NO CHAT SESSION
     } else {
@@ -114,6 +117,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
     localStorage.removeItem("chat_history");
+    setShowContextButtons(false);
     initializeChat();
   };
 
@@ -171,12 +175,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         {showContextButtons ? (
           <div className="chat-context-section">
             <div className="message">
-              I see you’re now viewing your Back Pain record. Would you like to switch focus to this, or continue where
-              we left off?
+              I see you’re now viewing {healthRecord?.title} record. Would you like to switch focus to this, or continue
+              where we left off?
             </div>
             <div className="chat-context-buttons">
               <button onClick={() => setShowContextButtons(false)}>Continue Chat</button>
-              <button>Switch to Back Pain</button>
+              <button onClick={handleResetChat}>Switch to {healthRecord?.title}</button>
             </div>
           </div>
         ) : (
