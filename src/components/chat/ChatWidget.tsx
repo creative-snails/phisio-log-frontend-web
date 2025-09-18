@@ -175,7 +175,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               we left off?
             </div>
             <div className="chat-context-buttons">
-              <button>Continue Chat</button>
+              <button onClick={() => setShowContextButtons(false)}>Continue Chat</button>
               <button>Switch to Back Pain</button>
             </div>
           </div>
