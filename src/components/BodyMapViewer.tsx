@@ -1,15 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./BodyMapViewer.css";
 import { type bodyPartData, frontSide } from "~/services/bodyParts";
+import type { HealthRecord } from "~/types";
 
 interface BodyMapViewerProps {
   className?: string;
+  records?: HealthRecord[];
 }
 
-const BodyMapViewer = ({ className = "" }: BodyMapViewerProps) => {
+const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
+  const [affectedParts, setAffectedParts] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const parts: { [key: string]: string } = {};
+    records.forEach((record) => {
+      if (record.status.stage !== "resolved" && record.status.stage !== "closed") {
+        record.symptoms.forEach((symptom) => {
+          if (symptom.affectedParts) {
+            symptom.affectedParts.forEach((part) => {
+              const currentState = parts[part.key];
+              if (!currentState || parseInt(part.state) > parseInt(currentState)) {
+                parts[part.key] = part.state;
+              }
+            });
+          }
+        });
+      }
+    });
+    setAffectedParts(parts);
+    console.log("Affected parts:", parts);
+  }, [records]);
 
   const handlePartClick = (partId: string) => {
     setSelectedPart(selectedPart === partId ? null : partId);
@@ -19,17 +42,22 @@ const BodyMapViewer = ({ className = "" }: BodyMapViewerProps) => {
     if (selectedPart === part.id) return "#ff6b6b";
     if (hoveredPart === part.id) return "#bbdefb";
 
-    // Status-based coloring
-    switch (part.status) {
-      case 1:
-        return "#e3f2fd"; // Light green - healthy
-      case 2:
-        return "#fff3cd"; // Light yellow - mild concern
-      case 3:
-        return "#f8d7da"; // Light red - needs attention
-      default:
-        return "#f8f9fa"; // Light gray - default
+    // Check if part is affected by current health issues
+    const affectedState = affectedParts[part.id];
+    if (affectedState) {
+      switch (affectedState) {
+        case "1":
+          return "#c8e6c9"; // Light green - mild
+        case "2":
+          return "#fff3cd"; // Light yellow - moderate
+        case "3":
+          return "#ffcdd2"; // Light red - severe
+        default:
+          return "#f8f9fa";
+      }
     }
+
+    return "#f8f9fa"; // Light gray - default
   };
 
   return (
@@ -56,7 +84,18 @@ const BodyMapViewer = ({ className = "" }: BodyMapViewerProps) => {
       {selectedPart && (
         <div className="selected-part-info">
           <h4>Selected: {selectedPart.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}</h4>
-          <p>Click to log symptoms or view history for this body part.</p>
+          {affectedParts[selectedPart] ? (
+            <p>
+              Current issue severity:{" "}
+              {affectedParts[selectedPart] === "1"
+                ? "Mild"
+                : affectedParts[selectedPart] === "2"
+                  ? "Moderate"
+                  : "Severe"}
+            </p>
+          ) : (
+            <p>No current issues reported for this area.</p>
+          )}
         </div>
       )}
     </div>

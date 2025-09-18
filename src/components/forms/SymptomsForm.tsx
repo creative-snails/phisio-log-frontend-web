@@ -46,7 +46,17 @@ const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, re
               />
 
               <label>Affected Parts</label>
-              <div className="placeholder">{symptom.affectedParts}</div>
+              <div className="placeholder">
+                {symptom.affectedParts
+                  ? symptom.affectedParts
+                      .map((part, i) => (
+                        <span key={i}>
+                          {part.key} (severity: {part.state})
+                        </span>
+                      ))
+                      .join(", ")
+                  : "No affected parts specified"}
+              </div>
             </div>
           )}
         </div>

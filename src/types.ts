@@ -1,7 +1,10 @@
 export interface Symptom {
   name: string;
   startDate: string;
-  affectedParts: string;
+  affectedParts?: {
+    key: string;
+    state: string;
+  }[];
 }
 
 export type SymptomUI = Symptom & {

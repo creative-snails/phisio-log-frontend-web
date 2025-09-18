@@ -55,7 +55,6 @@ const HealthRecordForm = () => {
   useEffect(() => {
     const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
       ...s,
-      affectedParts: "Placeholder: affected parts coming soon",
       isOpen: false,
     }));
     setSymptoms(loadedSymptoms);
@@ -93,7 +92,7 @@ const HealthRecordForm = () => {
 
   const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
     const update = [...symptoms];
-    if (field === "name" || field === "startDate" || field === "affectedParts") {
+    if (field === "name" || field === "startDate") {
       update[index][field] = value;
     }
     setSymptoms(update);
@@ -106,10 +105,7 @@ const HealthRecordForm = () => {
   };
 
   const handleAddSymptom = () => {
-    setSymptoms([
-      ...symptoms,
-      { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
-    ]);
+    setSymptoms([...symptoms, { name: "", startDate: "", isOpen: true }]);
   };
 
   const handleRemoveSymptom = (index: number) => {

@@ -50,7 +50,7 @@ const HealthRecordsManager = () => {
         </div>
         <div className="body-map-section">
           {/* <h3>Body Overview</h3> */}
-          <BodyMapViewer />
+          <BodyMapViewer records={records} />
         </div>
       </div>
 
