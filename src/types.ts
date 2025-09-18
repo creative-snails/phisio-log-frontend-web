@@ -50,6 +50,9 @@ export interface RecordFormData {
 }
 
 export interface ChatHistoryType {
-  role: "user" | "assistant";
-  message: string;
+  id?: string;
+  history: {
+    role: "user" | "assistant";
+    message: string;
+  }[];
 }

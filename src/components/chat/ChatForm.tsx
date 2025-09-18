@@ -5,8 +5,8 @@ import { getAssistantResponse } from "./mockChatService";
 import type { ChatHistoryType } from "~/types";
 
 interface ChatFormProps {
-  chatHistory: ChatHistoryType[];
-  setChatHistory: Dispatch<SetStateAction<ChatHistoryType[]>>;
+  chatHistory: ChatHistoryType;
+  setChatHistory: Dispatch<SetStateAction<ChatHistoryType>>;
   setIsThinking: Dispatch<SetStateAction<boolean>>;
   showChatWidget: boolean;
 }
@@ -25,12 +25,19 @@ const ChatForm = ({ chatHistory, setChatHistory, setIsThinking, showChatWidget }
     const userMessage = inputRef.current.value.trim();
     inputRef.current.value = "";
 
-    setChatHistory((history) => [...history, { role: "user", message: userMessage }]);
+    setChatHistory((prev) => ({
+      id: prev?.id,
+      history: [...(prev?.history || []), { role: "user", message: userMessage }],
+    }));
+
     setIsThinking(true);
 
     // Get assistant response with simulated delay
     setTimeout(() => {
-      setChatHistory((history) => [...history, { role: "assistant", message: getAssistantResponse(userMessage) }]);
+      setChatHistory((prev) => ({
+        id: prev?.id,
+        history: [...(prev?.history || []), { role: "assistant", message: getAssistantResponse(userMessage) }],
+      }));
       setIsThinking(false);
     }, 2000);
   };

@@ -14,16 +14,15 @@ import { type ChatHistoryType, type HealthRecord } from "~/types";
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryType>({
+    id: undefined,
+    history: [],
+  });
   const [isThinking, setIsThinking] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId.trim() !== "", [healthRecordId]);
-  /*   const sessionKey = useMemo(
-    () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
-    [healthRecordId]
-  ); */
 
   // Health record fetching
   const fetchHealthRecord = async () => {
@@ -34,15 +33,18 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
       return record;
     } catch (error) {
-      console.error(`ChatWidget: Error fetching health record id=${healthRecordId}!`, error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          message:
-            "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
-        },
-      ]);
+      console.error("Error fetching health record:", error);
+      setChatHistory((prev) => ({
+        id: prev?.id,
+        history: [
+          ...(prev?.history || []),
+          {
+            role: "assistant",
+            message:
+              "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
+          },
+        ],
+      }));
       setHealthRecord(null);
     } finally {
       setIsThinking(false);
@@ -51,29 +53,33 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
   const initializeChat = async () => {
     const existingChatSession = localStorage.getItem("chat_history");
-    const existingHealthRecord = localStorage.getItem("health_record");
 
-    if (existingChatSession && existingHealthRecord) {
-      const parsedChatHistory = JSON.parse(existingChatSession);
-      const parsedHealthRecord = JSON.parse(existingHealthRecord);
+    if (existingChatSession) {
+      const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
+      if (parsedChatHistory.id) setHealthRecord((await fetchHealthRecord()) || null);
       setChatHistory(parsedChatHistory);
-      setHealthRecord(parsedHealthRecord);
     } else {
       if (isValidRecordId) {
         const record = healthRecord || (await fetchHealthRecord());
         if (record) {
           localStorage.setItem("health_record", JSON.stringify(record));
-          setChatHistory([
-            {
-              role: "assistant",
-              message: `I see you're working with **${record.title}** record. How can I help you update it?`,
-            },
-          ]);
+          setChatHistory({
+            id: healthRecordId,
+            history: [
+              {
+                role: "assistant",
+                message: `I see you're working with **${record.title}** record. How can I help you update it?`,
+              },
+            ],
+          });
         }
       } else {
-        setChatHistory([
-          { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-        ]);
+        setChatHistory({
+          id: undefined,
+          history: [
+            { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+          ],
+        });
       }
     }
   };
@@ -92,7 +98,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
   // Save chat history to localStorage
   useEffect(() => {
-    if (showChatWidget && chatHistory.length > 0) {
+    if (showChatWidget && chatHistory && chatHistory.history.length > 0) {
       try {
         localStorage.setItem("chat_history", JSON.stringify(chatHistory));
       } catch (error) {
@@ -105,7 +111,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
     localStorage.removeItem("chat_history");
-    localStorage.removeItem("health_record");
     initializeChat();
   };
 
@@ -134,7 +139,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
           <div>{`Context: ${healthRecord?.title ?? "General"}`}</div>
         </div>
         <div ref={chatBodyRef} className="chat-body">
-          {chatHistory.map((chat, index) => (
+          {chatHistory?.history.map((chat, index) => (
             <div key={index} className={`chat-message chat-${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
               <div className="chat-message-text">
