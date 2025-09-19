@@ -26,10 +26,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId.trim() !== "", [healthRecordId]);
 
   // Health record fetching
-  const fetchHealthRecord = async () => {
+  const fetchHealthRecord = async (id: string | undefined) => {
+    if (!id) return;
     setIsThinking(true);
     try {
-      const record = await getHealthRecord(healthRecordId!);
+      const record = await getHealthRecord(id);
 
       return record;
     } catch (error) {
@@ -51,23 +52,38 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     }
   };
 
-  const initializeChat = async () => {
+  const initializeChat = async (continueChat = false) => {
     const existingChatSession = localStorage.getItem("chat_history");
 
     // CHAT SESSION EXISTS
     if (existingChatSession) {
+      console.log("Chat session exists!!!");
       const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
-
-      // If context has changed (e.g. user opens chat within different health record that the one in session) -> show buttons and load chat history, otherwise just load chat history
-      if (parsedChatHistory.id !== healthRecordId) {
-        setHealthRecord((await fetchHealthRecord()) || null);
-        setShowContextButtons(true);
-      }
       setChatHistory(parsedChatHistory);
+
+      // Within the same context
+      if (parsedChatHistory.id === healthRecordId) {
+        console.log("Within the same contxt");
+        setShowContextButtons(false);
+        setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
+
+        // Different context
+      } else {
+        // Continue chat selected
+        if (continueChat) {
+          console.log("Within different context --> chat continuation");
+          setShowContextButtons(false);
+          setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
+        } else {
+          setShowContextButtons(true);
+        }
+      }
+
       // NO CHAT SESSION
     } else {
+      console.log("Not chat session!!!");
       if (isValidRecordId) {
-        const record = healthRecord || (await fetchHealthRecord());
+        const record = healthRecord || (await fetchHealthRecord(healthRecordId));
         setHealthRecord(record || null);
         if (record) {
           setChatHistory({
@@ -90,11 +106,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     }
   };
 
-  // Chat initialization
   useEffect(() => {
     if (!showChatWidget) return;
+    console.log("FROM USE EFFECT - INITIALIZING");
     initializeChat();
-  }, [showChatWidget, healthRecordId]);
+  }, [showChatWidget]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
@@ -143,7 +159,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
         {/* Chat Body */}
         <div className="chat-context-indicator">
-          <div>{`Context: ${healthRecord?.title ?? "General"}`}</div>
+          <div>{`Context: ${
+            showContextButtons
+              ? chatHistory.id === undefined
+                ? "General"
+                : "Previous Record"
+              : (healthRecord?.title ?? "General")
+          }`}</div>
         </div>
         <div ref={chatBodyRef} className="chat-body">
           {chatHistory?.history.map((chat, index) => (
@@ -179,7 +201,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               where we left off?
             </div>
             <div className="chat-context-buttons">
-              <button onClick={() => setShowContextButtons(false)}>Continue Chat</button>
+              <button
+                onClick={() => {
+                  initializeChat(true);
+                }}
+              >
+                Continue Chat
+              </button>
               <button onClick={handleResetChat}>Switch to {healthRecord?.title}</button>
             </div>
           </div>
