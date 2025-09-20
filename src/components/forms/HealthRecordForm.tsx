@@ -11,6 +11,7 @@ import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 
 const HealthRecordForm = () => {
   const { id } = useParams<{ id: string }>();
+  const [isBodyMapOverlayOpen, setIsBodyMapOverlayOpen] = useState(false);
   const [recordFormData, setRecordFormData] = useState<RecordFormData>({
     data: {
       description: "",
@@ -238,6 +239,28 @@ const HealthRecordForm = () => {
           <BodyMapViewer records={data.id ? [data] : []} />
         </div>
       </div>
+
+      {/* Body Map Toggle Tab */}
+      <button className="body-map-tab" onClick={() => setIsBodyMapOverlayOpen(true)} title="View Body Map">
+        <span>Body Map</span>
+      </button>
+
+      {/* Body Map Slide Panel */}
+      <div className={`body-map-panel ${isBodyMapOverlayOpen ? "open" : ""}`}>
+        <div className="body-map-panel-header">
+          <h3>Body Map</h3>
+          <button className="close-panel" onClick={() => setIsBodyMapOverlayOpen(false)} title="Close">
+            ×
+          </button>
+        </div>
+        <div className="body-map-panel-content">
+          <BodyMapViewer records={data.id ? [data] : []} />
+        </div>
+      </div>
+
+      {/* Backdrop when panel is open */}
+      {isBodyMapOverlayOpen && <div className="body-map-backdrop" onClick={() => setIsBodyMapOverlayOpen(false)} />}
+
       <ChatWidget healthRecordId={data.id} />
     </div>
   );

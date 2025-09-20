@@ -79,7 +79,7 @@
 .shape-2 {
   width: 80px;
   height: 80px;
-  background: var(--accent-lavender);
+  background: var(--color-primary);
   top: 60%;
   left: 15%;
   animation-delay: 2s;

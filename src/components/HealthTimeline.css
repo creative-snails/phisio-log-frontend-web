@@ -337,9 +337,4 @@
     grid-template-columns: 1fr;
     gap: var(--space-lg);
   }
-
-  .status-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-sm);
-  }
 }

@@ -9,12 +9,7 @@
   --color-secondary: #536ba1; /* Blue tone for section titles */
 
   /* Accent Colors */
-  --color-accent-teal: #536ba1;
-  --color-accent-peach: #f8d8b3;
-  --color-accent-peach-hover: #f5d099;
-  --color-accent-sage: #a8c8a7;
-  --color-accent-lavender: #cdb4db;
-  --color-accent-lavender-hover: #b899c9;
+  --color-accent-sage: #a8c8a7; /* Used for hero decoration only */
 
   /* Text Colors */
   --color-text-primary: #2d2d2d;
@@ -83,10 +78,7 @@
   /* ===== LEGACY SUPPORT (for backward compatibility) ===== */
   --bg-white: var(--color-bg-primary);
   --bg-secondary: var(--color-bg-secondary);
-  --accent-teal: var(--color-secondary);
-  --accent-peach: var(--color-accent-peach);
   --accent-sage: var(--color-accent-sage);
-  --accent-lavender: var(--color-accent-lavender);
   --text-heading: var(--color-text-heading);
   --text-subheading: var(--color-text-secondary);
   --text-body: var(--color-text-secondary);
@@ -99,8 +91,6 @@
   --border-radius-pill: var(--radius-full);
   --accent-primary: var(--color-secondary);
   --accent-primary-hover: #4a5f91;
-  --accent-peach-hover: var(--color-accent-peach-hover);
-  --accent-lavender-hover: var(--color-accent-lavender-hover);
 }
 
 /* ===== UTILITY CLASSES ===== */
