@@ -1,3 +1,4 @@
+import ApiStatusBanner from "./ApiStatusBanner";
 import SideNavBar from "./SideNavBar";
 import TopNavBar from "./TopNavBar";
 
@@ -7,6 +8,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="layout">
+      <ApiStatusBanner />
       <TopNavBar />
       <div className="layout-body">
         <SideNavBar />

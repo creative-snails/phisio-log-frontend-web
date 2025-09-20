@@ -31,7 +31,7 @@ interface Update {
 }
 
 export interface HealthRecord {
-  id?: number;
+  id?: string;
   user?: string;
   title?: string;
   description: string;
