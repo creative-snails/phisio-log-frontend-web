@@ -59,7 +59,22 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
     // Chat session exists
     if (existingChatSession) {
-      const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
+      let parsedChatHistory: ChatHistoryType | null = null;
+
+      try {
+        parsedChatHistory = JSON.parse(existingChatSession);
+
+        if (!parsedChatHistory || !Array.isArray(parsedChatHistory.history)) {
+          throw new Error("Invalid chat history structure");
+        }
+      } catch (error) {
+        console.error("Failed to parse chat session:", error);
+        localStorage.removeItem("chat_history");
+        initializeChat();
+
+        return;
+      }
+
       setChatHistory(parsedChatHistory);
 
       // Within the same context
