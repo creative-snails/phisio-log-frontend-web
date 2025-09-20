@@ -23,7 +23,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
-  const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId.trim() !== "", [healthRecordId]);
+  const isValidRecordId = useMemo(() => {
+    return Boolean(healthRecordId?.trim());
+  }, [healthRecordId]);
 
   // Health record fetching
   const fetchHealthRecord = async (id: string | undefined) => {
@@ -55,7 +57,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const initializeChat = async (continueChat = false) => {
     const existingChatSession = localStorage.getItem("chat_history");
 
-    // CHAT SESSION EXISTS
+    // Chat session exists
     if (existingChatSession) {
       const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
       setChatHistory(parsedChatHistory);
@@ -67,17 +69,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
         // Different context
       } else {
-        // Continue chat selected
-        if (continueChat) {
-          setShowContextButtons(false);
-          setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-        } else {
-          setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-          setShowContextButtons(true);
-        }
+        setShowContextButtons(!continueChat);
+        setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
       }
 
-      // NO CHAT SESSION
+      // No chat session (fresh start)
     } else {
       if (isValidRecordId) {
         const record = await fetchHealthRecord(healthRecordId);
@@ -103,6 +99,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     }
   };
 
+  // Initialize chat effect
   useEffect(() => {
     if (!showChatWidget) return;
     initializeChat();
@@ -128,6 +125,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const handleResetChat = async () => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
+
     localStorage.removeItem("chat_history");
     setHealthRecord(null);
     setShowContextButtons(false);
