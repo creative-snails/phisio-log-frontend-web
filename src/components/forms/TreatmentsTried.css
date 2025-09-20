@@ -35,3 +35,29 @@
   box-shadow: 0 0 0 2px rgba(83, 107, 161, 0.1);
   outline: none;
 }
+
+.remove-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+}
+
+.remove-button:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.remove-button .remove-icon {
+  color: #dc3545;
+  font-size: 1.2em;
+  transition: color 0.2s;
+}
+
+.remove-button:hover .remove-icon {
+  color: #b02a37;
+}

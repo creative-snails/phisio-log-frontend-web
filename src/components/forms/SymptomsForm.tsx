@@ -1,4 +1,4 @@
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 
 import "./SymptomsForm.css";
 import type { SymptomUI } from "~/types";
@@ -18,14 +18,14 @@ const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, re
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
             <h4>{symptom.name || "New Symptom"}</h4>
+            <FaMinusCircle
+              className="remove-icon"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                removeSymptom(index);
+              }}
+            />
           </div>
-          <FaRegTrashAlt
-            className="trash-icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeSymptom(index);
-            }}
-          />
 
           {symptom.isOpen && (
             <div className="symptom-body">

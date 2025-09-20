@@ -33,6 +33,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-sm) 0;
+  position: relative;
 }
 
 .symptom-header h4 {
@@ -99,7 +100,7 @@ button.add-button:hover {
   background-color: #0056b3;
 }
 
-.trash-icon {
+.remove-icon {
   position: absolute;
   top: 0.7rem;
   right: 0.7rem;
@@ -111,7 +112,7 @@ button.add-button:hover {
   transition: all 0.2s ease;
 }
 
-.trash-icon:hover {
+.remove-icon:hover {
   color: white;
   background-color: #dc3545;
 }

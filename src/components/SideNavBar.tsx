@@ -14,12 +14,7 @@ const SideNavBar = () => {
         </li>
         <li>
           <NavLink to="/health-record" end className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Health Record Editor
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/health-record/form" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Health Record Form
+            Add Health Record
           </NavLink>
         </li>
         <li>

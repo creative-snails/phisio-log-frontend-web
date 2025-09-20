@@ -1,3 +1,5 @@
+import { FaMinusCircle } from "react-icons/fa";
+
 import "./TreatmentsTried.css";
 
 type TreatmentsTriedProps = {
@@ -24,7 +26,7 @@ const TreatmentsTried = ({ treatments, setTreatments }: TreatmentsTriedProps) =>
         <div key={i} className="treatment-item">
           <input type="text" value={treatment} onChange={(e) => updateTreatments(i, e.target.value)} />
           <button type="button" className="remove-button" onClick={() => removeTreatment(i)}>
-            X
+            <FaMinusCircle className="remove-icon" />
           </button>
         </div>
       ))}

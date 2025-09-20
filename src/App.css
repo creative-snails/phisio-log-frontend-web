@@ -276,8 +276,14 @@ input[type="text"]:focus {
 }
 
 .submit-button {
-  margin: var(--space-xl) auto 0;
+  margin-top: var(--space-xl);
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
   display: block;
+  width: fit-content;
+  position: relative;
+  left: calc((var(--space-2xl) + var(--space-sm)) / 2);
 }
 
 .timestamps-container {
@@ -453,7 +459,7 @@ input[type="text"]:focus {
   padding: var(--space-lg);
   margin-bottom: var(--space-md);
   box-shadow: var(--shadow-sm);
-  border-left: 4px solid var(--color-accent-peach);
+  border-left: 4px solid var(--color-secondary);
   transition: all var(--transition-normal);
 }
 

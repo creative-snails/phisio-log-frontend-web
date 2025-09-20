@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 
 import "./MedicalConsultationsForm.css";
 
@@ -83,9 +83,9 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
             {c.consultant && <h4>{c.consultant}</h4>}
             {c.diagnosis && <p className="diagnosis-summary">{c.diagnosis}</p>}
             {!c.consultant && !c.diagnosis && <h4>New Consultation</h4>}
-            <FaRegTrashAlt
-              className="bin-icon"
-              onClick={(e) => {
+            <FaMinusCircle
+              className="remove-icon"
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 removeConsultation(i);
               }}
@@ -116,7 +116,7 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
                   <div key={j} className="action-item">
                     <input type="text" value={action} onChange={(e) => updateAction(i, j, e.target.value)} />
                     <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
-                      X
+                      <FaMinusCircle className="remove-icon" />
                     </button>
                   </div>
                 ))}
