@@ -7,9 +7,11 @@ type TreatmentsTriedProps = {
   treatments: string[];
   setTreatments: (treatments: string[]) => void;
   formErrors?: FormErrors<string[]>;
+  touched?: boolean;
+  setTouched?: () => void;
 };
 
-const TreatmentsTried = ({ treatments, setTreatments, formErrors }: TreatmentsTriedProps) => {
+const TreatmentsTried = ({ treatments, setTreatments, formErrors, touched, setTouched }: TreatmentsTriedProps) => {
   const updateTreatments = (index: number, value: string) => {
     const updated = [...treatments];
     updated[index] = value;
@@ -31,18 +33,19 @@ const TreatmentsTried = ({ treatments, setTreatments, formErrors }: TreatmentsTr
             type="text"
             value={treatment}
             onChange={(e) => updateTreatments(i, e.target.value)}
-            className={formErrors?.[i]?._errors ? "input-error" : ""}
+            onBlur={setTouched}
+            className={touched && formErrors?.[i]?._errors ? "input-error" : ""}
           />
           <button type="button" className="remove-button" onClick={() => removeTreatment(i)}>
             X
           </button>
-          {renderErrors(formErrors?.[i])}
+          {touched && renderErrors(formErrors?.[i])}
         </div>
       ))}
       <button type="button" className="add-button" onClick={addTreatment}>
         + Add Treatment
       </button>
-      {renderErrors(formErrors?._errors)}
+      {touched && renderErrors(formErrors?._errors)}
     </div>
   );
 };

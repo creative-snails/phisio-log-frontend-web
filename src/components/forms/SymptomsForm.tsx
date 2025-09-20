@@ -12,6 +12,8 @@ type SymptomsFormProps = {
   addSymptom: () => void;
   removeSymptom: (index: number) => void;
   formErrors?: FormErrors<SymptomUI[]>;
+  touched?: { [index: number]: { [key in keyof SymptomUI]?: boolean } };
+  setTouched?: (index: number, field: keyof SymptomUI) => void;
 };
 
 const SymptomsForm = ({
@@ -21,6 +23,8 @@ const SymptomsForm = ({
   addSymptom,
   removeSymptom,
   formErrors,
+  touched,
+  setTouched,
 }: SymptomsFormProps) => {
   return (
     <div className="symptom-form-container">
@@ -46,18 +50,20 @@ const SymptomsForm = ({
                 value={symptom.name}
                 onChange={(e) => onSymptomChange(index, "name", e.target.value)}
                 placeholder="Enter symptom name"
-                className={formErrors?.[index]?._errors ? "input-error" : ""}
+                onBlur={() => setTouched && setTouched(index, "name")}
+                className={touched?.[index]?.name && formErrors?.[index]?.name?._errors ? "input-error" : ""}
               />
-              {renderErrors(formErrors?.[index]?.name)}
+              {touched?.[index]?.name && renderErrors(formErrors?.[index]?.name)}
 
               <label>Start Date</label>
               <input
                 type="date"
                 value={symptom.startDate}
                 onChange={(e) => onSymptomChange(index, "startDate", e.target.value)}
-                className={formErrors?.[index]?._errors ? "input-error" : ""}
+                onBlur={() => setTouched && setTouched(index, "startDate")}
+                className={touched?.[index]?.startDate && formErrors?.[index]?.startDate?._errors ? "input-error" : ""}
               />
-              {renderErrors(formErrors?.[index]?.startDate)}
+              {touched?.[index]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
               <label>Affected Parts</label>
               <div className="placeholder">{symptom.affectedParts}</div>
@@ -69,7 +75,7 @@ const SymptomsForm = ({
       <button type="button" className="add-button" onClick={addSymptom}>
         + Add Symptom
       </button>
-      {renderErrors(formErrors?._errors)}
+      {Object.keys(touched || {}).length > 0 && renderErrors(formErrors?._errors)}
     </div>
   );
 };

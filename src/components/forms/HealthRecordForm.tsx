@@ -9,6 +9,7 @@ import "~/utils/renderErrors.css";
 import ChatWidget from "~/components/chat/ChatWidget";
 import type { FormErrors } from "~/types/formErrors";
 import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types/types";
+import { statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
@@ -19,9 +20,9 @@ const HealthRecordForm = () => {
       description: "",
       symptoms: [],
       status: {
-        stage: "",
-        progression: "",
-        severity: "",
+        stage: statusOptions.stage[0].value,
+        severity: statusOptions.severity[0].value,
+        progression: statusOptions.progression[0].value,
       },
       treatmentsTried: [],
       medicalConsultations: [],
@@ -29,9 +30,22 @@ const HealthRecordForm = () => {
     loading: true,
     error: "",
   });
-  const [symptoms, setSymptoms] = useState<SymptomUI[]>([]);
   const [formErrors, setFormErrors] = useState<FormErrors<HealthRecord>>({});
   const [isValid, setIsValid] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
+  const [touchedStatus, setTouchedStatus] = useState<{ [key in keyof Status]?: boolean }>({});
+  const [touchedTreatments, setTouchedTreatments] = useState<boolean>(false);
+  const [touchedSymptoms, setTouchedSymptoms] = useState<{ [index: number]: { [key in keyof SymptomUI]?: boolean } }>(
+    {}
+  );
+  const [touchedConsultations, setTouchedConsultations] = useState<{
+    [index: number]: {
+      consultant?: boolean;
+      date?: boolean;
+      diagnosis?: boolean;
+      followUpActions?: boolean[];
+    };
+  }>({});
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -58,17 +72,8 @@ const HealthRecordForm = () => {
   const { data, loading, error } = recordFormData;
 
   useEffect(() => {
-    const loadedSymptoms = (data.symptoms || []).map((s: SymptomUI) => ({
-      ...s,
-      affectedParts: "Placeholder: affected parts coming soon",
-      isOpen: false,
-    }));
-    setSymptoms(loadedSymptoms);
-  }, [data.symptoms]);
-
-  useEffect(() => {
     validateForm();
-  }, [data, symptoms]);
+  }, [data]);
 
   const handleDescriptionChange = (value: string) => {
     setRecordFormData((prev) => ({
@@ -100,82 +105,96 @@ const HealthRecordForm = () => {
         medicalConsultations: newConsultations,
       },
     }));
+    setTouchedConsultations((prev) => {
+      const updated = { ...prev };
+      newConsultations.forEach((_, i) => {
+        if (!updated[i]) {
+          updated[i] = {
+            consultant: false,
+            date: false,
+            diagnosis: false,
+            followUpActions: [],
+          };
+        }
+      });
+
+      return updated;
+    });
     validateForm();
   };
 
   const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
-    const update = [...symptoms];
-    if (field === "name" || field === "startDate" || field === "affectedParts") {
-      update[index][field] = value;
-    }
-    setSymptoms(update);
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
     validateForm();
   };
 
   const toggleSymptom = (index: number) => {
-    const update = [...symptoms];
-    update[index].isOpen = !update[index].isOpen;
-    setSymptoms(update);
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      updatedSymptoms[index] = { ...updatedSymptoms[index], isOpen: !updatedSymptoms[index].isOpen };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
     validateForm();
   };
 
   const handleAddSymptom = () => {
-    setSymptoms([
-      ...symptoms,
-      { name: "", startDate: "", affectedParts: "Placeholder: affected parts coming soon", isOpen: true },
-    ]);
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        symptoms: [
+          ...prev.data.symptoms,
+          {
+            name: "",
+            startDate: "",
+            affectedParts: "Placeholder: affected parts coming soon",
+            isOpen: true,
+          },
+        ],
+      },
+    }));
     validateForm();
   };
 
   const handleRemoveSymptom = (index: number) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
-      const update = symptoms.filter((_, i) => i !== index);
-      setSymptoms(update);
+      setRecordFormData((prev) => ({
+        ...prev,
+        data: { ...prev.data, symptoms: prev.data.symptoms.filter((_, i) => i !== index) },
+      }));
       validateForm();
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parseResult = Z_HealthRecord.safeParse({ ...data, symptoms });
+    const parseResult = Z_HealthRecord.safeParse(data);
     if (!parseResult.success) {
       setFormErrors(parseResult.error.format() as unknown as FormErrors<HealthRecord>);
       setIsValid(false);
 
       return;
     }
-    console.log("Submitted record:", {
-      description: data.description,
-      treatmentsTried: data.treatmentsTried,
-      status: data.status,
-      medicalConsultations: data.medicalConsultations,
-      symptoms,
-    });
+    console.log("Submitted record:", data);
   };
 
   const validateForm = () => {
-    const normalizedSymptoms = symptoms.map((s) => ({
-      ...s,
-      startDate: s.startDate ? new Date(s.startDate) : undefined,
-    }));
-    const normalizedConsultations =
-      data.medicalConsultations?.map((c) => ({
-        ...c,
-        date: c.date ? new Date(c.date) : undefined,
-      })) ?? [];
     const parseResult = Z_HealthRecord.safeParse({
       ...data,
-      symptoms: normalizedSymptoms,
-      medicalConsultations: normalizedConsultations,
+      symptoms: data.symptoms,
     });
-
     if (parseResult.success) {
       setFormErrors({});
       setIsValid(true);
     } else {
       const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
       setFormErrors(formattedErrors);
-      console.log("Form validation errors:", parseResult.error.format);
       setIsValid(false);
     }
   };
@@ -212,13 +231,20 @@ const HealthRecordForm = () => {
             rows={4}
             value={data.description}
             onChange={(e) => handleDescriptionChange(e.target.value)}
+            onBlur={() => setTouchedFields((prev) => ({ ...prev, description: true }))}
             placeholder="Describe symptoms, context, or notes..."
-            className={formErrors?.description ? "input-error" : ""}
+            className={touchedFields.description && formErrors?.description ? "input-error" : ""}
           />
-          {renderErrors(formErrors.description)}
+          {touchedFields.description && renderErrors(formErrors.description)}
         </div>
         <div className="form-section">
-          <HealthStatusForm status={data.status} setStatus={setStatus} formErrors={formErrors.status} />
+          <HealthStatusForm
+            status={data.status}
+            setStatus={setStatus}
+            formErrors={formErrors.status}
+            touchedFields={touchedStatus}
+            setTouchedFields={(field) => setTouchedStatus((prev) => ({ ...prev, [field]: true }))}
+          />
         </div>
         <div className="form-section">
           <TreatmentsTried
@@ -231,16 +257,25 @@ const HealthRecordForm = () => {
               validateForm();
             }}
             formErrors={formErrors.treatmentsTried}
+            touched={touchedTreatments}
+            setTouched={() => setTouchedTreatments(true)}
           />
         </div>
         <div className="form-section">
           <SymptomsForm
-            symptoms={symptoms}
+            symptoms={data.symptoms}
             onSymptomChange={handleSymptomChange}
             toggleSymptom={toggleSymptom}
             addSymptom={handleAddSymptom}
             removeSymptom={handleRemoveSymptom}
             formErrors={formErrors.symptoms}
+            touched={touchedSymptoms}
+            setTouched={(index, field) =>
+              setTouchedSymptoms((prev) => ({
+                ...prev,
+                [index]: { ...prev[index], [field]: true },
+              }))
+            }
           />
         </div>
         <div className="form-section">
@@ -248,6 +283,22 @@ const HealthRecordForm = () => {
             consultations={data.medicalConsultations}
             setConsultations={updateConsultations}
             formErrors={formErrors.medicalConsultations}
+            touched={touchedConsultations}
+            setTouched={(index, field, actionIndex) => {
+              setTouchedConsultations((prev) => {
+                const updated = { ...prev };
+                if (!updated[index]) updated[index] = {};
+
+                if (field === "followUpActions" && actionIndex !== undefined) {
+                  if (!updated[index].followUpActions) updated[index].followUpActions = [];
+                  updated[index].followUpActions[actionIndex] = true;
+                } else if (field === "consultant" || field === "date" || field === "diagnosis") {
+                  updated[index][field] = true;
+                }
+
+                return updated;
+              });
+            }}
           />
         </div>
         <button type="submit" className="submit-button" disabled={!isValid}>

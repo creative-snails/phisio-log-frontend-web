@@ -19,15 +19,11 @@ export const Z_StatusOptions = z.object({
   progression: z.array(Z_LabeledEnumOption(Z_Progression)),
 });
 
-export const Z_Status = z
-  .object({
-    stage: Z_Stage,
-    severity: Z_Severity,
-    progression: Z_Progression,
-  })
-  .refine((data) => data.stage !== undefined, { message: "Stage is required", path: ["stage"] })
-  .refine((data) => data.severity !== undefined, { message: "Severity is required", path: ["severity"] })
-  .refine((data) => data.progression !== undefined, { message: "Progression is required", path: ["progression"] });
+export const Z_Status = z.object({
+  stage: Z_Stage,
+  severity: Z_Severity,
+  progression: Z_Progression,
+});
 
 export const Z_Description = z
   .string()

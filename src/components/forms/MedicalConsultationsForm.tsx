@@ -18,9 +18,24 @@ type MedicalConsultationsFormProps = {
   consultations: Consultation[];
   setConsultations: (consultations: Consultation[]) => void;
   formErrors?: FormErrors<Consultation[]>;
+  touched?: {
+    [index: number]: {
+      consultant?: boolean;
+      date?: boolean;
+      diagnosis?: boolean;
+      followUpActions?: boolean[];
+    };
+  };
+  setTouched?: (index: number, field: keyof Consultation | "followUpActions", actionIndex?: number) => void;
 };
 
-const MedicalConsultationsForm = ({ consultations, setConsultations, formErrors }: MedicalConsultationsFormProps) => {
+const MedicalConsultationsForm = ({
+  consultations,
+  setConsultations,
+  formErrors,
+  touched,
+  setTouched,
+}: MedicalConsultationsFormProps) => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const addConsultation = () => {
@@ -101,27 +116,30 @@ const MedicalConsultationsForm = ({ consultations, setConsultations, formErrors 
                 type="text"
                 value={c.consultant}
                 onChange={(e) => updateConsultation(i, "consultant", e.target.value)}
-                className={formErrors?.[i]?._errors ? "input-error" : ""}
+                onBlur={() => setTouched && setTouched(i, "consultant")}
+                className={touched?.[i]?.consultant && formErrors?.[i]?.consultant?._errors ? "input-error" : ""}
               />
-              {renderErrors(formErrors?.[i]?.consultant)}
+              {touched?.[i]?.consultant && renderErrors(formErrors?.[i]?.consultant)}
 
               <label>Date</label>
               <input
                 type="date"
                 value={c.date}
                 onChange={(e) => updateConsultation(i, "date", e.target.value)}
-                className={formErrors?.[i]?._errors ? "input-error" : ""}
+                onBlur={() => setTouched && setTouched(i, "date")}
+                className={touched?.[i]?.date && formErrors?.[i]?.date?._errors ? "input-error" : ""}
               />
-              {renderErrors(formErrors?.[i]?.date)}
+              {touched?.[i].date && renderErrors(formErrors?.[i]?.date)}
 
               <label>Diagnosis</label>
               <input
                 type="text"
                 value={c.diagnosis}
                 onChange={(e) => updateConsultation(i, "diagnosis", e.target.value)}
-                className={formErrors?.[i]?._errors ? "input-error" : ""}
+                onBlur={() => setTouched && setTouched(i, "diagnosis")}
+                className={touched?.[i]?.diagnosis && formErrors?.[i]?.diagnosis?._errors ? "input-error" : ""}
               />
-              {renderErrors(formErrors?.[i]?.diagnosis)}
+              {touched?.[i].diagnosis && renderErrors(formErrors?.[i]?.diagnosis)}
 
               <label>Follow-Up Action</label>
               <div className="follow-up-actions">
@@ -131,12 +149,17 @@ const MedicalConsultationsForm = ({ consultations, setConsultations, formErrors 
                       type="text"
                       value={action}
                       onChange={(e) => updateAction(i, j, e.target.value)}
-                      className={formErrors?.[i]?.followUpActions?.[j]?._errors ? "input-error" : ""}
+                      onBlur={() => setTouched && setTouched(i, "followUpActions", j)}
+                      className={
+                        touched?.[i]?.followUpActions?.[j] && formErrors?.[i]?.followUpActions?.[j]?._errors
+                          ? "input-error"
+                          : ""
+                      }
                     />
                     <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
                       X
                     </button>
-                    {renderErrors(formErrors?.[i]?.followUpActions?.[j])}
+                    {touched?.[i]?.followUpActions?.[j] && renderErrors(formErrors?.[i]?.followUpActions?.[j])}
                   </div>
                 ))}
                 <button type="button" className="add-button" onClick={() => addAction(i)}>
@@ -151,7 +174,13 @@ const MedicalConsultationsForm = ({ consultations, setConsultations, formErrors 
       <button type="button" className="add-button" onClick={addConsultation}>
         + Add Consultation
       </button>
-      {renderErrors(formErrors?._errors)}
+      {Object.keys(touched || {}).some(
+        (i) =>
+          touched?.[Number(i)]?.consultant ||
+          touched?.[Number(i)]?.date ||
+          touched?.[Number(i)]?.diagnosis ||
+          (touched?.[Number(i)]?.followUpActions?.some(Boolean) ?? false)
+      ) && renderErrors(formErrors?._errors)}
     </div>
   );
 };
