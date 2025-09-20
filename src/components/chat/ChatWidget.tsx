@@ -57,13 +57,11 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
     // CHAT SESSION EXISTS
     if (existingChatSession) {
-      console.log("Chat session exists!!!");
       const parsedChatHistory: ChatHistoryType = JSON.parse(existingChatSession);
       setChatHistory(parsedChatHistory);
 
       // Within the same context
       if (parsedChatHistory.id === healthRecordId) {
-        console.log("Within the same contxt");
         setShowContextButtons(false);
         setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
 
@@ -71,19 +69,18 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
       } else {
         // Continue chat selected
         if (continueChat) {
-          console.log("Within different context --> chat continuation");
           setShowContextButtons(false);
           setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
         } else {
+          setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
           setShowContextButtons(true);
         }
       }
 
       // NO CHAT SESSION
     } else {
-      console.log("Not chat session!!!");
       if (isValidRecordId) {
-        const record = healthRecord || (await fetchHealthRecord(healthRecordId));
+        const record = await fetchHealthRecord(healthRecordId);
         setHealthRecord(record || null);
         if (record) {
           setChatHistory({
@@ -108,7 +105,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
   useEffect(() => {
     if (!showChatWidget) return;
-    console.log("FROM USE EFFECT - INITIALIZING");
     initializeChat();
   }, [showChatWidget]);
 
@@ -133,6 +129,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
     localStorage.removeItem("chat_history");
+    setHealthRecord(null);
     setShowContextButtons(false);
     initializeChat();
   };
@@ -159,13 +156,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
         {/* Chat Body */}
         <div className="chat-context-indicator">
-          <div>{`Context: ${
-            showContextButtons
-              ? chatHistory.id === undefined
-                ? "General"
-                : "Previous Record"
-              : (healthRecord?.title ?? "General")
-          }`}</div>
+          <div>{`${healthRecord?.title ?? "General Chat"}`}</div>
         </div>
         <div ref={chatBodyRef} className="chat-body">
           {chatHistory?.history.map((chat, index) => (
@@ -196,19 +187,16 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         {/* Chat Footer */}
         {showContextButtons ? (
           <div className="chat-context-section">
-            <div className="message">
-              I see you’re now viewing {healthRecord?.title} record. Would you like to switch focus to this, or continue
-              where we left off?
-            </div>
+            <div className="message">Your chat focus doesn’t match the page you’re on. Would you like to:</div>
             <div className="chat-context-buttons">
               <button
                 onClick={() => {
                   initializeChat(true);
                 }}
               >
-                Continue Chat
+                Continue with {healthRecord?.title ? healthRecord?.title : "General Chat"}
               </button>
-              <button onClick={handleResetChat}>Switch to {healthRecord?.title}</button>
+              <button onClick={handleResetChat}>Switch Focus</button>
             </div>
           </div>
         ) : (
