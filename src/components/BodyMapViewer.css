@@ -9,10 +9,6 @@
   width: 100%;
   max-width: 400px;
   height: 800px;
-  background: white;
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 

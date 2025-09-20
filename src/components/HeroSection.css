@@ -15,7 +15,7 @@
 .hero-title {
   font-size: 3rem;
   font-weight: 700;
-  color: rgb(46, 83, 82);
+  color: #536ba1;
   margin: 0;
   line-height: 1.2;
 }
@@ -49,49 +49,6 @@
 
 .hero-subtitle span {
   font-weight: 500;
-}
-
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.action-button {
-  display: flex;
-  min-width: 300px;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 22px;
-  border: none;
-  border-radius: 16px;
-  font-weight: 500;
-  color: var(--text-heading);
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.action-button:nth-of-type(1) {
-  background-color: rgb(249, 235, 218);
-}
-
-.action-button:nth-of-type(2) {
-  background-color: rgb(230, 239, 228);
-}
-
-.action-button:nth-of-type(3) {
-  background-color: rgb(239, 222, 220);
-}
-
-.action-button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-.feature-emoji {
-  font-size: 1.2rem;
 }
 
 .hero-decoration {
@@ -150,11 +107,6 @@
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.2rem;
-  }
-
-  .hero-features {
-    flex-direction: column;
-    align-items: center;
   }
 
   .floating-shape {

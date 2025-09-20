@@ -23,11 +23,6 @@ const SideNavBar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/body-map" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Body Map
-          </NavLink>
-        </li>
-        <li>
           <NavLink to="/reports" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Tracking & Reporting
           </NavLink>

@@ -63,7 +63,7 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
   return (
     <div className={`body-map-viewer ${className}`}>
       <div className="body-map-container">
-        <svg viewBox="950 400 2800 5600" className="body-svg" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="950 400 2800 5400" className="body-svg" xmlns="http://www.w3.org/2000/svg">
           {frontSide.map((part) => (
             <path
               key={part.id}

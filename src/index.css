@@ -40,22 +40,3 @@ li {
 *::after {
   box-sizing: inherit;
 }
-
-.date {
-  color: #666;
-  font-size: 0.9em;
-  min-width: 660px;
-}
-
-.details {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-}
-
-.vitals {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 10px;
-}

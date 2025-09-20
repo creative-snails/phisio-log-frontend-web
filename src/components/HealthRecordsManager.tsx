@@ -36,9 +36,9 @@ const HealthRecordsManager = () => {
 
   return (
     <div className="home">
-      <h2 className="health-records-title">Health Timeline</h2>
       <div className="health-dashboard">
         <div className="timeline-section">
+          <h2 className="dashboard-section-title timeline-title">Health Timeline</h2>
           {records.length === 0 ? (
             <div className="empty-state">
               <p>No health records available.</p>
@@ -49,7 +49,7 @@ const HealthRecordsManager = () => {
           )}
         </div>
         <div className="body-map-section">
-          {/* <h3>Body Overview</h3> */}
+          <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
           <BodyMapViewer records={records} />
         </div>
       </div>

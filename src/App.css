@@ -21,38 +21,6 @@
   gap: 12px;
 }
 
-/* .sign-in-button,
-.sign-out-button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--border-radius-pill);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 100;
-}
-
-.sign-in-button {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  color: #283132 !important;
-}
-
-.sign-in-button:hover {
-  background-color: var(--accent-primary-hover);
-  transform: translateY(-1px);
-}
-
-.sign-out-button {
-  background-color: var(--accent-peach);
-  color: var(--text-heading);
-}
-
-.sign-out-button:hover {
-  background-color: var(--accent-peach-hover);
-  transform: translateY(-1px);
-} */
-
 /* Layout */
 .layout {
   display: flex;
@@ -72,14 +40,6 @@
   margin: 0 auto;
   padding: 0;
   color: var(--text-body);
-}
-
-.health-records-title {
-  font-size: 2rem;
-  margin: 2rem 0 1.5rem 2rem;
-  color: var(--text-heading);
-  font-weight: 700;
-  text-align: left;
 }
 
 .content-wrapper h3 {
@@ -347,11 +307,27 @@ input[type="text"]:focus {
   text-align: center;
 }
 
+/* Section titles for Health Timeline and Body Map */
+.dashboard-section-title {
+  margin: 0 0 1.5rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #536ba1; /* Blue tone */
+}
+
+.dashboard-section-title.timeline-title {
+  text-align: left;
+}
+
+.dashboard-section-title.bodymap-title {
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .health-dashboard {
     flex-direction: column;
   }
-  
+
   .body-map-section {
     flex: none;
     position: static;
