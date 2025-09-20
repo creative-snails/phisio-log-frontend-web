@@ -33,7 +33,6 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
       }
     });
     setAffectedParts(parts);
-    console.log("Affected parts:", parts);
   }, [records]);
 
   const handlePartClick = (partId: string) => {

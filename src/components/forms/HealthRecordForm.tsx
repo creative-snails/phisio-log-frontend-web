@@ -119,13 +119,7 @@ const HealthRecordForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Submitted record:", {
-      description: data.description,
-      treatmentsTried: data.treatmentsTried,
-      status: data.status,
-      medicalConsultations: data.medicalConsultations,
-      symptoms,
-    });
+    // Form submitted successfully
   };
 
   return loading ? (
