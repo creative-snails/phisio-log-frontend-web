@@ -15,21 +15,21 @@
 .hero-title {
   font-size: 3rem;
   font-weight: 700;
-  color: #536ba1;
+  color: var(--color-secondary);
   margin: 0;
   line-height: 1.2;
 }
 
 .sign-in-button {
   background: rgb(209, 224, 249);
-  color: #283132;
+  color: var(--color-text-primary);
   padding: 12px 18px;
   border: solid rgba(208, 228, 230, 0.9) 2px;
   border-radius: 10px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
   position: absolute;
   top: 0px;
   right: 0px;

@@ -1,27 +1,28 @@
-/* TopNavBar */
+/* ===== NAVIGATION COMPONENTS ===== */
+
 .top-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text-heading);
-  padding: 16px 24px;
-  box-shadow: var(--shadow-soft);
+  color: var(--color-text-heading);
+  padding: var(--space-lg) var(--space-2xl);
+  box-shadow: var(--shadow-md);
 }
 
 .top-left .home-button {
-  color: var(--text-heading);
+  color: var(--color-text-heading);
   text-decoration: none;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
 }
 
 .top-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-md);
 }
 
-/* Layout */
+/* ===== LAYOUT SYSTEM ===== */
 .layout {
   display: flex;
   height: 100vh;
@@ -36,10 +37,10 @@
 }
 
 .content-wrapper {
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 0;
-  color: var(--text-body);
+  color: var(--color-text-secondary);
 }
 
 .content-wrapper h3 {
@@ -69,11 +70,13 @@
   box-sizing: border-box;
 }
 
+/* ===== SIDEBAR NAVIGATION ===== */
+
 .sidebar-brand {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: rgb(40, 49, 49);
-  margin-bottom: 32px;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-heading);
+  margin-bottom: var(--space-2xl);
   text-align: center;
 }
 
@@ -84,18 +87,18 @@
 }
 
 .nav-list li {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm);
 }
 
 .nav-link {
   display: block;
   text-decoration: none;
-  color: rgb(40, 49, 49);
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding: 12px 16px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  color: var(--color-text-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
 }
 
 .nav-link:hover {
@@ -106,17 +109,18 @@
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-/* HealthRecordForm */
+/* ===== FORM COMPONENTS ===== */
+
 .form-wrapper {
-  background-color: var(--text-white);
+  background-color: var(--color-bg-primary);
   border: none;
-  border-radius: var(--border-radius);
-  padding: 2rem;
-  max-width: 700px;
-  margin: 2rem auto;
-  color: var(--text-body);
-  box-shadow: var(--shadow-card);
-  border-top: 4px solid var(--accent-peach);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xl);
+  max-width: var(--form-max-width);
+  margin: var(--space-2xl) auto;
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--color-accent-peach);
 }
 
 .form-wrapper h2 {
@@ -312,7 +316,7 @@ input[type="text"]:focus {
   margin: 0 0 1.5rem 0;
   font-size: 2rem;
   font-weight: bold;
-  color: #536ba1; /* Blue tone */
+  color: var(--color-secondary);
 }
 
 .dashboard-section-title.timeline-title {
