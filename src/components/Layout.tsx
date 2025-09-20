@@ -1,3 +1,4 @@
+import HeroSection from "./HeroSection";
 import SideNavBar from "./SideNavBar";
 
 interface LayoutProps {
@@ -7,7 +8,10 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="layout">
       <SideNavBar />
-      <main className="page-content">{children}</main>
+      <main className="page-content">
+        <HeroSection />
+        {children}
+      </main>
     </div>
   );
 };

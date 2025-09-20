@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { LuRefreshCw } from "react-icons/lu";
 
 import "./BodyMapViewer.css";
-import { type bodyPartData, frontSide } from "~/services/bodyParts";
+import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
 import type { HealthRecord } from "~/types";
 
 interface BodyMapViewerProps {
@@ -13,6 +14,7 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [affectedParts, setAffectedParts] = useState<{ [key: string]: string }>({});
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const parts: { [key: string]: string } = {};
@@ -60,11 +62,13 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
     return "#f8f9fa"; // Light gray - default
   };
 
+  const currentSide = isFlipped ? backSide : frontSide;
+
   return (
     <div className={`body-map-viewer ${className}`}>
       <div className="body-map-container">
         <svg viewBox="950 400 2800 5400" className="body-svg" xmlns="http://www.w3.org/2000/svg">
-          {frontSide.map((part) => (
+          {currentSide.map((part) => (
             <path
               key={part.id}
               d={part.d}
@@ -79,6 +83,12 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
             />
           ))}
         </svg>
+      </div>
+
+      <div className="flip-controls">
+        <div className="flip-icon" onClick={() => setIsFlipped(!isFlipped)} title="Flip to other side">
+          <LuRefreshCw />
+        </div>
       </div>
 
       {selectedPart && (
