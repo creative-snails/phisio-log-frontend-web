@@ -74,7 +74,7 @@
 .timeline-group-items {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   margin-left: 8px;
 }
 
@@ -172,6 +172,9 @@
 .timeline-content.expanded {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transform: scale(1.02);
+  z-index: 10;
+  position: relative;
+  margin: var(--space-lg) 0;
 }
 
 .timeline-expanded-content {
@@ -194,10 +197,33 @@
   }
 }
 
+.description-section {
+  background: var(--color-bg-secondary);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+  margin-bottom: var(--space-lg);
+}
+
+.description-section h4 {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--color-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.description-section p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: #333;
+}
+
 .expanded-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-xl);
+  align-items: stretch;
 }
 
 .detail-section {

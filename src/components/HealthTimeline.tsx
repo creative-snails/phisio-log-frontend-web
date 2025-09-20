@@ -107,7 +107,7 @@ const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
                   >
                     <div className="timeline-header">
                       <h3>
-                        {record.description} with {record.status.severity} symptoms
+                        {record.title || record.description} with {record.status.severity} symptoms
                       </h3>
                     </div>
                     <div className="timeline-subheader">
@@ -135,6 +135,12 @@ const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
                     {/* Expanded Details */}
                     {expandedRecordId === record.id && (
                       <div className="timeline-expanded-content">
+                        {record.description && (
+                          <div className="description-section">
+                            <h4>Description</h4>
+                            <p>{record.description}</p>
+                          </div>
+                        )}
                         <div className="expanded-details">
                           <div className="detail-section">
                             <h4>Latest Medical Consultation</h4>
