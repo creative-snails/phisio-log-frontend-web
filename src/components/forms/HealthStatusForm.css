@@ -34,23 +34,93 @@
   color: #333;
 }
 
-.health-status-form select {
-  padding: 0.5rem 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  color: #222;
+/* React Select Custom Styling */
+.react-select-container .react-select__control {
+  border: 1px solid rgba(83, 107, 161, 0.2);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-primary);
+  padding: 2px 8px;
+  min-height: 44px;
+  box-shadow: none;
+  transition: all var(--transition-normal);
+}
+
+.react-select-container .react-select__control:hover {
+  border-color: rgba(83, 107, 161, 0.3);
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px rgba(83, 107, 161, 0.1);
+}
+
+.react-select-container .react-select__value-container {
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.react-select-container .react-select__single-value {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+}
+
+.react-select-container .react-select__placeholder {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+}
+
+.react-select-container .react-select__indicator-separator {
+  display: none;
+}
+
+.react-select-container .react-select__dropdown-indicator {
+  color: rgba(83, 107, 161, 0.6);
+  transition: color var(--transition-normal);
+}
+
+.react-select-container .react-select__dropdown-indicator:hover {
+  color: var(--color-secondary);
+}
+
+.react-select-container .react-select__menu {
+  border: 1px solid rgba(83, 107, 161, 0.2);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 2px;
+  overflow: hidden;
+}
+
+.react-select-container .react-select__menu-list {
+  padding: 0;
+}
+
+.react-select-container .react-select__option {
+  padding: var(--space-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  background-color: white;
   cursor: pointer;
-  transition: border-color 0.3s ease;
-  background-color: #fafafa;
+  transition: all var(--transition-fast);
+  border-bottom: 1px solid rgba(83, 107, 161, 0.05);
 }
 
-.health-status-form select:hover {
-  border-color: #007bff;
+.react-select-container .react-select__option:last-child {
+  border-bottom: none;
 }
 
-.health-status-form select:focus {
-  outline: none;
-  border-color: #0056b3;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.react-select-container .react-select__option--is-focused {
+  background-color: rgba(83, 107, 161, 0.05);
+  color: var(--color-secondary);
+}
+
+.react-select-container .react-select__option--is-selected {
+  background-color: var(--color-secondary);
+  color: white;
+  font-weight: var(--font-weight-medium);
+}
+
+.react-select-container .react-select__option--is-selected:hover {
+  background-color: var(--color-secondary);
 }

@@ -2,14 +2,14 @@
   /* ===== COLOR SYSTEM ===== */
 
   /* Primary Brand Colors */
-  --color-primary: #4ca7a2;
-  --color-primary-hover: #3d8a86;
+  --color-primary: #536ba1;
+  --color-primary-hover: #4a5f91;
 
   /* Secondary Brand Colors */
   --color-secondary: #536ba1; /* Blue tone for section titles */
 
   /* Accent Colors */
-  --color-accent-teal: #4ca7a2;
+  --color-accent-teal: #536ba1;
   --color-accent-peach: #f8d8b3;
   --color-accent-peach-hover: #f5d099;
   --color-accent-sage: #a8c8a7;
@@ -20,8 +20,8 @@
   --color-text-primary: #2d2d2d;
   --color-text-secondary: #555555;
   --color-text-tertiary: #666666;
-  --color-text-heading: rgb(44, 82, 82);
-  --color-text-brand: rgb(50, 89, 85);
+  --color-text-heading: #3a4a6b;
+  --color-text-brand: #536ba1;
   --color-text-white: #ffffff;
   --color-text-muted: #999999;
 
@@ -83,7 +83,7 @@
   /* ===== LEGACY SUPPORT (for backward compatibility) ===== */
   --bg-white: var(--color-bg-primary);
   --bg-secondary: var(--color-bg-secondary);
-  --accent-teal: var(--color-accent-teal);
+  --accent-teal: var(--color-secondary);
   --accent-peach: var(--color-accent-peach);
   --accent-sage: var(--color-accent-sage);
   --accent-lavender: var(--color-accent-lavender);
@@ -97,8 +97,8 @@
   --border-radius: var(--radius-md);
   --border-radius-small: var(--radius-sm);
   --border-radius-pill: var(--radius-full);
-  --accent-primary: var(--color-primary);
-  --accent-primary-hover: var(--color-primary-hover);
+  --accent-primary: var(--color-secondary);
+  --accent-primary-hover: #4a5f91;
   --accent-peach-hover: var(--color-accent-peach-hover);
   --accent-lavender-hover: var(--color-accent-lavender-hover);
 }

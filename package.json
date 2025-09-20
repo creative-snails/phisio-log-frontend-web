@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "tsc": "tsc -b",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "verify-npm": "bash scripts/verify-npm-config.sh"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -19,6 +20,7 @@
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.6.0",
+    "react-select": "^5.10.2",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {

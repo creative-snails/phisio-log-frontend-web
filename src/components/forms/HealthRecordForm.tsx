@@ -5,6 +5,7 @@ import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
 
+import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import type { HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 
@@ -132,68 +133,119 @@ const HealthRecordForm = () => {
   ) : error ? (
     <div style={{ color: "red" }}>Error: {error}</div>
   ) : (
-    <>
-      <form className="form-wrapper" onSubmit={handleSubmit}>
-        <h2>Edit Health Record</h2>
-        <div className="timestamps-container">
+    <div className="health-record-page">
+      <div className="health-dashboard">
+        <div className="form-section-wrapper">
+          <h2 className="dashboard-section-title form-title">{id ? "Edit Health Record" : "Add Health Record"}</h2>
           {data.createdAt && (
-            <p>
-              <strong>Created: </strong>
-              {new Date(data.createdAt).toLocaleString()}
-            </p>
+            <div className="timestamps-container">
+              <p>
+                <strong>Created: </strong>
+                {new Date(data.createdAt).toLocaleString()}
+              </p>
+              {data.updatedAt && (
+                <p>
+                  <strong>Updated: </strong>
+                  {new Date(data.updatedAt).toLocaleString()}
+                </p>
+              )}
+            </div>
           )}
-          {data.updatedAt && (
-            <p>
-              <strong>Updated: </strong>
-              {new Date(data.updatedAt).toLocaleString()}
-            </p>
-          )}
+          <form className="form-timeline-wrapper" onSubmit={handleSubmit}>
+            <div className="form-timeline">
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>General Information</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <label htmlFor="description" className="sr-only">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      rows={4}
+                      value={data.description}
+                      onChange={(e) => handleDescriptionChange(e.target.value)}
+                      placeholder="Share details about your symptoms, their impact, or any relevant context that might help track your health journey..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>Health Status</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <HealthStatusForm status={data.status} setStatus={setStatus} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>Treatments & Therapies</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <TreatmentsTried
+                      treatments={data.treatmentsTried}
+                      setTreatments={(updated) =>
+                        setRecordFormData((prev) => ({
+                          ...prev,
+                          data: { ...prev.data, treatmentsTried: updated },
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>Symptoms & Body Parts</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <SymptomsForm
+                      symptoms={symptoms}
+                      onSymptomChange={handleSymptomChange}
+                      toggleSymptom={toggleSymptom}
+                      addSymptom={handleAddSymptom}
+                      removeSymptom={handleRemoveSymptom}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>Medical Consultations</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <MedicalConsultationsForm
+                      consultations={data.medicalConsultations}
+                      setConsultations={updateConsultations}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="submit" className="submit-button">
+              Submit
+            </button>
+          </form>
         </div>
-        <div className="form-section">
-          <h3>Description</h3>
-          <label htmlFor="description" className="sr-only">
-            Description
-          </label>
-          <textarea
-            id="description"
-            rows={4}
-            value={data.description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
-            placeholder="Describe symptoms, context, or notes..."
-          />
+        <div className="body-map-section">
+          <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
+          <BodyMapViewer records={data.id ? [data] : []} />
         </div>
-        <div className="form-section">
-          <HealthStatusForm status={data.status} setStatus={setStatus} />
-        </div>
-        <div className="form-section">
-          <TreatmentsTried
-            treatments={data.treatmentsTried}
-            setTreatments={(updated) =>
-              setRecordFormData((prev) => ({
-                ...prev,
-                data: { ...prev.data, treatmentsTried: updated },
-              }))
-            }
-          />
-        </div>
-        <div className="form-section">
-          <SymptomsForm
-            symptoms={symptoms}
-            onSymptomChange={handleSymptomChange}
-            toggleSymptom={toggleSymptom}
-            addSymptom={handleAddSymptom}
-            removeSymptom={handleRemoveSymptom}
-          />
-        </div>
-        <div className="form-section">
-          <MedicalConsultationsForm consultations={data.medicalConsultations} setConsultations={updateConsultations} />
-        </div>
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-      </form>
+      </div>
       <ChatWidget healthRecordId={data.id} />
-    </>
+    </div>
   );
 };
 

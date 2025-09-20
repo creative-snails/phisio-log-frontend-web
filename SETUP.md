@@ -18,9 +18,28 @@
    ```
 
    ⚠️ While dependencies are handled inside Docker, we recommend installing them locally too for IDE features like linting and autocomplete.
-
    - Use `npm ci` or `yarn install --immutable`
    - Avoid plain `npm install` or `yarn install`
+
+   📝 **Note on npm registry**: This project includes a `.npmrc` file that ensures the public npm registry is used. The Docker build is also configured to explicitly use the public registry, preventing issues with private corporate registries.
+
+<br>
+
+### Installing New Packages
+
+This project is configured to automatically use the public npm registry via `.npmrc`. Simply use standard npm commands:
+
+```bash
+# Install dependencies
+npm install package-name
+npm install -D package-name  # for dev dependencies
+```
+
+⚠️ **Important**: Always commit both `package.json` AND `package-lock.json` after installing packages.
+
+💡 **Troubleshooting**: If you encounter registry authentication errors, run `npm run verify-npm` to check the configuration.
+
+<br>
 
 2. **Build and start the app:**
 

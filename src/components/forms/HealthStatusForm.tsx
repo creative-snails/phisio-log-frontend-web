@@ -1,5 +1,12 @@
+import Select from "react-select";
+
 import "./HealthStatusForm.css";
 import type { Status } from "~/types";
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
 
 interface HealthStatusFormProps {
   status: Status;
@@ -38,46 +45,73 @@ const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
 
   return (
     <div className="health-status-section">
-      <h3 className="section-title">Status</h3>
       <div className="health-status-form">
         <div className="form-group">
           <label>Stage:</label>
-          <select
-            value={status.stage || statusOptions.stage.default}
-            onChange={(e) => setStatus("stage", e.target.value)}
-          >
-            {statusOptions.stage.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
+          <Select<SelectOption>
+            options={statusOptions.stage.options.map(({ display, value }) => ({
+              label: display,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.stage.options.find(
+                  (option) => option.value === (status.stage || statusOptions.stage.default)
+                )?.display || "Open",
+              value: status.stage || statusOptions.stage.default,
+            }}
+            onChange={(selectedOption) => setStatus("stage", selectedOption?.value || statusOptions.stage.default)}
+            placeholder="Select stage"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
         </div>
         <div className="form-group">
           <label>Severity:</label>
-          <select
-            value={status.severity || statusOptions.severity.default}
-            onChange={(e) => setStatus("severity", e.target.value)}
-          >
-            {statusOptions.severity.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
+          <Select<SelectOption>
+            options={statusOptions.severity.options.map(({ display, value }) => ({
+              label: display,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.severity.options.find(
+                  (option) => option.value === (status.severity || statusOptions.severity.default)
+                )?.display || "Variable",
+              value: status.severity || statusOptions.severity.default,
+            }}
+            onChange={(selectedOption) =>
+              setStatus("severity", selectedOption?.value || statusOptions.severity.default)
+            }
+            placeholder="Select severity"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
         </div>
         <div className="form-group">
           <label>Progression:</label>
-          <select
-            value={status.progression || statusOptions.progression.default}
-            onChange={(e) => setStatus("progression", e.target.value)}
-          >
-            {statusOptions.progression.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
+          <Select<SelectOption>
+            options={statusOptions.progression.options.map(({ display, value }) => ({
+              label: display,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.progression.options.find(
+                  (option) => option.value === (status.progression || statusOptions.progression.default)
+                )?.display || "Stable",
+              value: status.progression || statusOptions.progression.default,
+            }}
+            onChange={(selectedOption) =>
+              setStatus("progression", selectedOption?.value || statusOptions.progression.default)
+            }
+            placeholder="Select progression"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
         </div>
       </div>
     </div>

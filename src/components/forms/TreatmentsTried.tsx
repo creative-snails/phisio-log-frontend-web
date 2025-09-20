@@ -20,7 +20,6 @@ const TreatmentsTried = ({ treatments, setTreatments }: TreatmentsTriedProps) =>
 
   return (
     <div className="treatments-tried-container">
-      <h3>Treatments Tried</h3>
       {treatments.map((treatment, i) => (
         <div key={i} className="treatment-item">
           <input type="text" value={treatment} onChange={(e) => updateTreatments(i, e.target.value)} />

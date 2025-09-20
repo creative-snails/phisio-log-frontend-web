@@ -1,66 +1,93 @@
 .consultation-form-container {
-  margin: auto;
-  max-width: 700px;
+  margin: 0;
+  max-width: none;
 }
 
 .consultation-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.75rem;
-  background-color: #fafafa;
-  transition: box-shadow 0.4s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0, 05);
-  margin: 1rem;
+  padding: var(--space-lg) 0;
+  transition: all var(--transition-normal);
   position: relative;
+}
+
+/* Add border to all consultation cards */
+.consultation-card {
+  border-bottom: 1px solid var(--color-border-medium, #e9ecef);
+}
+
+/* Remove border from the last consultation card */
+.consultation-card:last-of-type {
+  border-bottom: none !important;
+}
+
+.consultation-card:hover {
+  background-color: rgba(83, 107, 161, 0.02);
+  margin: 0 calc(-1 * var(--space-lg));
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+  border-radius: var(--radius-sm);
 }
 
 .consultation-header {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
+  align-items: flex-start;
+  gap: var(--space-xs);
   cursor: pointer;
-  padding-right: 2.5rem;
+  padding: var(--space-sm) 0;
   position: relative;
 }
 
 .consultation-header h4 {
   margin: 0;
-  font-size: 1.2rem;
-  color: #333;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
 }
 
 .consultation-header .diagnosis-summary {
   margin: 0;
-  font-size: 0.9rem;
-  color: #666;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 .consultation-body {
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
-  gap: 0.5rem;
+  margin-top: var(--space-md);
+  gap: var(--space-md);
 }
 
 .consultation-body label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: var(--space-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 .consultation-body input,
-.consultation-body textarea {
-  padding: 0.5rem;
-  border: 2px solid #ccc;
-  border-radius: 6px;
+.consultation-body textarea,
+.consultation-body select {
+  padding: var(--space-md);
+  border: 1px solid rgba(83, 107, 161, 0.2);
+  border-radius: var(--radius-sm);
   width: 100%;
-  transition: border 0.3s;
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  background-color: var(--color-bg-primary);
+  transition: all var(--transition-normal);
 }
 
 .consultation-body input:focus,
-.consultation-body textarea:focus {
-  border-color: #007bff;
+.consultation-body textarea:focus,
+.consultation-body select:focus {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px rgba(83, 107, 161, 0.1);
   outline: none;
+}
+
+.consultation-body textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .follow-up-actions {

@@ -5,6 +5,7 @@ README.md
 Dockerfile
 .dockerignore
 compose.yml
+.npmrc
 
 # Build outputs
 dist

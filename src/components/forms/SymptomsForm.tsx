@@ -14,11 +14,10 @@ type SymptomsFormProps = {
 const SymptomsForm = ({ symptoms, onSymptomChange, toggleSymptom, addSymptom, removeSymptom }: SymptomsFormProps) => {
   return (
     <div className="symptom-form-container">
-      <h3>Symptoms</h3>
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
-            <h4>{symptom.name}</h4>
+            <h4>{symptom.name || "New Symptom"}</h4>
           </div>
           <FaRegTrashAlt
             className="trash-icon"

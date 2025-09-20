@@ -77,12 +77,12 @@ const MedicalConsultationsForm = ({ consultations, setConsultations }: MedicalCo
 
   return (
     <div className="Consultations-form-container">
-      <h3>Medical Consultations</h3>
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>
-            <h4>{c.consultant}</h4>
-            <p className="diagnosis-summary">{c.diagnosis}</p>
+            {c.consultant && <h4>{c.consultant}</h4>}
+            {c.diagnosis && <p className="diagnosis-summary">{c.diagnosis}</p>}
+            {!c.consultant && !c.diagnosis && <h4>New Consultation</h4>}
             <FaRegTrashAlt
               className="bin-icon"
               onClick={(e) => {
