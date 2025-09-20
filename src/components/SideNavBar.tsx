@@ -1,12 +1,24 @@
-import { FiBarChart, FiHome, FiPlus } from "react-icons/fi";
+import { FiBarChart, FiHome, FiPlus, FiX } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 
 import "~/App.css";
 
-const SideNavBar = () => {
+interface SideNavBarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const SideNavBar = ({ isOpen = false, onClose }: SideNavBarProps) => {
   return (
-    <nav className="side-nav">
-      <div className="sidebar-brand">PhisioLog</div>
+    <nav className={`side-nav ${isOpen ? "open" : ""}`}>
+      <div className="sidebar-header">
+        <div className="sidebar-brand">PhisioLog</div>
+        {onClose && (
+          <button className="nav-close-btn" onClick={onClose} title="Close Navigation">
+            <FiX />
+          </button>
+        )}
+      </div>
       <ul className="nav-list">
         <li>
           <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>

@@ -34,6 +34,16 @@
   flex: 1;
   padding: 40px 60px 40px 60px;
   overflow-y: auto;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content-wrap {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  align-items: flex-start;
 }
 
 .content-wrapper {
@@ -72,12 +82,35 @@
 
 /* ===== SIDEBAR NAVIGATION ===== */
 
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2xl);
+}
+
 .sidebar-brand {
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-heading);
-  margin-bottom: var(--space-2xl);
   text-align: center;
+  flex: 1;
+}
+
+.nav-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-heading);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .nav-list {
@@ -98,11 +131,14 @@
   font-weight: var(--font-weight-medium);
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
-  transition: all var(--transition-normal);
+  transition:
+    background-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-link.active {
@@ -335,6 +371,22 @@ input[type="text"]:focus {
 .timeline-section {
   flex: 1;
   min-width: 0;
+  padding-right: 80px;
+}
+
+/* Timeline expands to full width when body map is collapsed */
+@media (max-width: 1400px) {
+  .timeline-section {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Optimize timeline padding for intermediate screen sizes where sidebar is visible but body map is hidden */
+@media (max-width: 1400px) and (min-width: 801px) {
+  .timeline-section {
+    padding-right: 20px;
+  }
 }
 
 .body-map-section {
@@ -357,6 +409,146 @@ input[type="text"]:focus {
   font-size: 2rem;
   font-weight: bold;
   color: var(--color-secondary);
+}
+
+/* Body Map Tab - Hidden by default */
+.body-map-tab {
+  display: none;
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #536ba1;
+  color: white;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 16px 8px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.body-map-tab:hover {
+  background: #4a5d91;
+  transform: translateY(-50%) translateX(-5px);
+  box-shadow: -6px 0 16px rgba(0, 0, 0, 0.2);
+}
+
+.body-map-tab span {
+  white-space: nowrap;
+}
+
+/* Body Map Slide Panel */
+.body-map-panel {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 450px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transition: right 0.3s ease;
+  z-index: 2000;
+  overflow-y: auto;
+}
+
+.body-map-panel.open {
+  right: 0;
+}
+
+.body-map-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+}
+
+.body-map-panel-header h3 {
+  margin: 0;
+  color: #536ba1;
+  font-size: 1.5rem;
+}
+
+.close-panel {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-panel:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.body-map-panel-content {
+  padding: 1.5rem;
+}
+
+/* Backdrop */
+.body-map-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1500;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Navigation Toggle Tab - Hidden by default */
+.nav-toggle-tab {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 40px;
+  background: rgb(209, 224, 249);
+  color: var(--color-text-heading);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.nav-toggle-tab:hover {
+  background: rgb(189, 204, 229);
+  box-shadow: 6px 0 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation Backdrop */
+.nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1500;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .dashboard-section-title.timeline-title {
@@ -477,16 +669,89 @@ input[type="text"]:focus {
 
 /* Form item titles removed - content flows directly from timeline headers */
 
-@media (max-width: 768px) {
+@media (max-width: 1400px) {
   .health-dashboard {
     flex-direction: column;
   }
 
   .body-map-section {
-    flex: none;
-    position: static;
+    display: none;
   }
 
+  .body-map-tab {
+    display: block;
+  }
+}
+
+@media (max-width: 800px) {
+  .side-nav {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    height: 100vh;
+    z-index: 2000;
+    transition: left 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .side-nav.open {
+    left: 0;
+  }
+
+  .nav-close-btn {
+    display: block;
+  }
+
+  .nav-toggle-tab {
+    display: block;
+    top: 0px;
+  }
+
+  .page-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px 15px;
+    min-width: 0;
+  }
+
+  .timeline-section {
+    padding-right: 60px;
+  }
+
+  /* Make sign-in button more compact on mobile */
+  .sign-in-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    top: 0px;
+    right: 15px;
+  }
+
+  /* Adjust nav toggle position to align with sign-in button */
+  .nav-toggle-tab {
+    top: 0px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-content {
+    padding: 20px 15px;
+  }
+
+  .sign-in-button {
+    padding: 6px 12px;
+    font-size: 13px;
+    top: 15px;
+    right: 15px;
+  }
+
+  .nav-toggle-tab {
+    top: 15px;
+    padding: 10px 8px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
   .health-record-page {
     padding: var(--space-md);
   }

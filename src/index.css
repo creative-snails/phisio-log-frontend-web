@@ -11,7 +11,6 @@ body,
   background: rgb(250, 253, 255);
   color: var(--text-body);
   box-sizing: border-box;
-  min-width: 680px;
   position: relative;
 }
 
