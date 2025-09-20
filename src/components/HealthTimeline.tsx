@@ -8,7 +8,7 @@ const FILTERS = ["All", "Pain", "Allergies", "Injuries"];
 
 interface HealthTimelineProps {
   records: HealthRecord[];
-  onClick: (record: HealthRecord) => void;
+  onRecordSelect: (record: HealthRecord | null) => void;
 }
 
 function getCategory(record: HealthRecord): string {
@@ -39,9 +39,10 @@ const getSeverityColor = (severity: string): string => {
   }
 };
 
-const HealthTimeline = ({ records, onClick }: HealthTimelineProps) => {
+const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>("All");
+  const [expandedRecordId, setExpandedRecordId] = useState<number | null>(null);
 
   // Filter records by category
   const filteredRecords = filter === "All" ? records : records.filter((r) => getCategory(r) === filter);
@@ -95,9 +96,14 @@ const HealthTimeline = ({ records, onClick }: HealthTimelineProps) => {
                 {groupRecords.map((record) => (
                   <div
                     key={record.id}
-                    className="timeline-content"
+                    className={`timeline-content ${expandedRecordId === record.id ? "expanded" : ""}`}
                     style={{ borderLeftColor: getSeverityColor(record.status.severity) }}
-                    onClick={() => onClick(record)}
+                    onClick={() => {
+                      if (!record.id) return;
+                      const isExpanding = expandedRecordId !== record.id;
+                      setExpandedRecordId(isExpanding ? record.id : null);
+                      onRecordSelect(isExpanding ? record : null);
+                    }}
                   >
                     <div className="timeline-header">
                       <h3>
@@ -125,6 +131,85 @@ const HealthTimeline = ({ records, onClick }: HealthTimelineProps) => {
                         Edit
                       </button>
                     </div>
+
+                    {/* Expanded Details */}
+                    {expandedRecordId === record.id && (
+                      <div className="timeline-expanded-content">
+                        <div className="expanded-details">
+                          <div className="detail-section">
+                            <h4>Latest Medical Consultation</h4>
+                            {record.medicalConsultations.length > 0 ? (
+                              (() => {
+                                const latestConsultation =
+                                  record.medicalConsultations[record.medicalConsultations.length - 1];
+
+                                return (
+                                  <div className="consultation-summary">
+                                    <p>
+                                      <strong>Doctor:</strong> {latestConsultation.consultant}
+                                    </p>
+                                    <p>
+                                      <strong>Date:</strong> {new Date(latestConsultation.date).toLocaleDateString()}
+                                    </p>
+                                    <p>
+                                      <strong>Diagnosis:</strong> {latestConsultation.diagnosis}
+                                    </p>
+                                    {latestConsultation.followUpActions.length > 0 && (
+                                      <div className="follow-up-section">
+                                        <p>
+                                          <strong>Follow-up Actions:</strong>
+                                        </p>
+                                        <div className="follow-up-grid">
+                                          {latestConsultation.followUpActions.map((action, actionIdx) => (
+                                            <div key={actionIdx} className="follow-up-item">
+                                              <span className="follow-up-bullet">•</span>
+                                              <span className="follow-up-text">{action}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })()
+                            ) : (
+                              <p className="no-data">No consultations recorded</p>
+                            )}
+                          </div>
+
+                          <div className="detail-section">
+                            <h4>Health Status</h4>
+                            <div className="status-info">
+                              <p>
+                                <strong>Stage:</strong> {record.status.stage}
+                              </p>
+                              <p>
+                                <strong>Severity:</strong> {record.status.severity}
+                              </p>
+                              <p>
+                                <strong>Progression:</strong> {record.status.progression}
+                              </p>
+                            </div>
+
+                            <div className="treatments-section">
+                              <h4>Treatments</h4>
+                              {record.treatmentsTried.length > 0 ? (
+                                <div className="treatments-grid">
+                                  {record.treatmentsTried.map((treatment, idx) => (
+                                    <div key={idx} className="treatment-item">
+                                      <span className="treatment-bullet">•</span>
+                                      <span className="treatment-text">{treatment}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="no-data">No treatments recorded</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

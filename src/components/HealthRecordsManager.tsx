@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import BodyMapViewer from "./BodyMapViewer";
-import HealthModal from "./HealthModal.tsx";
 
 import HealthTimeline from "~/components/HealthTimeline";
 import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<HealthRecord | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:4444/health-records")
@@ -21,17 +20,8 @@ const HealthRecordsManager = () => {
       });
   }, []);
 
-  const handleNext = () => {
-    setSelectedIndex((prev) => (prev !== null ? (prev + 1) % records.length : null));
-  };
-
-  const handlePrev = () => {
-    setSelectedIndex((prev) => (prev !== null ? (prev - 1 + records.length) % records.length : null));
-  };
-
-  const handleRecordClick = (record: HealthRecord) => {
-    const index = records.findIndex((r) => r.id === record.id);
-    setSelectedIndex(index);
+  const handleRecordSelect = (record: HealthRecord | null) => {
+    setSelectedRecord(record);
   };
 
   return (
@@ -45,23 +35,14 @@ const HealthRecordsManager = () => {
               <p>Create your first health record to start tracking your health journey.</p>
             </div>
           ) : (
-            <HealthTimeline records={records} onClick={handleRecordClick} />
+            <HealthTimeline records={records} onRecordSelect={handleRecordSelect} />
           )}
         </div>
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
-          <BodyMapViewer records={records} />
+          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} />
         </div>
       </div>
-
-      {selectedIndex !== null && (
-        <HealthModal
-          record={records[selectedIndex]}
-          onClose={() => setSelectedIndex(null)}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
     </div>
   );
 };
