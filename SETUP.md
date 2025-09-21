@@ -1,3 +1,24 @@
+## 🌱 Environment Variables
+
+This project uses environment variables to configure API connections.
+
+1. **Rename `.env.example` to `.env`**
+
+2. **Adjust the values in `.env` if needed:**
+
+```py
+# URL of the dev backend API server
+VITE_API_BASE_URL
+# URL of the mock API server (json-server)
+VITE_MOCK_API_BASE_URL
+# Set to "true" to use mock API, or "false" to use the dev API. This has no effect in production builds.
+VITE_USE_MOCK_API
+```
+
+---
+
+<br>
+
 ## 🐳 Docker Development Setup
 
 ### Prerequisites

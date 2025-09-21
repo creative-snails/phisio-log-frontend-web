@@ -1,0 +1,19 @@
+.error-message {
+  color: #ef4444;  
+  font-size: 0.875rem; 
+  margin-top: 0.25rem;
+}
+
+.form-input,
+.form-select {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}

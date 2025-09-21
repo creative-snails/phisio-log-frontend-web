@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
+import ApiStatusBanner from "./ApiStatusBanner";
 import HeroSection from "./HeroSection";
 import SideNavBar from "./SideNavBar";
 
@@ -11,6 +12,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="layout">
+      <ApiStatusBanner />
       <SideNavBar isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
       <main className="page-content">
         <HeroSection />

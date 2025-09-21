@@ -237,6 +237,12 @@ input[type="text"]:focus {
   left: calc((var(--space-2xl) + var(--space-sm)) / 2);
 }
 
+.submit-button:disabled {
+  background-color: #d1d5db; 
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .timestamps-container {
   display: flex;
   justify-content: space-between;

@@ -3,7 +3,8 @@ import { FiX } from "react-icons/fi";
 import BodyMapViewer from "./BodyMapViewer";
 
 import HealthTimeline from "~/components/HealthTimeline";
-import type { HealthRecord } from "~/types";
+import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
+import type { HealthRecord } from "~/types/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
@@ -11,15 +12,15 @@ const HealthRecordsManager = () => {
   const [isBodyMapOverlayOpen, setIsBodyMapOverlayOpen] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:4444/health-records")
-      .then((response) => response.json())
-      .then((data) => {
-        // if you want to test empty state comment line below
-        setRecords(data);
-
-        // and use this one:
-        //setRecords([]);
-      });
+    const fetchHealthRecords = async () => {
+      try {
+        const healthRecords = await getHealthRecords();
+        setRecords(healthRecords);
+      } catch (error) {
+        console.error("HealthRecordsManager: Error fetching health records!", error);
+      }
+    };
+    fetchHealthRecords();
   }, []);
 
   return (

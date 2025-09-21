@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./HealthTimeline.css";
-import type { HealthRecord, Symptom } from "~/types";
+import type { HealthRecord, Symptom } from "~/types/types";
 import { getTimelineSeverityColor } from "~/utils/severityColors";
 
 const FILTERS = ["All", "Pain", "Allergies", "Injuries"];
