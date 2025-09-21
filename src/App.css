@@ -4,6 +4,7 @@
 .layout {
   display: flex;
   height: 100vh;
+  min-width: 400px;
   position: relative;
   z-index: 2;
 }
@@ -413,7 +414,8 @@ input[type="text"]:focus {
   display: none;
   position: fixed;
   left: 0;
-  top: 0px;
+  top: 20px;
+  height: 46px;
   background: rgb(209, 224, 249);
   color: var(--color-text-heading);
   border: none;
@@ -599,7 +601,6 @@ input[type="text"]:focus {
 
   .nav-toggle-tab {
     display: block;
-    top: 0px;
   }
 
   .page-content {
@@ -620,11 +621,6 @@ input[type="text"]:focus {
     top: 0px;
     right: 15px;
   }
-
-  /* Adjust nav toggle position to align with sign-in button */
-  .nav-toggle-tab {
-    top: 0px;
-  }
 }
 
 @media (max-width: 600px) {
@@ -637,12 +633,6 @@ input[type="text"]:focus {
     font-size: 13px;
     top: 15px;
     right: 15px;
-  }
-
-  .nav-toggle-tab {
-    top: 15px;
-    padding: 10px 8px;
-    font-size: 16px;
   }
 }
 
