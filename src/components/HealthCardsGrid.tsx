@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import "./HealthCardsGrid.css";
-import type { HealthRecord } from "~/types";
+import type { HealthRecord } from "~/types/types";
 
 interface HealthCardsGridProps {
   records: HealthRecord[];

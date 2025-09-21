@@ -1,6 +1,6 @@
 import apiClient from "./apiClient";
 
-import type { HealthRecord } from "~/types";
+import type { HealthRecord } from "~/types/types";
 
 const endPoint = "/health-records";
 

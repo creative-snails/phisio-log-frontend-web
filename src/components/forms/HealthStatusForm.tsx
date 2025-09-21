@@ -1,85 +1,50 @@
 import "./HealthStatusForm.css";
-import type { Status } from "~/types";
+import type { FormErrors } from "~/types/formErrors";
+import type { Status } from "~/types/types";
+import { statusOptions } from "~/utils/constants";
+import { renderErrors } from "~/utils/renderErrors";
 
 interface HealthStatusFormProps {
   status: Status;
   setStatus: (field: keyof Status, value: string) => void;
+  formErrors?: FormErrors<Status>;
+  touchedFields: { [key in keyof Status]?: boolean };
+  setTouchedFields: (field: keyof Status) => void;
 }
 
-const HealthStatusForm = ({ status, setStatus }: HealthStatusFormProps) => {
-  const statusOptions = {
-    stage: {
-      options: [
-        { display: "Open", value: "open" },
-        { display: "Closed", value: "closed" },
-        { display: "In-progress", value: "in-progress" },
-      ],
-      default: "open",
-    },
-    severity: {
-      options: [
-        { display: "Mild", value: "mild" },
-        { display: "Moderate", value: "moderate" },
-        { display: "Severe", value: "severe" },
-        { display: "Variable", value: "variable" },
-      ],
-      default: "variable",
-    },
-    progression: {
-      options: [
-        { display: "Improving", value: "improving" },
-        { display: "Stable", value: "stable" },
-        { display: "Worsening", value: "worsening" },
-        { display: "Variable", value: "variable" },
-      ],
-      default: "stable",
-    },
-  };
-
+const HealthStatusForm = ({
+  status,
+  setStatus,
+  formErrors,
+  touchedFields,
+  setTouchedFields,
+}: HealthStatusFormProps) => {
   return (
     <div className="health-status-section">
       <h3 className="section-title">Status</h3>
       <div className="health-status-form">
-        <div className="form-group">
-          <label>Stage:</label>
-          <select
-            value={status.stage || statusOptions.stage.default}
-            onChange={(e) => setStatus("stage", e.target.value)}
-          >
-            {statusOptions.stage.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Severity:</label>
-          <select
-            value={status.severity || statusOptions.severity.default}
-            onChange={(e) => setStatus("severity", e.target.value)}
-          >
-            {statusOptions.severity.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Progression:</label>
-          <select
-            value={status.progression || statusOptions.progression.default}
-            onChange={(e) => setStatus("progression", e.target.value)}
-          >
-            {statusOptions.progression.options.map(({ display, value }) => (
-              <option key={value} value={value}>
-                {display}
-              </option>
-            ))}
-          </select>
-        </div>
+        {Object.entries(statusOptions).map(([field, options]) => (
+          <div className="form-group" key={field}>
+            <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+            <select
+              value={status[field as keyof Status]}
+              onChange={(e) => setStatus(field as keyof Status, e.target.value)}
+              onBlur={() => setTouchedFields(field as keyof Status)}
+              className={
+                touchedFields[field as keyof Status] && formErrors?.[field as keyof Status] ? "input-error" : ""
+              }
+            >
+              {options.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            {touchedFields[field as keyof Status] && renderErrors(formErrors?.[field as keyof Status])}
+          </div>
+        ))}
       </div>
+      {renderErrors(formErrors?._errors)}
     </div>
   );
 };
