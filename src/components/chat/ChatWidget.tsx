@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BsTrash } from "react-icons/bs";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom"; // Add this import
 import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
@@ -11,69 +13,137 @@ import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
+  const navigate = useNavigate(); // Add this hook
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
-  const [showChatWidget, setShowChatWidget] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatHistoryType[]>([]);
+  const [showChatWidget, setShowChatWidget] = useState<boolean>(() => {
+    const isChatOpened = localStorage.getItem("chat_widget_open");
+
+    return isChatOpened ? JSON.parse(isChatOpened) : false;
+  });
+  const [chatHistory, setChatHistory] = useState<ChatHistoryType>({
+    id: undefined,
+    history: [],
+  });
   const [isThinking, setIsThinking] = useState(false);
+  const [showContextButtons, setShowContextButtons] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
-  const isValidRecordId = useMemo(() => healthRecordId !== undefined && healthRecordId.trim() !== "", [healthRecordId]);
-  const sessionKey = useMemo(
-    () => (isValidRecordId ? `chat-session-record-${healthRecordId}` : "chat-session-general"),
-    [healthRecordId]
-  );
+  const isValidRecordId = useMemo(() => {
+    return Boolean(healthRecordId?.trim());
+  }, [healthRecordId]);
 
   // Health record fetching
-  const fetchHealthRecord = async () => {
+  const fetchHealthRecord = async (id: string | undefined) => {
+    if (!id) return;
     setIsThinking(true);
     try {
-      const record = await getHealthRecord(healthRecordId!);
-      setHealthRecord(record);
+      const record = await getHealthRecord(id);
 
       return record;
     } catch (error) {
-      console.error(`ChatWidget: Error fetching health record id=${healthRecordId}!`, error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          message:
-            "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
-        },
-      ]);
+      console.error("Error fetching health record:", error);
+      setChatHistory((prev) => ({
+        id: prev?.id,
+        history: [
+          ...(prev?.history || []),
+          {
+            role: "assistant",
+            message:
+              "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
+          },
+        ],
+      }));
       setHealthRecord(null);
     } finally {
       setIsThinking(false);
     }
   };
 
-  // Chat initialization
-  useEffect(() => {
-    if (!showChatWidget) return;
+  const initializeChat = async (continueChat = false) => {
+    const existingChatSession = localStorage.getItem("chat_history");
 
-    const initializeChat = async () => {
-      const existingChatSession = localStorage.getItem(sessionKey);
+    // Chat session exists
+    if (existingChatSession) {
+      let parsedChatHistory: ChatHistoryType | null = null;
 
-      if (isValidRecordId && !healthRecord && !existingChatSession) {
-        const record = await fetchHealthRecord();
-        if (record) {
-          setChatHistory([
-            {
-              role: "assistant",
-              message: `I see you're working with **${record.title}** record. How can I help you update it?`,
-            },
-          ]);
+      try {
+        parsedChatHistory = JSON.parse(existingChatSession);
+
+        if (!parsedChatHistory || !Array.isArray(parsedChatHistory.history)) {
+          throw new Error("Invalid chat history structure");
         }
-      } else if (!isValidRecordId && !existingChatSession) {
-        setChatHistory([
-          { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-        ]);
-      }
-    };
+      } catch (error) {
+        console.error("Failed to parse chat session:", error);
+        localStorage.removeItem("chat_history");
+        initializeChat();
 
+        return;
+      }
+
+      setChatHistory(parsedChatHistory);
+
+      // Within the same context
+      if (parsedChatHistory.id === healthRecordId) {
+        setShowContextButtons(false);
+        setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
+
+        // Within different context
+      } else {
+        // Continue previous discussion
+        if (continueChat) {
+          setShowContextButtons(false);
+          // Previous discussion is record related (non general chat)
+          if (parsedChatHistory.id) {
+            const confirm = window.confirm(
+              `This will take you to the ${healthRecord?.title || "previous"} record page. Continue?`
+            );
+            if (!confirm) {
+              setShowContextButtons(true);
+
+              return;
+            }
+            navigate(`/health-record/${parsedChatHistory.id}/edit`);
+          }
+
+          return;
+        }
+        setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
+        setShowContextButtons(true);
+      }
+
+      // No chat session (fresh start)
+    } else {
+      if (isValidRecordId) {
+        const record = await fetchHealthRecord(healthRecordId);
+        setHealthRecord(record || null);
+        if (record) {
+          setChatHistory({
+            id: healthRecordId,
+            history: [
+              {
+                role: "assistant",
+                message: `I see you're working with **${record.title}** record. How can I help you update it?`,
+              },
+            ],
+          });
+        }
+      } else {
+        setChatHistory({
+          history: [
+            { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
+          ],
+        });
+      }
+    }
+  };
+
+  // Save chat widget state to local storage and Initialize chat
+  useEffect(() => {
+    localStorage.setItem("chat_widget_open", JSON.stringify(showChatWidget));
+    if (!showChatWidget) return;
     initializeChat();
-  }, [showChatWidget, healthRecordId]);
+  }, [showChatWidget]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
@@ -83,51 +153,28 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
   // Save chat history to localStorage
   useEffect(() => {
-    if (showChatWidget && chatHistory.length > 0) {
+    if (showChatWidget && chatHistory && chatHistory.history.length > 0) {
       try {
-        localStorage.setItem(sessionKey, JSON.stringify(chatHistory));
+        localStorage.setItem("chat_history", JSON.stringify(chatHistory));
       } catch (error) {
         console.error("Failed to save chat session:", error);
       }
     }
   }, [chatHistory]);
 
-  const handleNewChat = async () => {
-    const confirm = window.confirm(
-      "Starting a new chat will erase your previous chat session! Do you want to continue?"
-    );
+  const handleResetChat = async () => {
+    const confirm = window.confirm("Do you want to start fresh? This will clear your current chat history.");
     if (!confirm) return;
-    localStorage.removeItem(sessionKey);
 
-    if (isValidRecordId) {
-      const record = healthRecord || (await fetchHealthRecord());
-      if (record) {
-        setChatHistory([
-          {
-            role: "assistant",
-            message: `I see you're working with **${record.title}** record. How can I help you update it?`,
-          },
-        ]);
-      }
-    } else {
-      setChatHistory([
-        { role: "assistant", message: "Hello 👋!!!\nI'm your PhisioLog Assistant. How can I help you today?" },
-      ]);
-    }
+    localStorage.removeItem("chat_history");
+    setHealthRecord(null);
+    setShowContextButtons(false);
+    initializeChat();
   };
 
-  const handleContinueChat = () => {
-    try {
-      const savedSession = localStorage.getItem(sessionKey);
-      if (savedSession) {
-        const parsedChatHistory = JSON.parse(savedSession);
-        setChatHistory(parsedChatHistory);
-      }
-    } catch (error) {
-      console.error("Failed to load chat session:", error);
-      setChatHistory([
-        { role: "assistant", message: "I couldn't retrieve your previous conversation! Let's start a new chat!" },
-      ]);
+  const handleContextClick = () => {
+    if (healthRecord?.id) {
+      navigate(`/health-record/${healthRecord.id}/edit`);
     }
   };
 
@@ -143,60 +190,79 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
             <FaUserDoctor className="chat-logo-icon" /> {/* placeholder logo */}
             <div className="chat-logo-text">PhisioLog</div>
           </div>
-          <button onClick={() => setShowChatWidget((prev) => !prev)}>
+          <button className="chat-reset-btn" onClick={handleResetChat} title="Reset Chat">
+            <BsTrash />
+          </button>
+          <button onClick={() => setShowChatWidget((prev) => !prev)} title="Close Chat">
             <SlArrowDown />
           </button>
         </div>
 
         {/* Chat Body */}
-        {chatHistory.length > 0 ? (
-          <div ref={chatBodyRef} className="chat-body">
-            {chatHistory.map((chat, index) => (
-              <div key={index} className={`chat-message chat-${chat.role}-message`}>
-                {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
-                <div className="chat-message-text">
-                  <ReactMarkdown
-                    components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
-                    remarkPlugins={[remarkGfm]}
-                  >
-                    {chat.message}
-                  </ReactMarkdown>
-                </div>
+        <div className="chat-context-indicator">
+          {healthRecord?.id ? (
+            <button
+              className="chat-context-link"
+              onClick={handleContextClick}
+              title={`Go to ${healthRecord.title} record`}
+            >
+              {healthRecord.title}
+            </button>
+          ) : (
+            <div>General Chat</div>
+          )}
+        </div>
+        <div ref={chatBodyRef} className="chat-body">
+          {chatHistory?.history.map((chat, index) => (
+            <div key={index} className={`chat-message chat-${chat.role}-message`}>
+              {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
+              <div className="chat-message-text">
+                <ReactMarkdown
+                  components={{ a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {chat.message}
+                </ReactMarkdown>
               </div>
-            ))}
-            {isThinking && (
-              <div className="chat-message chat-assistant-message">
-                <FaUserDoctor className="chat-logo-icon" />
-                <div className="chat-message-text chat-thinking-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+            </div>
+          ))}
+          {isThinking && (
+            <div className="chat-message chat-assistant-message">
+              <FaUserDoctor className="chat-logo-icon" />
+              <div className="chat-message-text chat-thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="chat-body-onboarding">
-            <div className="chat-body-onboarding-section">
-              <button onClick={handleContinueChat}>Continue Chat</button>
-              <p className="chat-onboarding-btn-subtext">Pick up from where you left off in your last session.</p>
             </div>
-            <div className="chat-body-onboarding-section">
-              <button onClick={handleNewChat}>Start New Chat</button>
-              <p className="chat-onboarding-btn-subtext">Begin a new conversation with your PhisioLog Assistant.</p>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Chat Footer */}
-        <div className="chat-footer">
-          <ChatForm
-            setChatHistory={setChatHistory}
-            setIsThinking={setIsThinking}
-            disabled={chatHistory.length === 0}
-            showChatWidget={showChatWidget}
-          />
-        </div>
+        {showContextButtons ? (
+          <div className="chat-context-section">
+            <div className="message">Your chat focus doesn’t match the page you’re on. Would you like to:</div>
+            <div className="chat-context-buttons">
+              <button
+                onClick={() => {
+                  initializeChat(true);
+                }}
+              >
+                Continue with {healthRecord?.title ? healthRecord?.title : "General Chat"}
+              </button>
+              <button onClick={handleResetChat}>Switch Focus</button>
+            </div>
+          </div>
+        ) : (
+          <div className="chat-input-form">
+            <ChatForm
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              setIsThinking={setIsThinking}
+              showChatWidget={showChatWidget}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
