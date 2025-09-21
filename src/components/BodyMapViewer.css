@@ -11,6 +11,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  perspective: 1000px;
+}
+
+.body-svg-wrapper {
+  width: 100%;
+  transform-style: preserve-3d;
 }
 
 .body-svg {
@@ -73,5 +79,5 @@
 
 .flip-icon:hover {
   background: rgba(83, 107, 161, 0.1);
-  transform: scale(1.1) rotate(180deg);
+  transform: scale(1.1);
 }
