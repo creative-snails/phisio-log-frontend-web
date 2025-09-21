@@ -2,7 +2,7 @@ import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useRef }
 import { IoMdArrowUp } from "react-icons/io";
 import { getAssistantResponse } from "./mockChatService";
 
-import type { ChatHistoryType } from "~/types/types";
+import type { ChatHistoryType } from "~/types";
 
 interface ChatFormProps {
   chatHistory: ChatHistoryType;

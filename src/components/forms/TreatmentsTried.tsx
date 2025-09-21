@@ -2,7 +2,7 @@ import { FaMinusCircle } from "react-icons/fa";
 
 import "~/utils/renderErrors.css";
 import "./TreatmentsTried.css";
-import type { FormErrors } from "~/types/formErrors";
+import type { FormErrors } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type TreatmentsTriedProps = {

@@ -3,7 +3,7 @@ import { LuRefreshCw } from "react-icons/lu";
 
 import "./BodyMapViewer.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
-import type { HealthRecord } from "~/types/types";
+import type { HealthRecord } from "~/types";
 import { getSeverityColor, getSeverityLabelColor, getSeverityLabelState } from "~/utils/severityColors";
 
 interface BodyMapViewerProps {

@@ -1,8 +1,7 @@
 import Select from "react-select";
 
 import "./HealthStatusForm.css";
-import type { FormErrors } from "~/types/formErrors";
-import type { Status } from "~/types/types";
+import type { FormErrors, Status } from "~/types";
 import { statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 

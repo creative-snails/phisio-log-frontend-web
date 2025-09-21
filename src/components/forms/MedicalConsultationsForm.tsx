@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaMinusCircle } from "react-icons/fa";
 
 import "./MedicalConsultationsForm.css";
-import type { FormErrors } from "~/types/formErrors";
+import type { FormErrors } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type Consultation = {

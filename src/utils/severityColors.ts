@@ -1,4 +1,4 @@
-import type { HealthRecord } from "~/types/types";
+import type { HealthRecord } from "~/types";
 
 /**
  * Get the maximum severity state from all symptoms in a health record

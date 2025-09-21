@@ -4,7 +4,7 @@ import BodyMapViewer from "./BodyMapViewer";
 
 import HealthTimeline from "~/components/HealthTimeline";
 import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
-import type { HealthRecord } from "~/types/types";
+import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./HealthTimeline.css";
-import type { HealthRecord, Symptom } from "~/types/types";
+import type { HealthRecord, Symptom } from "~/types";
 import { getTimelineSeverityColor } from "~/utils/severityColors";
 
 const FILTERS = ["All", "Pain", "Allergies", "Injuries"];
@@ -37,7 +37,7 @@ const matchesFilter = (record: HealthRecord, filterName: string): boolean => {
 const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>("All");
-  const [expandedRecordId, setExpandedRecordId] = useState<number | null>(null);
+  const [expandedRecordId, setExpandedRecordId] = useState<string | null>(null);
 
   // Filter records by category
   const filteredRecords = filter === "All" ? records : records.filter((r) => matchesFilter(r, filter));

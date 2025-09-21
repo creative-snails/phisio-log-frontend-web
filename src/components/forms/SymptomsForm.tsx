@@ -1,8 +1,7 @@
 import { FaMinusCircle } from "react-icons/fa";
 
 import "./SymptomsForm.css";
-import type { FormErrors } from "~/types/formErrors";
-import type { SymptomUI } from "~/types/types";
+import type { FormErrors, SymptomUI } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
