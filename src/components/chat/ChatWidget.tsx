@@ -4,6 +4,7 @@ import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom"; // Add this import
 import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
@@ -12,6 +13,7 @@ import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
+  const navigate = useNavigate(); // Add this hook
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistoryType>({
@@ -82,10 +84,28 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         setShowContextButtons(false);
         setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
 
-        // Different context
+        // Within different context
       } else {
-        setShowContextButtons(!continueChat);
+        // Continue previous discussion
+        if (continueChat) {
+          setShowContextButtons(false);
+          // Previous discussion is record related (non general chat)
+          if (parsedChatHistory.id) {
+            const confirm = window.confirm(
+              `This will take you to the ${healthRecord?.title || "previous"} record page. Continue?`
+            );
+            if (!confirm) {
+              setShowContextButtons(true);
+
+              return;
+            }
+            navigate(`/health-record/${parsedChatHistory.id}/edit`);
+          }
+
+          return;
+        }
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
+        setShowContextButtons(true);
       }
 
       // No chat session (fresh start)
