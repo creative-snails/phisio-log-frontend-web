@@ -15,7 +15,11 @@ import { type ChatHistoryType, type HealthRecord } from "~/types";
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const navigate = useNavigate(); // Add this hook
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
-  const [showChatWidget, setShowChatWidget] = useState(false);
+  const [showChatWidget, setShowChatWidget] = useState<boolean>(() => {
+    const isChatOpened = localStorage.getItem("chat_widget_open");
+
+    return isChatOpened ? JSON.parse(isChatOpened) : false;
+  });
   const [chatHistory, setChatHistory] = useState<ChatHistoryType>({
     id: undefined,
     history: [],
@@ -134,8 +138,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     }
   };
 
-  // Initialize chat effect
+  // Save chat widget state to local storage and Initialize chat
   useEffect(() => {
+    localStorage.setItem("chat_widget_open", JSON.stringify(showChatWidget));
     if (!showChatWidget) return;
     initializeChat();
   }, [showChatWidget]);
@@ -167,6 +172,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     initializeChat();
   };
 
+  const handleContextClick = () => {
+    if (healthRecord?.id) {
+      navigate(`/health-record/${healthRecord.id}/edit`);
+    }
+  };
+
   return (
     <div className={showChatWidget ? "chat-show-widget" : ""}>
       <button onClick={() => setShowChatWidget((prev) => !prev)} id="chat-widget-toggler">
@@ -189,7 +200,17 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
         {/* Chat Body */}
         <div className="chat-context-indicator">
-          <div>{`${healthRecord?.title ?? "General Chat"}`}</div>
+          {healthRecord?.id ? (
+            <button
+              className="chat-context-link"
+              onClick={handleContextClick}
+              title={`Go to ${healthRecord.title} record`}
+            >
+              {healthRecord.title}
+            </button>
+          ) : (
+            <div>General Chat</div>
+          )}
         </div>
         <div ref={chatBodyRef} className="chat-body">
           {chatHistory?.history.map((chat, index) => (

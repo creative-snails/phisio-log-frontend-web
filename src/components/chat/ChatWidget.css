@@ -332,6 +332,12 @@
   font-weight: 500;
 }
 
+.chat-context-indicator button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
 .chat-context-section {
   display: flex;
   flex-direction: column;
