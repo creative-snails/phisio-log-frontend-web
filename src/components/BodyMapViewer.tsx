@@ -4,14 +4,26 @@ import { LuRefreshCw } from "react-icons/lu";
 import "./BodyMapViewer.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
 import type { HealthRecord } from "~/types";
+import { getSeverityColor, getSeverityLabelColor, getSeverityLabelState } from "~/utils/severityColors";
 
 interface BodyMapViewerProps {
   className?: string;
   records?: HealthRecord[];
+  readOnly?: boolean;
+  /**
+   * Choose how to color parts:
+   * - 'part' (default): color by each part's max affected state
+   * - 'record': color all parts by the record's declared severity label
+   */
+  colorSource?: "part" | "record";
 }
 
-const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => {
-  const [selectedPart, setSelectedPart] = useState<string | null>(null);
+const BodyMapViewer = ({
+  className = "",
+  records = [],
+  readOnly = false,
+  colorSource = "part",
+}: BodyMapViewerProps) => {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [affectedParts, setAffectedParts] = useState<{ [key: string]: string }>({});
   const [isFlipped, setIsFlipped] = useState(false);
@@ -35,27 +47,39 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
     setAffectedParts(parts);
   }, [records]);
 
-  const handlePartClick = (partId: string) => {
-    setSelectedPart(selectedPart === partId ? null : partId);
-  };
-
   const getPartFill = (part: bodyPartData) => {
-    if (selectedPart === part.id) return "#ff6b6b";
     if (hoveredPart === part.id) return "#bbdefb";
 
     // Check if part is affected by current health issues
     const affectedState = affectedParts[part.id];
-    if (affectedState) {
-      switch (affectedState) {
-        case "1":
-          return "#c8e6c9"; // Light green - mild
-        case "2":
-          return "#fff3cd"; // Light yellow - moderate
-        case "3":
-          return "#ffcdd2"; // Light red - severe
-        default:
-          return "#f8f9fa";
+
+    if (colorSource === "record") {
+      // Use record-level label color, but only on affected parts
+      if (records.length === 1) {
+        if (affectedState) {
+          const rec = records[0];
+          const labelColor = getSeverityLabelColor(rec.status?.severity ?? null);
+          if (labelColor) return labelColor;
+        }
+      } else {
+        // Multiple records overall view: aggregate by maximum label state across records affecting this part
+        let maxLabelState = 0;
+        records.forEach((rec) => {
+          if (rec.status.stage === "resolved" || rec.status.stage === "closed") return;
+          rec.symptoms.forEach((symptom) => {
+            symptom.affectedParts?.forEach((p) => {
+              if (p.key === part.id) {
+                const labelState = getSeverityLabelState(rec.status?.severity ?? null);
+                if (labelState > maxLabelState) maxLabelState = labelState;
+              }
+            });
+          });
+        });
+        if (maxLabelState > 0) return getSeverityColor(maxLabelState);
       }
+    } else if (affectedState) {
+      // Part-based severity coloring
+      return getSeverityColor(affectedState);
     }
 
     return "#f8f9fa"; // Light gray - default
@@ -75,10 +99,9 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
               stroke="#333"
               strokeWidth="2"
               className="body-part"
-              onClick={() => handlePartClick(part.id)}
-              onMouseEnter={() => setHoveredPart(part.id)}
-              onMouseLeave={() => setHoveredPart(null)}
-              style={{ cursor: "pointer" }}
+              onMouseEnter={() => !readOnly && setHoveredPart(part.id)}
+              onMouseLeave={() => !readOnly && setHoveredPart(null)}
+              style={{ cursor: readOnly ? "default" : "pointer" }}
             />
           ))}
         </svg>
@@ -89,24 +112,6 @@ const BodyMapViewer = ({ className = "", records = [] }: BodyMapViewerProps) => 
           <LuRefreshCw />
         </div>
       </div>
-
-      {selectedPart && (
-        <div className="selected-part-info">
-          <h4>Selected: {selectedPart.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}</h4>
-          {affectedParts[selectedPart] ? (
-            <p>
-              Current issue severity:{" "}
-              {affectedParts[selectedPart] === "1"
-                ? "Mild"
-                : affectedParts[selectedPart] === "2"
-                  ? "Moderate"
-                  : "Severe"}
-            </p>
-          ) : (
-            <p>No current issues reported for this area.</p>
-          )}
-        </div>
-      )}
     </div>
   );
 };

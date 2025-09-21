@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import "./HealthTimeline.css";
 import type { HealthRecord, Symptom } from "~/types";
+import { getTimelineSeverityColor } from "~/utils/severityColors";
 
 const FILTERS = ["All", "Pain", "Allergies", "Injuries"];
 
@@ -25,19 +26,6 @@ function getCategory(record: HealthRecord): string {
 
   return "Other";
 }
-
-const getSeverityColor = (severity: string): string => {
-  switch (severity.toLowerCase()) {
-    case "severe":
-      return "#ffcdd2"; // Pastel red
-    case "moderate":
-      return "#ffe0b2"; // Pastel orange
-    case "mild":
-      return "#c8e6c9"; // Pastel green
-    default:
-      return "#e1f5fe"; // Pastel blue
-  }
-};
 
 const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
   const navigate = useNavigate();
@@ -97,7 +85,7 @@ const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
                   <div
                     key={record.id}
                     className={`timeline-content ${expandedRecordId === record.id ? "expanded" : ""}`}
-                    style={{ borderLeftColor: getSeverityColor(record.status.severity) }}
+                    style={{ borderLeftColor: getTimelineSeverityColor(record) }}
                     onClick={() => {
                       if (!record.id) return;
                       const isExpanding = expandedRecordId !== record.id;

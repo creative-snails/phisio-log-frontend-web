@@ -41,7 +41,7 @@ const HealthRecordsManager = () => {
         </div>
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
-          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} />
+          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} readOnly={true} colorSource="record" />
         </div>
       </div>
 
@@ -59,7 +59,7 @@ const HealthRecordsManager = () => {
           </button>
         </div>
         <div className="body-map-panel-content">
-          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} />
+          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} readOnly={true} colorSource="record" />
         </div>
       </div>
 

@@ -3,7 +3,7 @@ export interface Symptom {
   startDate: string;
   affectedParts?: {
     key: string;
-    state: '1' | '2' | '3';
+    state: "1" | "2" | "3";
   }[];
 }
 
