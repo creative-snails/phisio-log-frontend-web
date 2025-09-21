@@ -44,7 +44,9 @@ export interface HealthRecord {
   updatedAt?: string;
 }
 export interface RecordFormData {
-  data: HealthRecord;
+  data: Omit<HealthRecord, "symptoms"> & {
+    symptoms: SymptomUI[];
+  };
   loading: boolean;
   error: string;
 }

@@ -8,7 +8,7 @@ import ChatForm from "./ChatForm";
 
 import "./ChatWidget.css";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import { type ChatHistoryType, type HealthRecord } from "~/types";
+import { type ChatHistoryType, type HealthRecord } from "~/types/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);

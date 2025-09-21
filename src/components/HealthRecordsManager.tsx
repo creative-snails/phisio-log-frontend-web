@@ -3,7 +3,7 @@ import HealthCardGrid from "./HealthCardsGrid.tsx";
 import HealthModal from "./HealthModal.tsx";
 
 import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
-import type { HealthRecord } from "~/types";
+import type { HealthRecord } from "~/types/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
