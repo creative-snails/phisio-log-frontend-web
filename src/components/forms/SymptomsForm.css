@@ -34,6 +34,33 @@
   justify-content: space-between;
   padding: var(--space-sm) 0;
   position: relative;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+}
+
+.symptom-header:hover {
+  background-color: rgba(83, 107, 161, 0.05);
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+  margin-left: calc(-1 * var(--space-sm));
+  margin-right: calc(-1 * var(--space-sm));
+}
+
+.symptom-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.chevron-icon {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-normal);
+  transform-origin: center;
+}
+
+.symptom-header:hover .chevron-icon {
+  color: var(--color-secondary);
 }
 
 .symptom-header h4 {
@@ -48,6 +75,19 @@
   flex-direction: column;
   margin-top: var(--space-md);
   gap: var(--space-md);
+  animation: slideDown 0.2s ease-out;
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .symptom-body label {

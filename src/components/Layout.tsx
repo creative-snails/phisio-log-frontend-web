@@ -11,22 +11,24 @@ const Layout = ({ children }: LayoutProps) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
-    <div className="layout">
+    <>
       <ApiStatusBanner />
-      <SideNavBar isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
-      <main className="page-content">
-        <HeroSection />
-        {children}
-      </main>
+      <div className="layout">
+        <SideNavBar isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
+        <main className="page-content">
+          <HeroSection />
+          {children}
+        </main>
 
-      {/* Navigation Toggle Tab */}
-      <button className="nav-toggle-tab" onClick={() => setIsNavOpen(true)} title="Open Navigation">
-        <FiMenu />
-      </button>
+        {/* Navigation Toggle Tab */}
+        <button className="nav-toggle-tab" onClick={() => setIsNavOpen(true)} title="Open Navigation">
+          <FiMenu />
+        </button>
 
-      {/* Backdrop when nav is open */}
-      {isNavOpen && <div className="nav-backdrop" onClick={() => setIsNavOpen(false)} />}
-    </div>
+        {/* Backdrop when nav is open */}
+        {isNavOpen && <div className="nav-backdrop" onClick={() => setIsNavOpen(false)} />}
+      </div>
+    </>
   );
 };
 

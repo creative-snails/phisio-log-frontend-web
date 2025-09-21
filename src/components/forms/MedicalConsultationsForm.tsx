@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaMinusCircle } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
 import "./MedicalConsultationsForm.css";
 import type { FormErrors } from "~/types";
@@ -98,9 +98,14 @@ const MedicalConsultationsForm = ({
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>
-            {c.consultant && <h4>{c.consultant}</h4>}
-            {c.diagnosis && <p className="diagnosis-summary">{c.diagnosis}</p>}
-            {!c.consultant && !c.diagnosis && <h4>New Consultation</h4>}
+            <div className="consultation-header-content">
+              {c.isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
+              <div className="consultation-info">
+                {c.consultant && <h4>{c.consultant}</h4>}
+                {c.diagnosis && <p className="diagnosis-summary">{c.diagnosis}</p>}
+                {!c.consultant && !c.diagnosis && <h4>New Consultation</h4>}
+              </div>
+            </div>
             <FaMinusCircle
               className="remove-icon"
               onClick={(e: React.MouseEvent) => {

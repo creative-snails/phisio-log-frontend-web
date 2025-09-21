@@ -238,7 +238,7 @@ input[type="text"]:focus {
 }
 
 .submit-button:disabled {
-  background-color: #d1d5db; 
+  background-color: #d1d5db;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -458,11 +458,6 @@ input[type="text"]:focus {
 
 .dashboard-section-title.bodymap-title {
   text-align: center;
-}
-
-/* Health Record Form Page */
-.health-record-page {
-  padding: 40px 60px 40px 60px;
 }
 
 .form-section-wrapper {

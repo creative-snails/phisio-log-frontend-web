@@ -1,4 +1,4 @@
-import { FaMinusCircle } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
 import "./SymptomsForm.css";
 import type { FormErrors, SymptomUI } from "~/types";
@@ -30,7 +30,10 @@ const SymptomsForm = ({
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
-            <h4>{symptom.name || "New Symptom"}</h4>
+            <div className="symptom-header-content">
+              {symptom.isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
+              <h4>{symptom.name || "New Symptom"}</h4>
+            </div>
             <FaMinusCircle
               className="remove-icon"
               onClick={(e: React.MouseEvent) => {
