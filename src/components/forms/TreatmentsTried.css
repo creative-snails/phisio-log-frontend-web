@@ -6,17 +6,9 @@
 .treatment-item {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  margin-bottom: 12px;
   padding: var(--space-md) 0;
   transition: all var(--transition-normal);
-}
-
-.treatment-item:hover {
-  background-color: rgba(83, 107, 161, 0.02);
-  margin: 0 calc(-1 * var(--space-lg));
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-  border-radius: var(--radius-sm);
 }
 
 .treatment-item input {

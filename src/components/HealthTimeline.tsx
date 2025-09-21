@@ -12,20 +12,27 @@ interface HealthTimelineProps {
   onRecordSelect: (record: HealthRecord | null) => void;
 }
 
-function getCategory(record: HealthRecord): string {
-  // Example: derive category from record or symptoms
-  if (record.symptoms.some((s: Symptom) => s.name.toLowerCase().includes("pain"))) {
-    return "Pain";
-  }
-  if (record.symptoms.some((s: Symptom) => s.name.toLowerCase().includes("allergy"))) {
-    return "Allergies";
-  }
-  if (record.symptoms.some((s: Symptom) => s.name.toLowerCase().includes("injury"))) {
-    return "Injuries";
-  }
+const isMatchFilter = (record: HealthRecord, filterTerm: string): boolean => {
+  return (
+    record.symptoms.some((s: Symptom) => s.name.toLowerCase().includes(filterTerm)) ||
+    record.description.toLowerCase().includes(filterTerm)
+  );
+};
 
-  return "Other";
-}
+const matchesFilter = (record: HealthRecord, filterName: string): boolean => {
+  switch (filterName) {
+    case "Pain":
+      return isMatchFilter(record, "pain") || isMatchFilter(record, "ache") || isMatchFilter(record, "aching");
+    case "Allergies":
+      return (
+        isMatchFilter(record, "allergy") || isMatchFilter(record, "allergies") || isMatchFilter(record, "allergic")
+      );
+    case "Injuries":
+      return isMatchFilter(record, "injury") || isMatchFilter(record, "injuries");
+    default:
+      return false;
+  }
+};
 
 const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
   const navigate = useNavigate();
@@ -33,7 +40,7 @@ const HealthTimeline = ({ records, onRecordSelect }: HealthTimelineProps) => {
   const [expandedRecordId, setExpandedRecordId] = useState<number | null>(null);
 
   // Filter records by category
-  const filteredRecords = filter === "All" ? records : records.filter((r) => getCategory(r) === filter);
+  const filteredRecords = filter === "All" ? records : records.filter((r) => matchesFilter(r, filter));
 
   // Group records by month
 

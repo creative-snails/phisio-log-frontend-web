@@ -93,12 +93,11 @@
 .follow-up-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .follow-up-actions .action-item {
   display: flex;
-  gap: 0.5rem;
+  margin-bottom: 16px;
   align-items: center;
 }
 

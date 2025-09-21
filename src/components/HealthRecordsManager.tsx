@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiX } from "react-icons/fi";
 import BodyMapViewer from "./BodyMapViewer";
 
 import HealthTimeline from "~/components/HealthTimeline";
@@ -21,10 +22,6 @@ const HealthRecordsManager = () => {
       });
   }, []);
 
-  const handleRecordSelect = (record: HealthRecord | null) => {
-    setSelectedRecord(record);
-  };
-
   return (
     <div className="home">
       <div className="health-dashboard">
@@ -36,7 +33,10 @@ const HealthRecordsManager = () => {
               <p>Create your first health record to start tracking your health journey.</p>
             </div>
           ) : (
-            <HealthTimeline records={records} onRecordSelect={handleRecordSelect} />
+            <HealthTimeline
+              records={records}
+              onRecordSelect={(record: HealthRecord | null) => setSelectedRecord(record)}
+            />
           )}
         </div>
         <div className="body-map-section">
@@ -55,7 +55,7 @@ const HealthRecordsManager = () => {
         <div className="body-map-panel-header">
           <h3>Body Map</h3>
           <button className="close-panel" onClick={() => setIsBodyMapOverlayOpen(false)} title="Close">
-            ×
+            <FiX />
           </button>
         </div>
         <div className="body-map-panel-content">
