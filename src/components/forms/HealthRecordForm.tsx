@@ -200,51 +200,60 @@ const HealthRecordForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Perform full validation before submission
     const parseResult = Z_HealthRecord.safeParse(data);
     if (!parseResult.success) {
-      setFormErrors(parseResult.error.format() as unknown as FormErrors<HealthRecord>);
-      setIsValid(false);
+      // Show all validation errors, including optional fields if they have invalid data
+      const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
+      setFormErrors(formattedErrors);
 
       return;
     }
-    console.log("Submitted record:", data);
+
+    // Clean up data for backend submission - use empty strings consistently
+    const cleanedData = {
+      ...data,
+      treatmentsTried: data.treatmentsTried.filter((treatment) => treatment.trim() !== ""),
+      medicalConsultations: data.medicalConsultations.map((consultation) => ({
+        ...consultation,
+        diagnosis: consultation.diagnosis || "",
+        followUpActions: consultation.followUpActions.filter((action) => action.trim() !== ""),
+      })),
+    };
+
+    console.log("Submitted record:", cleanedData);
   };
 
   const validateForm = () => {
-    // Custom validation: enable save button when description + at least one symptom is provided
-    const hasDescription = data.description.trim().length >= 10; // MIN_CHAR_MEDIUM
-    const hasAtLeastOneSymptom =
-      data.symptoms.length > 0 && data.symptoms.some((symptom) => symptom.name.trim().length > 0);
-
-    // Check if the basic requirements are met
-    const basicRequirementsMet = hasDescription && hasAtLeastOneSymptom;
-
-    // Still validate individual fields for error display
+    // Validate all fields using the full schema
     const parseResult = Z_HealthRecord.safeParse({
       ...data,
       symptoms: data.symptoms,
     });
 
-    if (basicRequirementsMet) {
-      setIsValid(true);
-      // Only show errors for fields that don't meet basic requirements
-      if (!parseResult.success) {
-        const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
-        // Clear errors for optional fields if basic requirements are met
-        const filteredErrors = { ...formattedErrors };
+    // Show validation errors for real-time feedback
+    if (!parseResult.success) {
+      const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
+      // Remove errors for optional fields if they're empty to reduce noise
+      const filteredErrors = { ...formattedErrors };
+
+      // Only hide optional field errors if they're empty, not if they have invalid data
+      if (data.treatmentsTried.length === 0) {
         delete filteredErrors.treatmentsTried;
+      }
+      if (data.medicalConsultations.length === 0) {
         delete filteredErrors.medicalConsultations;
-        setFormErrors(filteredErrors);
-      } else {
-        setFormErrors({});
       }
+
+      setFormErrors(filteredErrors);
     } else {
-      setIsValid(false);
-      if (!parseResult.success) {
-        const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
-        setFormErrors(formattedErrors);
-      }
+      // No validation errors
+      setFormErrors({});
     }
+
+    // Button enabling logic: enable only when all validation passes
+    setIsValid(parseResult.success);
   };
 
   return loading ? (
