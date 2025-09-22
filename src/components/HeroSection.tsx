@@ -1,3 +1,5 @@
+import { FaBandage, FaHeartPulse, FaStethoscope } from "react-icons/fa6";
+
 import "./HeroSection.css";
 
 const HeroSection = () => {
@@ -12,9 +14,15 @@ const HeroSection = () => {
       <p className="hero-subtitle"></p>
 
       <div className="hero-decoration">
-        <div className="floating-shape shape-1"></div>
-        <div className="floating-shape shape-2"></div>
-        <div className="floating-shape shape-3"></div>
+        <div className="floating-icon icon-1">
+          <FaHeartPulse />
+        </div>
+        <div className="floating-icon icon-2">
+          <FaStethoscope />
+        </div>
+        <div className="floating-icon icon-3">
+          <FaBandage />
+        </div>
       </div>
     </section>
   );

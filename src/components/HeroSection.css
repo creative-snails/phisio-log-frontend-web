@@ -60,47 +60,52 @@
   pointer-events: none;
 }
 
-.floating-shape {
+.floating-icon {
   position: absolute;
-  border-radius: 50%;
-  opacity: 0.1;
-  animation: float 6s ease-in-out infinite;
+  opacity: 0.15;
+  animation: floatAndRock 12s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.shape-1 {
-  width: 120px;
-  height: 120px;
-  background: rgb(238, 145, 145);
-  top: 20%;
-  right: 10%;
+.icon-1 {
+  font-size: 4rem;
+  color: var(--color-primary);
+  top: 40%;
+  right: 5%;
   animation-delay: 0s;
 }
 
-.shape-2 {
-  width: 80px;
-  height: 80px;
-  background: var(--color-primary);
-  top: 60%;
+.icon-2 {
+  font-size: 3.5rem;
+  color: var(--color-primary);
+  top: 72%;
   left: 15%;
-  animation-delay: 2s;
+  animation-delay: 2.5s;
 }
 
-.shape-3 {
-  width: 60px;
-  height: 60px;
-  background: var(--accent-sage);
-  top: 30%;
-  left: 20%;
-  animation-delay: 4s;
+.icon-3 {
+  font-size: 3.5rem;
+  color: var(--color-primary);
+  top: 0;
+  left: 40%;
+  animation-delay: 5s;
 }
 
-@keyframes float {
+@keyframes floatAndRock {
   0%,
   100% {
     transform: translateY(0px) rotate(0deg);
   }
+  25% {
+    transform: translateY(-8px) rotate(-13deg);
+  }
   50% {
-    transform: translateY(-20px) rotate(180deg);
+    transform: translateY(-15px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(13deg);
   }
 }
 
@@ -114,7 +119,7 @@
     margin-top: 1rem;
   }
 
-  .floating-shape {
+  .floating-icon {
     display: none;
   }
 }
