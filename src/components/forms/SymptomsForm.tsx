@@ -1,8 +1,7 @@
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
 import "./SymptomsForm.css";
-import type { FormErrors } from "~/types/formErrors";
-import type { SymptomUI } from "~/types/types";
+import type { FormErrors, SymptomUI } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
@@ -28,19 +27,21 @@ const SymptomsForm = ({
 }: SymptomsFormProps) => {
   return (
     <div className="symptom-form-container">
-      <h3>Symptoms</h3>
       {symptoms.map((symptom, index) => (
         <div key={index} className="symptom-card">
           <div className="symptom-header" onClick={() => toggleSymptom(index)}>
-            <h4>{symptom.name}</h4>
+            <div className="symptom-header-content">
+              {symptom.isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
+              <h4>{symptom.name || "New Symptom"}</h4>
+            </div>
+            <FaMinusCircle
+              className="remove-icon"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                removeSymptom(index);
+              }}
+            />
           </div>
-          <FaRegTrashAlt
-            className="trash-icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeSymptom(index);
-            }}
-          />
 
           {symptom.isOpen && (
             <div className="symptom-body">
@@ -66,7 +67,19 @@ const SymptomsForm = ({
               {touched?.[index]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
               <label>Affected Parts</label>
-              <div className="placeholder">{symptom.affectedParts}</div>
+              <div className="placeholder">
+                {Array.isArray(symptom.affectedParts) && symptom.affectedParts.length > 0
+                  ? symptom.affectedParts
+                      .map((part, i) => (
+                        <span key={i}>
+                          {part.key} (severity: {part.state})
+                        </span>
+                      ))
+                      .join(", ")
+                  : typeof symptom.affectedParts === "string"
+                    ? symptom.affectedParts
+                    : "No affected parts specified"}
+              </div>
               {renderErrors(formErrors?.[index]?.affectedParts)}
             </div>
           )}

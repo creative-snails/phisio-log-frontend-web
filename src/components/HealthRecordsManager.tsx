@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import HealthCardGrid from "./HealthCardsGrid.tsx";
-import HealthModal from "./HealthModal.tsx";
+import { FiX } from "react-icons/fi";
+import BodyMapViewer from "./BodyMapViewer";
 
+import HealthTimeline from "~/components/HealthTimeline";
 import { getHealthRecords } from "~/services/api/healthRecordsApi.ts";
-import type { HealthRecord } from "~/types/types";
+import type { HealthRecord } from "~/types";
 
 const HealthRecordsManager = () => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<HealthRecord | null>(null);
+  const [isBodyMapOverlayOpen, setIsBodyMapOverlayOpen] = useState(false);
 
   useEffect(() => {
     const fetchHealthRecords = async () => {
@@ -21,41 +23,49 @@ const HealthRecordsManager = () => {
     fetchHealthRecords();
   }, []);
 
-  const handleNext = () => {
-    setSelectedIndex((prev) => (prev !== null ? (prev + 1) % records.length : null));
-  };
-
-  const handlePrev = () => {
-    setSelectedIndex((prev) => (prev !== null ? (prev - 1 + records.length) % records.length : null));
-  };
-
-  const handleRecordClick = (record: HealthRecord) => {
-    const index = records.findIndex((r) => r.id === record.id);
-    setSelectedIndex(index);
-  };
-
   return (
     <div className="home">
-      <h2>Health Records</h2>
-      <div className="health-records-grid">
-        {records.length === 0 ? (
-          <div className="empty-state">
-            <p>No health records available.</p>
-            <p>This is a placeholder with instruction to create your first health record.</p>
-          </div>
-        ) : (
-          <HealthCardGrid records={records} onClick={handleRecordClick} />
-        )}
+      <div className="health-dashboard">
+        <div className="timeline-section">
+          <h2 className="dashboard-section-title timeline-title">Health Timeline</h2>
+          {records.length === 0 ? (
+            <div className="empty-state">
+              <p>No health records available.</p>
+              <p>Create your first health record to start tracking your health journey.</p>
+            </div>
+          ) : (
+            <HealthTimeline
+              records={records}
+              onRecordSelect={(record: HealthRecord | null) => setSelectedRecord(record)}
+            />
+          )}
+        </div>
+        <div className="body-map-section">
+          <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
+          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} readOnly={true} colorSource="record" />
+        </div>
       </div>
 
-      {selectedIndex !== null && (
-        <HealthModal
-          record={records[selectedIndex]}
-          onClose={() => setSelectedIndex(null)}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
+      {/* Body Map Toggle Tab */}
+      <button className="body-map-tab" onClick={() => setIsBodyMapOverlayOpen(true)} title="View Body Map">
+        <span>Body Map</span>
+      </button>
+
+      {/* Body Map Slide Panel */}
+      <div className={`body-map-panel ${isBodyMapOverlayOpen ? "open" : ""}`}>
+        <div className="body-map-panel-header">
+          <h3>Body Map</h3>
+          <button className="close-panel" onClick={() => setIsBodyMapOverlayOpen(false)} title="Close">
+            <FiX />
+          </button>
+        </div>
+        <div className="body-map-panel-content">
+          <BodyMapViewer records={selectedRecord ? [selectedRecord] : records} readOnly={true} colorSource="record" />
+        </div>
+      </div>
+
+      {/* Backdrop when panel is open */}
+      {isBodyMapOverlayOpen && <div className="body-map-backdrop" onClick={() => setIsBodyMapOverlayOpen(false)} />}
     </div>
   );
 };

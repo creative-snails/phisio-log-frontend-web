@@ -3,4 +3,7 @@
 
 npx lint-staged && npm run tsc
 
+# Prevent committing lockfile-only changes
+bash scripts/guard-lockfile.sh
+
 

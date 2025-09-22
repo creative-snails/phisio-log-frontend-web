@@ -1,0 +1,83 @@
+.body-map-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.body-map-container {
+  width: 400px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.body-svg-wrapper {
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
+.body-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: scaleY(-1);
+}
+
+.body-part {
+  transition: all 0.2s ease;
+}
+
+.body-part:hover {
+  stroke-width: 3;
+  stroke: var(--accent-primary);
+}
+
+.selected-part-info {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: var(--border-radius-small);
+  border-left: 3px solid var(--accent-primary);
+  max-width: 300px;
+  text-align: center;
+}
+
+.selected-part-info h4 {
+  margin: 0 0 8px 0;
+  color: #1976d2;
+  font-size: 16px;
+}
+
+.selected-part-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.flip-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  padding: 2px 0;
+}
+
+.flip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  color: #536ba1;
+  font-size: 32px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.flip-icon:hover {
+  background: rgba(83, 107, 161, 0.1);
+  transform: scale(1.1);
+}

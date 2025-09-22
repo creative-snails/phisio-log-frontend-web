@@ -1,7 +1,18 @@
+// Form validation types
+export type FormErrors<T> = {
+  _errors?: string[];
+} & {
+  [K in keyof T]?: FormErrors<T[K]>;
+};
+
+// Health domain types
 export interface Symptom {
   name: string;
   startDate: string;
-  affectedParts: string;
+  affectedParts?: {
+    key: string;
+    state: "1" | "2" | "3";
+  }[];
 }
 
 export type SymptomUI = Symptom & {
@@ -43,6 +54,7 @@ export interface HealthRecord {
   createdAt?: string;
   updatedAt?: string;
 }
+
 export interface RecordFormData {
   data: Omit<HealthRecord, "symptoms"> & {
     symptoms: SymptomUI[];
@@ -51,6 +63,7 @@ export interface RecordFormData {
   error: string;
 }
 
+// Chat types
 export interface ChatHistoryType {
   id?: string;
   history: {

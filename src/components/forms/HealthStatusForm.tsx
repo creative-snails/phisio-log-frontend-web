@@ -1,8 +1,14 @@
+import Select from "react-select";
+
 import "./HealthStatusForm.css";
-import type { FormErrors } from "~/types/formErrors";
-import type { Status } from "~/types/types";
+import type { FormErrors, Status } from "~/types";
 import { statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
 
 interface HealthStatusFormProps {
   status: Status;
@@ -21,28 +27,79 @@ const HealthStatusForm = ({
 }: HealthStatusFormProps) => {
   return (
     <div className="health-status-section">
-      <h3 className="section-title">Status</h3>
       <div className="health-status-form">
-        {Object.entries(statusOptions).map(([field, options]) => (
-          <div className="form-group" key={field}>
-            <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
-            <select
-              value={status[field as keyof Status]}
-              onChange={(e) => setStatus(field as keyof Status, e.target.value)}
-              onBlur={() => setTouchedFields(field as keyof Status)}
-              className={
-                touchedFields[field as keyof Status] && formErrors?.[field as keyof Status] ? "input-error" : ""
-              }
-            >
-              {options.map(({ label, value }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            {touchedFields[field as keyof Status] && renderErrors(formErrors?.[field as keyof Status])}
-          </div>
-        ))}
+        <div className="form-group">
+          <label>Stage:</label>
+          <Select<SelectOption>
+            options={statusOptions.stage.map(({ label, value }) => ({
+              label,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.stage.find((option) => option.value === status.stage)?.label ||
+                statusOptions.stage[0].label,
+              value: status.stage || statusOptions.stage[0].value,
+            }}
+            onChange={(selectedOption) => {
+              setStatus("stage", selectedOption?.value || statusOptions.stage[0].value);
+              setTouchedFields("stage");
+            }}
+            placeholder="Select stage"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
+          {touchedFields.stage && renderErrors(formErrors?.stage)}
+        </div>
+        <div className="form-group">
+          <label>Severity:</label>
+          <Select<SelectOption>
+            options={statusOptions.severity.map(({ label, value }) => ({
+              label,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.severity.find((option) => option.value === status.severity)?.label ||
+                statusOptions.severity[0].label,
+              value: status.severity || statusOptions.severity[0].value,
+            }}
+            onChange={(selectedOption) => {
+              setStatus("severity", selectedOption?.value || statusOptions.severity[0].value);
+              setTouchedFields("severity");
+            }}
+            placeholder="Select severity"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
+          {touchedFields.severity && renderErrors(formErrors?.severity)}
+        </div>
+        <div className="form-group">
+          <label>Progression:</label>
+          <Select<SelectOption>
+            options={statusOptions.progression.map(({ label, value }) => ({
+              label,
+              value,
+            }))}
+            value={{
+              label:
+                statusOptions.progression.find((option) => option.value === status.progression)?.label ||
+                statusOptions.progression[0].label,
+              value: status.progression || statusOptions.progression[0].value,
+            }}
+            onChange={(selectedOption) => {
+              setStatus("progression", selectedOption?.value || statusOptions.progression[0].value);
+              setTouchedFields("progression");
+            }}
+            placeholder="Select progression"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isSearchable={false}
+          />
+          {touchedFields.progression && renderErrors(formErrors?.progression)}
+        </div>
       </div>
       {renderErrors(formErrors?._errors)}
     </div>

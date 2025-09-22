@@ -1,37 +1,42 @@
+@import "./theme.css";
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
 html,
 body,
 #root {
   height: 100%;
   width: 100%;
+  min-width: 400px !important;
   margin: 0;
   padding: 0;
-  font-family: system-ui, sans-serif;
-  background-color: #121212;
+  background: rgb(250, 253, 255);
+  color: var(--text-body);
   box-sizing: border-box;
-  min-width: 680px;
+  position: relative;
+}
+
+body {
+  font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600; /* instead of 700 */
+  color: var(--color-text-primary);
+}
+
+p,
+span,
+li {
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: inherit;
-}
-
-.date {
-  color: #666;
-  font-size: 0.9em;
-  min-width: 660px;
-}
-
-.details {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-}
-
-.vitals {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 10px;
 }

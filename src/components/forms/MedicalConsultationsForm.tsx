@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
 import "./MedicalConsultationsForm.css";
-import type { FormErrors } from "~/types/formErrors";
+import type { FormErrors } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type Consultation = {
@@ -94,16 +94,21 @@ const MedicalConsultationsForm = ({
   };
 
   return (
-    <div className="Consultations-form-container">
-      <h3>Medical Consultations</h3>
+    <div className="consultations-form-container">
       {consultations.map((c, i) => (
         <div key={i} className="consultation-card">
           <div className="consultation-header" onClick={() => toggleCol(i)}>
-            <h4>{c.consultant}</h4>
-            <p className="diagnosis-summary">{c.diagnosis}</p>
-            <FaRegTrashAlt
-              className="bin-icon"
-              onClick={(e) => {
+            <div className="consultation-header-content">
+              {c.isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
+              <div className="consultation-info">
+                {c.consultant && <h4>{c.consultant}</h4>}
+                {c.diagnosis && <p className="diagnosis-summary">{c.diagnosis}</p>}
+                {!c.consultant && !c.diagnosis && <h4>New Consultation</h4>}
+              </div>
+            </div>
+            <FaMinusCircle
+              className="remove-icon"
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 removeConsultation(i);
               }}
@@ -145,20 +150,22 @@ const MedicalConsultationsForm = ({
               <div className="follow-up-actions">
                 {c.followUpActions.map((action, j) => (
                   <div key={j} className="action-item">
-                    <input
-                      type="text"
-                      value={action}
-                      onChange={(e) => updateAction(i, j, e.target.value)}
-                      onBlur={() => setTouched && setTouched(i, "followUpActions", j)}
-                      className={
-                        touched?.[i]?.followUpActions?.[j] && formErrors?.[i]?.followUpActions?.[j]?._errors
-                          ? "input-error"
-                          : ""
-                      }
-                    />
-                    <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
-                      X
-                    </button>
+                    <div className="action-input-row">
+                      <input
+                        type="text"
+                        value={action}
+                        onChange={(e) => updateAction(i, j, e.target.value)}
+                        onBlur={() => setTouched && setTouched(i, "followUpActions", j)}
+                        className={
+                          touched?.[i]?.followUpActions?.[j] && formErrors?.[i]?.followUpActions?.[j]?._errors
+                            ? "input-error"
+                            : ""
+                        }
+                      />
+                      <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
+                        <FaMinusCircle className="remove-icon" />
+                      </button>
+                    </div>
                     {touched?.[i]?.followUpActions?.[j] && renderErrors(formErrors?.[i]?.followUpActions?.[j])}
                   </div>
                 ))}

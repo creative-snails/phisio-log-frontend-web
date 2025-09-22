@@ -8,11 +8,27 @@
       "symptoms": [
         {
           "name": "Migraine",
-          "startDate": "2025-02-20"
+          "startDate": "2025-02-20",
+          "affectedParts": [
+            {
+              "key": "head-front",
+              "state": "3"
+            }
+          ]
         },
         {
           "name": "Nausea",
-          "startDate": "2025-02-21"
+          "startDate": "2025-02-21",
+          "affectedParts": [
+            {
+              "key": "upper-abdomen-left",
+              "state": "2"
+            },
+            {
+              "key": "upper-abdomen-right",
+              "state": "2"
+            }
+          ]
         }
       ],
       "status": {
@@ -61,11 +77,31 @@
       "symptoms": [
         {
           "name": "Lower back pain",
-          "startDate": "2025-02-10"
+          "startDate": "2025-02-10",
+          "affectedParts": [
+            {
+              "key": "lower-spine-left",
+              "state": "3"
+            },
+            {
+              "key": "lower-spine-right",
+              "state": "3"
+            }
+          ]
         },
         {
           "name": "Muscle stiffness",
-          "startDate": "2025-02-12"
+          "startDate": "2025-02-12",
+          "affectedParts": [
+            {
+              "key": "middle-back-left",
+              "state": "2"
+            },
+            {
+              "key": "middle-back-right",
+              "state": "2"
+            }
+          ]
         }
       ],
       "status": {
@@ -108,15 +144,33 @@
       "symptoms": [
         {
           "name": "Sneezing",
-          "startDate": "2025-05-01"
+          "startDate": "2025-05-01",
+          "affectedParts": [
+            {
+              "key": "head-front",
+              "state": "2"
+            }
+          ]
         },
         {
           "name": "Itchy eyes",
-          "startDate": "2025-05-01"
+          "startDate": "2025-05-01",
+          "affectedParts": [
+            {
+              "key": "head-front",
+              "state": "2"
+            }
+          ]
         },
         {
           "name": "Runny nose",
-          "startDate": "2025-05-02"
+          "startDate": "2025-05-02",
+          "affectedParts": [
+            {
+              "key": "head-front",
+              "state": "2"
+            }
+          ]
         }
       ],
       "status": {
@@ -145,11 +199,23 @@
       "symptoms": [
         {
           "name": "Joint pain",
-          "startDate": "2025-04-15"
+          "startDate": "2025-04-15",
+          "affectedParts": [
+            {
+              "key": "knee-left-front",
+              "state": "3"
+            }
+          ]
         },
         {
           "name": "Swelling",
-          "startDate": "2025-04-15"
+          "startDate": "2025-04-15",
+          "affectedParts": [
+            {
+              "key": "knee-left-front",
+              "state": "2"
+            }
+          ]
         }
       ],
       "status": {
@@ -188,11 +254,47 @@
       "symptoms": [
         {
           "name": "Bloating",
-          "startDate": "2025-03-10"
+          "startDate": "2025-03-10",
+          "affectedParts": [
+            {
+              "key": "upper-abdomen-left",
+              "state": "2"
+            },
+            {
+              "key": "upper-abdomen-right",
+              "state": "2"
+            },
+            {
+              "key": "lower-abdomen-left",
+              "state": "2"
+            },
+            {
+              "key": "lower-abdomen-right",
+              "state": "2"
+            }
+          ]
         },
         {
           "name": "Acid reflux",
-          "startDate": "2025-03-11"
+          "startDate": "2025-03-11",
+          "affectedParts": [
+            {
+              "key": "upper-abdomen-left",
+              "state": "2"
+            },
+            {
+              "key": "upper-abdomen-right",
+              "state": "2"
+            },
+            {
+              "key": "chest-left",
+              "state": "2"
+            },
+            {
+              "key": "chest-right",
+              "state": "2"
+            }
+          ]
         }
       ],
       "status": {

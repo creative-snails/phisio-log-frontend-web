@@ -1,0 +1,43 @@
+name: lockfile-guard
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: [main, master]
+
+jobs:
+  check-lockfile-coherence:
+    name: Ensure lockfile changes accompany package.json
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute diff against base
+        id: diff
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          else
+            # For push events, compare against the previous commit on this branch
+            BASE_SHA="$(git rev-parse HEAD^)"
+          fi
+          echo "Base SHA: $BASE_SHA"
+          git diff --name-only "$BASE_SHA" HEAD | tee changed_files.txt
+          echo "changed=$(paste -sd, changed_files.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Guard package-lock.json
+        shell: bash
+        run: |
+          CHANGED_FILES=$(cat changed_files.txt)
+          echo "Changed files:\n$CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep -q '^package-lock.json$'; then
+            if ! echo "$CHANGED_FILES" | grep -q '^package.json$'; then
+              echo "::error::package-lock.json changed without package.json. Use 'npm ci' for installs and avoid committing lockfile churn."
+              exit 1
+            fi
+          fi

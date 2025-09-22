@@ -1,0 +1,135 @@
+.hero-section {
+  padding: 3rem 0 1.5rem 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.sign-in-button {
+  background: rgb(209, 224, 249);
+  color: var(--color-text-primary);
+  padding: 12px 18px;
+  border: solid rgba(208, 228, 230, 0.9) 2px;
+  border-radius: 10px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.sign-in-button:hover {
+  background: rgb(222, 232, 248);
+  transform: translateY(-1px);
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--text-body);
+  margin-bottom: 3.5rem;
+  line-height: 1.5;
+}
+
+.hero-subtitle span {
+  font-weight: 500;
+}
+
+.hero-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.floating-icon {
+  position: absolute;
+  opacity: 0.15;
+  animation: floatAndRock 12s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-1 {
+  font-size: 4rem;
+  color: var(--color-primary);
+  top: 40%;
+  right: 5%;
+  animation-delay: 0s;
+}
+
+.icon-2 {
+  font-size: 3.5rem;
+  color: var(--color-primary);
+  top: 72%;
+  left: 15%;
+  animation-delay: 2.5s;
+}
+
+.icon-3 {
+  font-size: 3.5rem;
+  color: var(--color-primary);
+  top: 0;
+  left: 40%;
+  animation-delay: 5s;
+}
+
+@keyframes floatAndRock {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-13deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(13deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 4rem 0 1rem 0;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+    margin-top: 1rem;
+  }
+
+  .floating-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 4.5rem 0 0.5rem 0;
+  }
+
+  .hero-title {
+    margin-top: 1.5rem;
+  }
+}
