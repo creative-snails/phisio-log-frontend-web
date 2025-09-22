@@ -1,10 +1,18 @@
 import { FaBandage, FaHeartPulse, FaStethoscope } from "react-icons/fa6";
+import { FiMenu } from "react-icons/fi";
 
 import "./HeroSection.css";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onOpenNav?: () => void;
+}
+
+const HeroSection = ({ onOpenNav }: HeroSectionProps) => {
   return (
     <section className="hero-section">
+      <button className="nav-toggle-tab" onClick={onOpenNav} title="Open Navigation">
+        <FiMenu />
+      </button>
       <button className="sign-in-button">Sign In</button>
       <div className="hero-header">
         <h1 className="hero-title">Your Health Companion</h1>

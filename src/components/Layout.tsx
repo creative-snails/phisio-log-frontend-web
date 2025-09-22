@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FiMenu } from "react-icons/fi";
 import ApiStatusBanner from "./ApiStatusBanner";
 import HeroSection from "./HeroSection";
 import SideNavBar from "./SideNavBar";
@@ -16,14 +15,9 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="layout">
         <SideNavBar isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
         <main className="page-content">
-          <HeroSection />
+          <HeroSection onOpenNav={() => setIsNavOpen(true)} />
           {children}
         </main>
-
-        {/* Navigation Toggle Tab */}
-        <button className="nav-toggle-tab" onClick={() => setIsNavOpen(true)} title="Open Navigation">
-          <FiMenu />
-        </button>
 
         {/* Backdrop when nav is open */}
         {isNavOpen && <div className="nav-backdrop" onClick={() => setIsNavOpen(false)} />}
