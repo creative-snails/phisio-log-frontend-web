@@ -29,17 +29,19 @@ const TreatmentsTried = ({ treatments, setTreatments, formErrors, touched, setTo
   return (
     <div className="treatments-tried-container">
       {treatments.map((treatment, i) => (
-        <div key={i} className="treatment-item">
-          <input
-            type="text"
-            value={treatment}
-            onChange={(e) => updateTreatments(i, e.target.value)}
-            onBlur={setTouched}
-            className={touched && formErrors?.[i]?._errors ? "input-error" : ""}
-          />
-          <button type="button" className="remove-button" onClick={() => removeTreatment(i)}>
-            <FaMinusCircle className="remove-icon" />
-          </button>
+        <div key={i} className="form-treatment-item">
+          <div className="treatment-input-row">
+            <input
+              type="text"
+              value={treatment}
+              onChange={(e) => updateTreatments(i, e.target.value)}
+              onBlur={setTouched}
+              className={touched && formErrors?.[i]?._errors ? "input-error" : ""}
+            />
+            <button type="button" className="remove-button" onClick={() => removeTreatment(i)}>
+              <FaMinusCircle className="remove-icon" />
+            </button>
+          </div>
           {touched && renderErrors(formErrors?.[i])}
         </div>
       ))}

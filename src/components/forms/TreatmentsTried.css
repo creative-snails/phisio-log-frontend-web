@@ -3,12 +3,19 @@
   max-width: none;
 }
 
-.treatment-item {
+.form-treatment-item {
   display: flex;
-  align-items: center;
-  margin-bottom: 12px;
+  flex-direction: column;
+  margin-bottom: 4px;
   padding: var(--space-md) 0;
   transition: all var(--transition-normal);
+}
+
+.treatment-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+  width: 100%;
 }
 
 .treatment-item input {

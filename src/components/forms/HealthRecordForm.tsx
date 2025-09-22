@@ -91,10 +91,26 @@ const HealthRecordForm = () => {
   }, [data]);
 
   const handleDescriptionChange = (value: string) => {
-    setRecordFormData((prev) => ({
-      ...prev,
-      data: { ...prev.data, description: value },
-    }));
+    setRecordFormData((prev) => {
+      const hasDescription = value.trim().length > 0;
+      const shouldPopulateDefaults = hasDescription && !prev.data.description.trim();
+
+      return {
+        ...prev,
+        data: {
+          ...prev.data,
+          description: value,
+          // Auto-populate health status defaults when description is first provided
+          status: shouldPopulateDefaults
+            ? {
+                stage: statusOptions.stage[0].value,
+                severity: statusOptions.severity[0].value,
+                progression: statusOptions.progression[1].value, // "stable" as default
+              }
+            : prev.data.status,
+        },
+      };
+    });
     validateForm();
   };
 
@@ -195,17 +211,39 @@ const HealthRecordForm = () => {
   };
 
   const validateForm = () => {
+    // Custom validation: enable save button when description + at least one symptom is provided
+    const hasDescription = data.description.trim().length >= 10; // MIN_CHAR_MEDIUM
+    const hasAtLeastOneSymptom =
+      data.symptoms.length > 0 && data.symptoms.some((symptom) => symptom.name.trim().length > 0);
+
+    // Check if the basic requirements are met
+    const basicRequirementsMet = hasDescription && hasAtLeastOneSymptom;
+
+    // Still validate individual fields for error display
     const parseResult = Z_HealthRecord.safeParse({
       ...data,
       symptoms: data.symptoms,
     });
-    if (parseResult.success) {
-      setFormErrors({});
+
+    if (basicRequirementsMet) {
       setIsValid(true);
+      // Only show errors for fields that don't meet basic requirements
+      if (!parseResult.success) {
+        const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
+        // Clear errors for optional fields if basic requirements are met
+        const filteredErrors = { ...formattedErrors };
+        delete filteredErrors.treatmentsTried;
+        delete filteredErrors.medicalConsultations;
+        setFormErrors(filteredErrors);
+      } else {
+        setFormErrors({});
+      }
     } else {
-      const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
-      setFormErrors(formattedErrors);
       setIsValid(false);
+      if (!parseResult.success) {
+        const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
+        setFormErrors(formattedErrors);
+      }
     }
   };
 
@@ -276,29 +314,6 @@ const HealthRecordForm = () => {
 
               <div className="form-group-section">
                 <div className="form-group-header">
-                  <h4>Treatments & Therapies</h4>
-                </div>
-                <div className="form-group-items">
-                  <div className="form-item">
-                    <TreatmentsTried
-                      treatments={data.treatmentsTried}
-                      setTreatments={(updated) => {
-                        setRecordFormData((prev) => ({
-                          ...prev,
-                          data: { ...prev.data, treatmentsTried: updated },
-                        }));
-                        validateForm();
-                      }}
-                      formErrors={formErrors.treatmentsTried}
-                      touched={touchedTreatments}
-                      setTouched={() => setTouchedTreatments(true)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-group-section">
-                <div className="form-group-header">
                   <h4>Symptoms & Body Parts</h4>
                 </div>
                 <div className="form-group-items">
@@ -317,6 +332,29 @@ const HealthRecordForm = () => {
                           [index]: { ...prev[index], [field]: true },
                         }))
                       }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group-section">
+                <div className="form-group-header">
+                  <h4>Treatments & Therapies</h4>
+                </div>
+                <div className="form-group-items">
+                  <div className="form-item">
+                    <TreatmentsTried
+                      treatments={data.treatmentsTried}
+                      setTreatments={(updated) => {
+                        setRecordFormData((prev) => ({
+                          ...prev,
+                          data: { ...prev.data, treatmentsTried: updated },
+                        }));
+                        validateForm();
+                      }}
+                      formErrors={formErrors.treatmentsTried}
+                      touched={touchedTreatments}
+                      setTouched={() => setTouchedTreatments(true)}
                     />
                   </div>
                 </div>

@@ -150,20 +150,22 @@ const MedicalConsultationsForm = ({
               <div className="follow-up-actions">
                 {c.followUpActions.map((action, j) => (
                   <div key={j} className="action-item">
-                    <input
-                      type="text"
-                      value={action}
-                      onChange={(e) => updateAction(i, j, e.target.value)}
-                      onBlur={() => setTouched && setTouched(i, "followUpActions", j)}
-                      className={
-                        touched?.[i]?.followUpActions?.[j] && formErrors?.[i]?.followUpActions?.[j]?._errors
-                          ? "input-error"
-                          : ""
-                      }
-                    />
-                    <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
-                      <FaMinusCircle className="remove-icon" />
-                    </button>
+                    <div className="action-input-row">
+                      <input
+                        type="text"
+                        value={action}
+                        onChange={(e) => updateAction(i, j, e.target.value)}
+                        onBlur={() => setTouched && setTouched(i, "followUpActions", j)}
+                        className={
+                          touched?.[i]?.followUpActions?.[j] && formErrors?.[i]?.followUpActions?.[j]?._errors
+                            ? "input-error"
+                            : ""
+                        }
+                      />
+                      <button type="button" className="remove-button" onClick={() => removeAction(i, j)}>
+                        <FaMinusCircle className="remove-icon" />
+                      </button>
+                    </div>
                     {touched?.[i]?.followUpActions?.[j] && renderErrors(formErrors?.[i]?.followUpActions?.[j])}
                   </div>
                 ))}

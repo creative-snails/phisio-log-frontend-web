@@ -144,8 +144,15 @@
 
 .follow-up-actions .action-item {
   display: flex;
+  flex-direction: column;
   margin-bottom: 16px;
+}
+
+.follow-up-actions .action-input-row {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 button.add-button {

@@ -238,7 +238,7 @@ input[type="text"]:focus {
 }
 
 .submit-button:disabled {
-  background-color: #d1d5db;
+  background-color: #747f9b;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -639,22 +639,15 @@ input[type="text"]:focus {
 
 /* Health record form responsive spacing to match timeline */
 @media (max-width: 1400px) and (min-width: 801px) {
-  .health-record-page {
-    padding: 40px 20px 40px 60px;
-  }
 }
 
 @media (max-width: 800px) {
   .health-record-page {
-    padding: 20px 60px 20px 15px;
+    padding: 20px 40px 20px 15px;
   }
 }
 
 @media (max-width: 768px) {
-  .health-record-page {
-    padding: 20px 15px;
-  }
-
   .dashboard-section-title.form-title {
     font-size: 1.75rem;
     margin-bottom: var(--space-lg);

@@ -47,7 +47,6 @@ export const Z_Symptom = z.object({
 
       return undefined;
     }, z.date().optional())
-    .refine((d) => !!d, { message: "Start date is required" })
     .refine((d) => !d || d <= new Date(), { message: "Start Date cannot be in the future" }),
 });
 
@@ -68,13 +67,13 @@ export const Z_MedicalConsultation = z.object({
 
       return undefined;
     }, z.date().optional())
-    .refine((d) => !!d, { message: "Consultation date is required" })
-    .refine((d) => !d || d <= new Date(), { message: "Consultation date cannot be in the future" }),
+    .optional(),
   diagnosis: z
     .string()
     .trim()
     .min(MIN_CHAR_SHORT, minValidationMessage("Diagnosis", MIN_CHAR_SHORT))
-    .max(MAX_CHAR_SHORT, maxValidationMessage("Diagnosis", MAX_CHAR_SHORT)),
+    .max(MAX_CHAR_SHORT, maxValidationMessage("Diagnosis", MAX_CHAR_SHORT))
+    .optional(),
   followUpActions: z
     .array(
       z
@@ -126,9 +125,9 @@ export const Z_HealthRecord = z.object({
         .min(MIN_CHAR_SHORT, minValidationMessage("Treatments tried", MIN_CHAR_SHORT))
         .max(MAX_CHAR_SHORT, maxValidationMessage("Treatments tried", MAX_CHAR_SHORT))
     )
-    .min(1, "At least one treatment is required")
+    .optional()
     .default([]),
-  medicalConsultations: z.array(Z_MedicalConsultation).min(1, "At least one consultation is required"),
+  medicalConsultations: z.array(Z_MedicalConsultation).optional().default([]),
   updates: z.array(Z_HealthRecordUpdate).optional(),
 });
 
