@@ -1,12 +1,14 @@
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
-import "./SymptomsForm.css";
+import InteractiveBodyMap from "~/components/InteractiveBodyMap";
 import type { FormErrors, SymptomUI } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
+import "./SymptomsForm.css";
+
 
 type SymptomsFormProps = {
   symptoms: SymptomUI[];
-  onSymptomChange: (index: number, field: keyof SymptomUI, value: string) => void;
+  onSymptomChange: (index: number, field: keyof SymptomUI, value: string | SymptomUI["affectedParts"]) => void;
   toggleSymptom: (index: number) => void;
   addSymptom: () => void;
   removeSymptom: (index: number) => void;
@@ -68,17 +70,10 @@ const SymptomsForm = ({
 
               <label>Affected Parts</label>
               <div className="placeholder">
-                {Array.isArray(symptom.affectedParts) && symptom.affectedParts.length > 0
-                  ? symptom.affectedParts
-                      .map((part, i) => (
-                        <span key={i}>
-                          {part.key} (severity: {part.state})
-                        </span>
-                      ))
-                      .join(", ")
-                  : typeof symptom.affectedParts === "string"
-                    ? symptom.affectedParts
-                    : "No affected parts specified"}
+                <InteractiveBodyMap
+                  initial={Array.isArray(symptom.affectedParts) ? symptom.affectedParts : []}
+                  onChange={(updatedParts) => onSymptomChange(index, "affectedParts", updatedParts)}
+                />
               </div>
               {renderErrors(formErrors?.[index]?.affectedParts)}
             </div>

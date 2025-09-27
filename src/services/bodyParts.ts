@@ -3,6 +3,8 @@ export type bodyPartData = {
   isSelected: boolean;
   status: 1 | 2 | 3;
   d: string;
+  cx?: number;
+  cy?: number;
 };
 
 export const frontSide: bodyPartData[] = [
