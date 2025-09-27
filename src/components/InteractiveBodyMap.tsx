@@ -1,30 +1,33 @@
 import { useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
+import "./BodyMapViewer.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
 import type { SeverityState } from "~/types";
 import { getSeverityColor } from "~/utils/severityColors";
-import "./BodyMapViewer.css";
 
 interface InteractiveBodyMapProps {
-    initial?: {key: string; state: SeverityState}[];
-    onChange: (parts: {key: string; state: SeverityState}[]) => void;
+  initial?: { key: string; state: SeverityState }[];
+  onChange: (parts: { key: string; state: SeverityState }[]) => void;
 }
 
-const severityOptions: {value: SeverityState; label: string}[] = [
-  {value: "0", label: "Variable"},
-  {value: "1", label: "Mild"},
-  {value: "2", label: "Moderate"},
-  {value: "3", label: "Severe"},
+const severityOptions: { value: SeverityState; label: string }[] = [
+  { value: "0", label: "Variable" },
+  { value: "1", label: "Mild" },
+  { value: "2", label: "Moderate" },
+  { value: "3", label: "Severe" },
 ];
 
 const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps) => {
-  const [selectedParts, setSelectedParts] = useState<{ [key: string]: SeverityState }>(
-    () =>
-      initial.reduce((acc, part) => {
+  const [selectedParts, setSelectedParts] = useState<{ [key: string]: SeverityState }>(() =>
+    initial.reduce(
+      (acc, part) => {
         acc[part.key] = part.state;
+
         return acc;
-      }, {} as { [key: string]: SeverityState })
+      },
+      {} as { [key: string]: SeverityState }
+    )
   );
 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -40,23 +43,23 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     setIsFlipped(!isFlipped);
   };
 
-  
   const togglePart = (partId: string) => {
     setActiveDropdown((prev) => (prev === partId ? null : partId));
   };
 
   const handleSeverityChange = (partId: string, severity: SeverityState) => {
-    const updated = {...selectedParts, [partId]: severity};
+    const updated = { ...selectedParts, [partId]: severity };
     setSelectedParts(updated);
     setActiveDropdown(null);
-    if(onChange) {
-        const partsArray = Object.entries(updated).map(([key, state]) => ({key, state: state as SeverityState}));
-        onChange(partsArray);
+    if (onChange) {
+      const partsArray = Object.entries(updated).map(([key, state]) => ({ key, state: state as SeverityState }));
+      onChange(partsArray);
     }
   };
 
   const getPartFill = (part: bodyPartData) => {
     const state = selectedParts[part.id];
+
     return state ? getSeverityColor(state) : "#f8f9fa";
   };
 

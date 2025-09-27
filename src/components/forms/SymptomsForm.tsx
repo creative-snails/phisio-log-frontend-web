@@ -1,10 +1,9 @@
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
+import "./SymptomsForm.css";
 import InteractiveBodyMap from "~/components/InteractiveBodyMap";
 import type { FormErrors, SymptomUI } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
-import "./SymptomsForm.css";
-
 
 type SymptomsFormProps = {
   symptoms: SymptomUI[];

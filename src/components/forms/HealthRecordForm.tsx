@@ -5,13 +5,13 @@ import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
 
-import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import type { FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 import { statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
+import "~/utils/renderErrors.css";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
 const HealthRecordForm = () => {
@@ -149,7 +149,7 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
+  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string | SymptomUI["affectedParts"]) => {
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
       updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
