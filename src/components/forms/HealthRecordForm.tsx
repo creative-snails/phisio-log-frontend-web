@@ -149,7 +149,11 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string | SymptomUI["affectedParts"]) => {
+  const handleSymptomChange = (
+    index: number,
+    field: keyof SymptomUI,
+    value: string | SymptomUI["affectedParts"] | undefined
+  ) => {
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
       updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };

@@ -7,7 +7,11 @@ import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
   symptoms: SymptomUI[];
-  onSymptomChange: (index: number, field: keyof SymptomUI, value: string | SymptomUI["affectedParts"]) => void;
+  onSymptomChange: (
+    index: number,
+    field: keyof SymptomUI,
+    value: string | SymptomUI["affectedParts"] | undefined
+  ) => void;
   toggleSymptom: (index: number) => void;
   addSymptom: () => void;
   removeSymptom: (index: number) => void;

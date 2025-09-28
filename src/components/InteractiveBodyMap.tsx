@@ -30,7 +30,6 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     )
   );
 
-  const [isFlipped, setIsFlipped] = useState(false);
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -40,7 +39,7 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     setIsAnimating(true);
     const newRotation = rotationDegrees + 180;
     setRotationDegrees(newRotation);
-    setIsFlipped(!isFlipped);
+    setActiveDropdown(null);
   };
 
   const togglePart = (partId: string) => {
@@ -83,8 +82,8 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
                 <path
                   d={part.d}
                   fill={getPartFill(part)}
-                  stroke="#333"
-                  strokeWidth="2"
+                  stroke={selectedParts[part.id] ? getSeverityColor(selectedParts[part.id]) : "#333"}
+                  strokeWidth={selectedParts[part.id] ? "3" : "2"}
                   className="body-part"
                   onClick={() => togglePart(part.id)}
                   style={{ cursor: "pointer" }}
