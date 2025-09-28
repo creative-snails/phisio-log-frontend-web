@@ -161,6 +161,7 @@ const HealthRecordForm = () => {
       return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
     });
     validateForm();
+    console.log("Updating symptom", index, field, value);
   };
 
   const toggleSymptom = (index: number) => {

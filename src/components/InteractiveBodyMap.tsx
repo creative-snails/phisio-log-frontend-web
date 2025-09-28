@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
 import "./BodyMapViewer.css";
@@ -30,6 +30,19 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     )
   );
 
+  useEffect(() => {
+    setSelectedParts(
+      initial.reduce(
+        (acc, part) => {
+          acc[part.key] = part.state;
+
+          return acc;
+        },
+        {} as { [key: string]: SeverityState }
+      )
+    );
+  }, [initial]);
+
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -43,6 +56,18 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
   };
 
   const togglePart = (partId: string) => {
+    setSelectedParts((prev) => {
+      const newState = { ...prev };
+      if (!newState[partId]) {
+        newState[partId] = "0";
+        if (onChange) {
+          const partsArray = Object.entries(newState).map(([key, state]) => ({ key, state }));
+          onChange(partsArray);
+        }
+      }
+
+      return newState;
+    });
     setActiveDropdown((prev) => (prev === partId ? null : partId));
   };
 
