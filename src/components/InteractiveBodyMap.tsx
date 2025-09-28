@@ -20,28 +20,18 @@ const severityOptions: { value: SeverityState; label: string }[] = [
 
 const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps) => {
   const [selectedParts, setSelectedParts] = useState<{ [key: string]: SeverityState }>(() =>
-    initial.reduce(
-      (acc, part) => {
-        acc[part.key] = part.state;
-
-        return acc;
-      },
-      {} as { [key: string]: SeverityState }
-    )
+    initial.reduce((acc, part) => ({ ...acc, [part.key]: part.state }), {})
   );
 
   useEffect(() => {
-    setSelectedParts(
-      initial.reduce(
-        (acc, part) => {
-          acc[part.key] = part.state;
-
-          return acc;
-        },
-        {} as { [key: string]: SeverityState }
-      )
-    );
-  }, [initial]);
+    const partsArray = Object.entries(selectedParts).map(([key, state]) => ({ key, state }));
+    const isEqual =
+      partsArray.length === (initial?.length ?? 0) &&
+      partsArray.every((p, i) => p.key === initial[i]?.key && p.state === initial[i]?.state);
+    if (!isEqual) {
+      onChange(partsArray);
+    }
+  }, [selectedParts, onChange, initial]);
 
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -55,30 +45,23 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     setActiveDropdown(null);
   };
 
+  const severityCycle: SeverityState[] = ["0", "1", "2", "3"];
+
   const togglePart = (partId: string) => {
     setSelectedParts((prev) => {
-      const newState = { ...prev };
-      if (!newState[partId]) {
-        newState[partId] = "0";
-        if (onChange) {
-          const partsArray = Object.entries(newState).map(([key, state]) => ({ key, state }));
-          onChange(partsArray);
-        }
-      }
+      const current = prev[partId] ?? "0";
+      const nextIndex = (severityCycle.indexOf(current) + 1) % severityCycle.length;
+      const updated = { ...prev, [partId]: severityCycle[nextIndex] };
 
-      return newState;
+      return updated;
     });
-    setActiveDropdown((prev) => (prev === partId ? null : partId));
+    setActiveDropdown(null);
   };
 
   const handleSeverityChange = (partId: string, severity: SeverityState) => {
     const updated = { ...selectedParts, [partId]: severity };
     setSelectedParts(updated);
     setActiveDropdown(null);
-    if (onChange) {
-      const partsArray = Object.entries(updated).map(([key, state]) => ({ key, state: state as SeverityState }));
-      onChange(partsArray);
-    }
   };
 
   const getPartFill = (part: bodyPartData) => {
