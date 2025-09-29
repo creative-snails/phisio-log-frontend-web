@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
 import "./BodyMapViewer.css";
+import "./InteractiveBodyMap.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
 import type { SeverityState } from "~/types";
 import { getSeverityColor } from "~/utils/severityColors";
@@ -46,17 +47,15 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     setActiveDropdown(null);
   };
 
-  const severityCycle: SeverityState[] = ["0", "1", "2", "3"];
-
   const togglePart = (partId: string) => {
     setSelectedParts((prev) => {
-      const current = prev[partId] ?? "0";
-      const nextIndex = (severityCycle.indexOf(current) + 1) % severityCycle.length;
-      const updated = { ...prev, [partId]: severityCycle[nextIndex] };
+      if (!prev[partId]) {
+        return { ...prev, [partId]: "0" };
+      }
 
-      return updated;
+      return prev;
     });
-    setActiveDropdown(null);
+    setActiveDropdown((prev) => (prev === partId ? null : partId));
   };
 
   const handleSeverityChange = (partId: string, severity: SeverityState) => {
@@ -102,31 +101,41 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
                   onMouseLeave={() => setHoverPart(null)}
                   style={{ cursor: "pointer", transition: "fill 0.2s ease" }}
                 />
-                {activeDropdown === part.id && (
-                  <foreignObject x={part.cx ?? 60} y={part.cy ?? 30} width="120" height="60">
-                    <select
-                      value={selectedParts[part.id] ?? ""}
-                      onChange={(e) => handleSeverityChange(part.id, e.target.value as SeverityState)}
-                      style={{
-                        width: "100%",
-                        fontSize: "14px",
-                      }}
-                    >
-                      <option value="">Select severity</option>
-                      {severityOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </foreignObject>
-                )}
               </g>
             ))}
           </svg>
         </div>
-      </div>
+        {activeDropdown &&
+          (() => {
+            const part = currentSide.find((p) => p.id === activeDropdown);
+            if (!part) return null;
 
+            return (
+              <div
+                className="dropdown-overlay"
+                style={{
+                  position: "absolute",
+                  left: `${part.cx ?? 0}px`,
+                  top: `${part.cy ?? 0}px`,
+                  zIndex: 10,
+                }}
+              >
+                <select
+                  value={selectedParts[part.id] ?? ""}
+                  onChange={(e) => handleSeverityChange(part.id, e.target.value as SeverityState)}
+                  className="severity-dropdown"
+                >
+                  <option value="">Select severity</option>
+                  {severityOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            );
+          })()}
+      </div>
       <div className="flip-controls">
         <div
           className={`flip-icon ${isAnimating ? "rotating" : ""}`}
