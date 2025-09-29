@@ -22,6 +22,7 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
   const [selectedParts, setSelectedParts] = useState<{ [key: string]: SeverityState }>(() =>
     initial.reduce((acc, part) => ({ ...acc, [part.key]: part.state }), {})
   );
+  const [hoverPart, setHoverPart] = useState<string | null>(null);
 
   useEffect(() => {
     const partsArray = Object.entries(selectedParts).map(([key, state]) => ({ key, state }));
@@ -65,6 +66,9 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
   };
 
   const getPartFill = (part: bodyPartData) => {
+    if (hoverPart === part.id && !selectedParts[part.id]) {
+      return "#b3e5fc";
+    }
     const state = selectedParts[part.id];
 
     return state ? getSeverityColor(state) : "#f8f9fa";
@@ -94,7 +98,9 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
                   strokeWidth={selectedParts[part.id] ? "3" : "2"}
                   className="body-part"
                   onClick={() => togglePart(part.id)}
-                  style={{ cursor: "pointer" }}
+                  onMouseEnter={() => setHoverPart(part.id)}
+                  onMouseLeave={() => setHoverPart(null)}
+                  style={{ cursor: "pointer", transition: "fill 0.2s ease" }}
                 />
                 {activeDropdown === part.id && (
                   <foreignObject x={part.cx ?? 60} y={part.cy ?? 30} width="120" height="60">
