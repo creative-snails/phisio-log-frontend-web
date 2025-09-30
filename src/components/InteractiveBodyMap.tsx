@@ -38,6 +38,7 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ x: number; y: number } | null>(null);
 
   const handleFlip = () => {
     if (isAnimating) return;
@@ -45,17 +46,6 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
     const newRotation = rotationDegrees + 180;
     setRotationDegrees(newRotation);
     setActiveDropdown(null);
-  };
-
-  const togglePart = (partId: string) => {
-    setSelectedParts((prev) => {
-      if (!prev[partId]) {
-        return { ...prev, [partId]: "0" };
-      }
-
-      return prev;
-    });
-    setActiveDropdown((prev) => (prev === partId ? null : partId));
   };
 
   const handleSeverityChange = (partId: string, severity: SeverityState) => {
@@ -75,6 +65,24 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
 
   const handleTransitionEnd = () => setIsAnimating(false);
   const currentSide = rotationDegrees % 360 >= 180 ? backSide : frontSide;
+
+  const handlePartClick = (partId: string, event: React.MouseEvent<SVGPathElement>) => {
+    setSelectedParts((prev) => {
+      if (!prev[partId]) {
+        return { ...prev, [partId]: "0" };
+      }
+
+      return prev;
+    });
+    const container = (event.currentTarget.ownerSVGElement?.parentNode as HTMLElement)?.getBoundingClientRect();
+    if (container) {
+      setDropdownPosition({
+        x: event.clientX - container.left,
+        y: event.clientY - container.top,
+      });
+    }
+    setActiveDropdown((prev) => (prev === partId ? null : partId));
+  };
 
   return (
     <div className="body-map-viewer">
@@ -96,7 +104,7 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
                   stroke={selectedParts[part.id] ? getSeverityColor(selectedParts[part.id]) : "#333"}
                   strokeWidth={selectedParts[part.id] ? "3" : "2"}
                   className="body-part"
-                  onClick={() => togglePart(part.id)}
+                  onClick={(e) => handlePartClick(part.id, e)}
                   onMouseEnter={() => setHoverPart(part.id)}
                   onMouseLeave={() => setHoverPart(null)}
                   style={{ cursor: "pointer", transition: "fill 0.2s ease" }}
@@ -105,36 +113,30 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
             ))}
           </svg>
         </div>
-        {activeDropdown &&
-          (() => {
-            const part = currentSide.find((p) => p.id === activeDropdown);
-            if (!part) return null;
-
-            return (
-              <div
-                className="dropdown-overlay"
-                style={{
-                  position: "absolute",
-                  left: `${part.cx ?? 0}px`,
-                  top: `${part.cy ?? 0}px`,
-                  zIndex: 10,
-                }}
-              >
-                <select
-                  value={selectedParts[part.id] ?? ""}
-                  onChange={(e) => handleSeverityChange(part.id, e.target.value as SeverityState)}
-                  className="severity-dropdown"
-                >
-                  <option value="">Select severity</option>
-                  {severityOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            );
-          })()}
+        {activeDropdown && dropdownPosition && (
+          <div
+            className="dropdown-overlay"
+            style={{
+              position: "absolute",
+              left: `${dropdownPosition.x}px`,
+              top: `${dropdownPosition.y}px`,
+              zIndex: 10,
+            }}
+          >
+            <select
+              value={selectedParts[activeDropdown] ?? ""}
+              onChange={(e) => handleSeverityChange(activeDropdown, e.target.value as SeverityState)}
+              className="severity-dropdown"
+            >
+              <option value="">Select severity</option>
+              {severityOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       <div className="flip-controls">
         <div
