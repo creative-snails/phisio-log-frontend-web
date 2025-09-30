@@ -324,20 +324,31 @@
 
 /* Context related styles */
 .chat-context-indicator {
-  background: var(--color-bg-secondary);
-  max-width: fit-content;
-  margin: var(--space-xs) auto 0 auto;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
-  color: var(--color-text-primary);
+  background: var(--color-text-brand);
+  margin: 0 auto 1px auto;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  color: var(--color-text-white);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 
 .chat-context-indicator button {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--space-xs) var(--space-md);
+  color: var(--color-text-white);
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+.chat-context-indicator button:hover {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.chat-context-indicator span {
+  padding: var(--space-xs) var(--space-md);
+  cursor: default;
 }
 
 .chat-context-section {

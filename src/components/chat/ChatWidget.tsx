@@ -199,7 +199,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               {healthRecord.title}
             </button>
           ) : (
-            <div>General Chat</div>
+            <span>General Chat</span>
           )}
         </div>
         <div ref={chatBodyRef} className="chat-body">
