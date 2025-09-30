@@ -25,7 +25,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     history: [],
   });
   const [isThinking, setIsThinking] = useState(false);
-  const [wasClosedDuringNavigation, setWasClosedDuringNavigation] = useState(false);
+  const [wasClosedBeforeNavigation, setWasClosedBeforeNavigation] = useState(false);
   const [showContextButtons, setShowContextButtons] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
@@ -90,10 +90,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
         // Within different context
       } else {
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-        // Chat widget was closed before navigation
-        if (wasClosedDuringNavigation) setShowContextButtons(true);
-        // Continue previous discussion
-        if (continueChat) setShowContextButtons(false);
+        // Show context buttons only if chat widget was closed before navigation and continue chat not selected
+        const showButtons = wasClosedBeforeNavigation && !continueChat;
+        setShowContextButtons(showButtons);
       }
 
       // No chat session (fresh start)
@@ -132,16 +131,9 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   // Track when healthRecordId changes while widget is closed
   useEffect(() => {
     if (!showChatWidget) {
-      setWasClosedDuringNavigation(true);
+      setWasClosedBeforeNavigation(true);
     }
   }, [healthRecordId]);
-
-  // Reset the flag when widget is opened
-  useEffect(() => {
-    if (showChatWidget && wasClosedDuringNavigation) {
-      setWasClosedDuringNavigation(false);
-    }
-  }, [showChatWidget, wasClosedDuringNavigation]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
