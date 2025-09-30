@@ -1,23 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
+import SeverityDropdown from "./SeverityDropdown";
 
 import "./BodyMapViewer.css";
-import "./InteractiveBodyMap.css";
+import "./SeverityDropdown.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
 import type { SeverityState } from "~/types";
+import { SEVERITY_OPTIONS } from "~/utils/constants";
 import { getSeverityColor } from "~/utils/severityColors";
 
 interface InteractiveBodyMapProps {
   initial?: { key: string; state: SeverityState }[];
   onChange: (parts: { key: string; state: SeverityState }[]) => void;
 }
-
-const severityOptions: { value: SeverityState; label: string }[] = [
-  { value: "0", label: "Variable" },
-  { value: "1", label: "Mild" },
-  { value: "2", label: "Moderate" },
-  { value: "3", label: "Severe" },
-];
 
 const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps) => {
   const [selectedParts, setSelectedParts] = useState<{ [key: string]: SeverityState }>(() =>
@@ -105,28 +100,12 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
           </svg>
         </div>
         {activeDropdown && dropdownPosition && (
-          <div
-            className="dropdown-overlay"
-            style={{
-              position: "absolute",
-              left: `${dropdownPosition.x}px`,
-              top: `${dropdownPosition.y}px`,
-              zIndex: 10,
-            }}
-          >
-            <select
-              value={selectedParts[activeDropdown] ?? ""}
-              onChange={(e) => handleSeverityChange(activeDropdown, e.target.value as SeverityState)}
-              className="severity-dropdown"
-            >
-              <option value="">Select severity</option>
-              {severityOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SeverityDropdown
+            value={selectedParts[activeDropdown] ?? ""}
+            options={SEVERITY_OPTIONS}
+            position={dropdownPosition}
+            onChange={(val) => handleSeverityChange(activeDropdown, val)}
+          />
         )}
       </div>
       <div className="flip-controls">
