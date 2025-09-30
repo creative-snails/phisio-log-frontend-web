@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
 import "./BodyMapViewer.css";
@@ -39,41 +39,32 @@ const InteractiveBodyMap = ({ initial = [], onChange }: InteractiveBodyMapProps)
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number; y: number } | null>(null);
+  const ensurePartSelected = (partId: string) => {
+    setSelectedParts((prev) => ({ ...prev, [partId]: prev[partId] ?? "0" }));
+  };
 
   const handleFlip = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    const newRotation = rotationDegrees + 180;
-    setRotationDegrees(newRotation);
-    setActiveDropdown(null);
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setRotationDegrees((deg) => deg + 180);
+      setActiveDropdown(null);
+      setDropdownPosition(null);
+    }
   };
 
   const handleSeverityChange = (partId: string, severity: SeverityState) => {
-    const updated = { ...selectedParts, [partId]: severity };
-    setSelectedParts(updated);
+    setSelectedParts((prev) => ({ ...prev, [partId]: severity }));
     setActiveDropdown(null);
   };
 
-  const getPartFill = (part: bodyPartData) => {
-    if (hoverPart === part.id && !selectedParts[part.id]) {
-      return "#b3e5fc";
-    }
-    const state = selectedParts[part.id];
-
-    return state ? getSeverityColor(state) : "#f8f9fa";
-  };
+  const getPartFill = (part: bodyPartData) =>
+    hoverPart === part.id && !selectedParts[part.id] ? "#b3e5fc" : getSeverityColor(selectedParts[part.id] ?? "");
 
   const handleTransitionEnd = () => setIsAnimating(false);
-  const currentSide = rotationDegrees % 360 >= 180 ? backSide : frontSide;
+  const currentSide = useMemo(() => (rotationDegrees % 360 >= 180 ? backSide : frontSide), [rotationDegrees]);
 
   const handlePartClick = (partId: string, event: React.MouseEvent<SVGPathElement>) => {
-    setSelectedParts((prev) => {
-      if (!prev[partId]) {
-        return { ...prev, [partId]: "0" };
-      }
-
-      return prev;
-    });
+    ensurePartSelected(partId);
     const container = (event.currentTarget.ownerSVGElement?.parentNode as HTMLElement)?.getBoundingClientRect();
     if (container) {
       setDropdownPosition({
