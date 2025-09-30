@@ -13,7 +13,7 @@ import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState<boolean>(() => {
     const isChatOpened = localStorage.getItem("chat_widget_open");
@@ -25,6 +25,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     history: [],
   });
   const [isThinking, setIsThinking] = useState(false);
+  const [wasClosedBeforeNavigation, setWasClosedBeforeNavigation] = useState(false);
   const [showContextButtons, setShowContextButtons] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
@@ -85,31 +86,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
       // Within the same context
       if (parsedChatHistory.id === healthRecordId) {
-        setShowContextButtons(false);
         setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
-
         // Within different context
       } else {
-        // Continue previous discussion
-        if (continueChat) {
-          setShowContextButtons(false);
-          // Previous discussion is record related (non general chat)
-          if (parsedChatHistory.id) {
-            const confirm = window.confirm(
-              `This will take you to the ${healthRecord?.title || "previous"} record page. Continue?`
-            );
-            if (!confirm) {
-              setShowContextButtons(true);
-
-              return;
-            }
-            navigate(`/health-record/${parsedChatHistory.id}/edit`);
-          }
-
-          return;
-        }
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-        setShowContextButtons(true);
+        // Show context buttons only if chat widget was closed before navigation and continue chat not selected
+        const showButtons = wasClosedBeforeNavigation && !continueChat;
+        setShowContextButtons(showButtons);
       }
 
       // No chat session (fresh start)
@@ -144,6 +127,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     if (!showChatWidget) return;
     initializeChat();
   }, [showChatWidget]);
+
+  // Track when healthRecordId changes while widget is closed
+  useEffect(() => {
+    if (!showChatWidget) {
+      setWasClosedBeforeNavigation(true);
+    }
+  }, [healthRecordId]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
@@ -209,7 +199,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               {healthRecord.title}
             </button>
           ) : (
-            <div>General Chat</div>
+            <span>General Chat</span>
           )}
         </div>
         <div ref={chatBodyRef} className="chat-body">
