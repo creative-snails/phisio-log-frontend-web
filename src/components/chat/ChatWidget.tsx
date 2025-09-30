@@ -86,31 +86,14 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
       // Within the same context
       if (parsedChatHistory.id === healthRecordId) {
-        setShowContextButtons(false);
         setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
-
         // Within different context
       } else {
-        // Continue previous discussion
-        if (continueChat) {
-          setShowContextButtons(false);
-          // Previous discussion is record related (non general chat)
-          if (parsedChatHistory.id) {
-            const confirm = window.confirm(
-              `This will take you to the ${healthRecord?.title || "previous"} record page. Continue?`
-            );
-            if (!confirm) {
-              setShowContextButtons(true);
-
-              return;
-            }
-            navigate(`/health-record/${parsedChatHistory.id}/edit`);
-          }
-
-          return;
-        }
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
+        // Chat widget was closed before navigation
         if (wasClosedDuringNavigation) setShowContextButtons(true);
+        // Continue previous discussion
+        if (continueChat) setShowContextButtons(false);
       }
 
       // No chat session (fresh start)
