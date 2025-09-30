@@ -13,7 +13,7 @@ import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState<boolean>(() => {
     const isChatOpened = localStorage.getItem("chat_widget_open");
@@ -25,6 +25,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     history: [],
   });
   const [isThinking, setIsThinking] = useState(false);
+  const [wasClosedDuringNavigation, setWasClosedDuringNavigation] = useState(false);
   const [showContextButtons, setShowContextButtons] = useState(false);
 
   const chatBodyRef = useRef<HTMLDivElement>(null);
@@ -109,7 +110,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
           return;
         }
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-        setShowContextButtons(true);
+        if (wasClosedDuringNavigation) setShowContextButtons(true);
       }
 
       // No chat session (fresh start)
@@ -144,6 +145,20 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     if (!showChatWidget) return;
     initializeChat();
   }, [showChatWidget]);
+
+  // Track when healthRecordId changes while widget is closed
+  useEffect(() => {
+    if (!showChatWidget) {
+      setWasClosedDuringNavigation(true);
+    }
+  }, [healthRecordId]);
+
+  // Reset the flag when widget is opened
+  useEffect(() => {
+    if (showChatWidget && wasClosedDuringNavigation) {
+      setWasClosedDuringNavigation(false);
+    }
+  }, [showChatWidget, wasClosedDuringNavigation]);
 
   // Scroll to the bottom of the chat body
   useEffect(() => {
