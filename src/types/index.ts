@@ -6,12 +6,14 @@ export type FormErrors<T> = {
 };
 
 // Health domain types
+export type SeverityState = "0" | "1" | "2" | "3";
+
 export interface Symptom {
   name: string;
   startDate: string;
   affectedParts?: {
     key: string;
-    state: "1" | "2" | "3";
+    state: SeverityState;
   }[];
 }
 

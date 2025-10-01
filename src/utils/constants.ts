@@ -1,3 +1,4 @@
+import type { SeverityState } from "~/types";
 import type { StatusOptionsType } from "~/validation/healthRecordSchema";
 
 export const ROUTES = {
@@ -51,6 +52,22 @@ export const statusConfigs = [
   { field: "severity", title: "Severity", zIndex: 2000, zIndexInverse: 2000 },
   { field: "progression", title: "Progression", zIndex: 1000, zIndexInverse: 3000 },
 ] as const;
+
+export const SEVERITY_OPTIONS: { value: SeverityState; label: string }[] = [
+  { value: "0", label: "Variable" },
+  { value: "1", label: "Mild" },
+  { value: "2", label: "Moderate" },
+  { value: "3", label: "Severe" },
+];
+
+export const numericToLabel: Record<SeverityState, string> = SEVERITY_OPTIONS.reduce(
+  (acc, option) => {
+    acc[option.value] = option.label.toLowerCase();
+
+    return acc;
+  },
+  {} as Record<SeverityState, string>
+);
 
 export const MAX_CHAR_SHORT = 100;
 export const MAX_CHAR_MEDIUM = 1000;

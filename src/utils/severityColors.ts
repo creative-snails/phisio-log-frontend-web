@@ -33,6 +33,8 @@ export const getSeverityColor = (state: number | string): string => {
       return "#e1bee7"; // Pastel purple - moderate
     case 1:
       return "#ffe0b2"; // Pastel orange - mild
+    case 0:
+      return "#cce5ff"; // Light blue - variable
     default:
       return "#f8f9fa"; // Light gray - default/no issues
   }
