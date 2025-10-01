@@ -10,7 +10,7 @@ import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import type { FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
-import { statusOptions } from "~/utils/constants";
+import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
@@ -206,8 +206,20 @@ const HealthRecordForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Convert numeric severity to labels for validation
+    const payloadForValidation = {
+      ...data,
+      symptoms: data.symptoms.map((symptom) => ({
+        ...symptom,
+        affectedParts: symptom.affectedParts?.map((part) => ({
+          key: part.key,
+          state: numericToLabel[part.state], // numeric → label
+        })),
+      })),
+    };
+
     // Perform full validation before submission
-    const parseResult = Z_HealthRecord.safeParse(data);
+    const parseResult = Z_HealthRecord.safeParse(payloadForValidation);
     if (!parseResult.success) {
       // Show all validation errors, including optional fields if they have invalid data
       const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
@@ -218,9 +230,9 @@ const HealthRecordForm = () => {
 
     // Clean up data for backend submission - use empty strings consistently
     const cleanedData = {
-      ...data,
-      treatmentsTried: data.treatmentsTried.filter((treatment) => treatment.trim() !== ""),
-      medicalConsultations: data.medicalConsultations.map((consultation) => ({
+      ...payloadForValidation,
+      treatmentsTried: payloadForValidation.treatmentsTried.filter((treatment) => treatment.trim() !== ""),
+      medicalConsultations: payloadForValidation.medicalConsultations.map((consultation) => ({
         ...consultation,
         diagnosis: consultation.diagnosis || "",
         followUpActions: consultation.followUpActions.filter((action) => action.trim() !== ""),
@@ -231,11 +243,19 @@ const HealthRecordForm = () => {
   };
 
   const validateForm = () => {
-    // Validate all fields using the full schema
-    const parseResult = Z_HealthRecord.safeParse({
+    // Convert numeric severity to labels for validation
+    const payloadForValidation = {
       ...data,
-      symptoms: data.symptoms,
-    });
+      symptoms: data.symptoms.map((symptom) => ({
+        ...symptom,
+        affectedParts: symptom.affectedParts?.map((part) => ({
+          key: part.key,
+          state: numericToLabel[part.state], // numeric → label
+        })),
+      })),
+    };
+    // Validate all fields using the full schema
+    const parseResult = Z_HealthRecord.safeParse(payloadForValidation);
 
     // Show validation errors for real-time feedback
     if (!parseResult.success) {

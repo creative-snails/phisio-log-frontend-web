@@ -22,7 +22,6 @@
   padding: 8px;
 }
 
-/* Optional: custom arrow using background */
 .severity-dropdown::-ms-expand {
   display: none;
 }

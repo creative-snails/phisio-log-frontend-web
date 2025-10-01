@@ -60,6 +60,15 @@ export const SEVERITY_OPTIONS: { value: SeverityState; label: string }[] = [
   { value: "3", label: "Severe" },
 ];
 
+export const numericToLabel: Record<SeverityState, string> = SEVERITY_OPTIONS.reduce(
+  (acc, option) => {
+    acc[option.value] = option.label.toLowerCase();
+
+    return acc;
+  },
+  {} as Record<SeverityState, string>
+);
+
 export const MAX_CHAR_SHORT = 100;
 export const MAX_CHAR_MEDIUM = 1000;
 export const MAX_CHAR_LONG = 10_000;
