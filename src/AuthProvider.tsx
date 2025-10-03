@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PrivateRoute from "./routes/PrivateRoute";
 
+import "~/App.css";
 import { AuthProvider } from "~/components/AuthContext";
 import AuthModal from "~/components/AuthModal";
 import HealthRecordForm from "~/components/forms/HealthRecordForm";
@@ -8,7 +10,6 @@ import Layout from "~/components/Layout";
 import Home from "~/pages/Home";
 import LandingPage from "~/pages/LandingPage";
 import Reports from "~/pages/Reports";
-import PrivateRoute from "~/routes/PrivateRoute";
 
 function App() {
   const [authOpen, setAuthOpen] = useState<"login" | "signup" | null>(null);
@@ -17,7 +18,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public landing page */}
+          {/* Landing page for unauthenticated users */}
           <Route
             path="/"
             element={
@@ -28,7 +29,7 @@ function App() {
             }
           />
 
-          {/* Protected routes */}
+          {/* Protected routes wrapped with PrivateRoute */}
           <Route
             path="/home"
             element={
