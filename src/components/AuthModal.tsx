@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "./signup/LoginForm";
 import SignupForm from "./signup/SignupForm";
 
@@ -13,12 +14,18 @@ interface AuthModalProps {
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = "login" }) => {
   const [mode, setMode] = React.useState<"login" | "signup">(initialMode);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) setMode(initialMode);
   }, [isOpen, initialMode]);
 
   if (!isOpen) return null;
+
+  const handleSuccess = () => {
+    onClose();
+    navigate("/home");
+  };
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
@@ -39,7 +46,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = "l
         <div className="auth-modal-body">
           {mode === "login" ? (
             <>
-              <LoginForm onSuccess={onClose} />
+              <LoginForm onSuccess={handleSuccess} />
               <p className="switch-text">
                 Don’t have an account?{" "}
                 <button className="link-btn" onClick={() => setMode("signup")}>
@@ -49,7 +56,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = "l
             </>
           ) : (
             <>
-              <SignupForm onSuccess={onClose} />
+              <SignupForm onSuccess={handleSuccess} />
               <p className="switch-text">
                 Already have an account?{" "}
                 <button className="link-btn" onClick={() => setMode("login")}>
