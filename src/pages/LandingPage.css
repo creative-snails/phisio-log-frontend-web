@@ -1,7 +1,11 @@
+@import "../styles/variables.css";
+
 .landing-page {
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text-primary);
 }
 
 .value-prop {
@@ -9,44 +13,82 @@
   margin: 2rem 0;
 }
 
+.value-prop h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.value-prop p {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+}
+
 .demo {
   margin-top: 3rem;
+}
+
+.demo h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--color-primary);
 }
 
 .demo-cards {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .demo-cards .card {
-  background: #f9f9f9;
-  padding: 1rem;
+  background: var(--color-white);
+  padding: 1.5rem;
   border-radius: 8px;
   flex: 1;
+  min-width: 250px;
   text-align: center;
+  border: 1px solid var(--color-border);
+}
+
+.demo-cards .card h4 {
+  margin-bottom: 0.5rem;
+  color: var(--color-secondary);
 }
 
 .cta-row {
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 button.primary {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-black);
   padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 4px;
+  border: 2px solid var(--color-black);
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+button.primary:hover {
+  background-color: var(--color-tertiary);
 }
 
 button.secondary {
-  background-color: transparent;
-  color: #007bff;
-  border: 2px solid #007bff;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  border: 2px solid var(--color-black);
   padding: 0.6rem 1.2rem;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button.secondary:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-white);
 }

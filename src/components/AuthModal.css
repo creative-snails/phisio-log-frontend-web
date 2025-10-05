@@ -1,3 +1,5 @@
+@import "../styles/variables.css";
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -5,15 +7,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .auth-modal {
-  background: #fff;
+  background: var(--color-white, #fff);
   padding: 2rem;
   border-radius: 12px;
   width: 400px;
   max-width: 90%;
   position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
 .modal-close {
@@ -23,6 +27,7 @@
   background: none;
   border: none;
   cursor: pointer;
+  font-size: 1.25rem;
 }
 
 .auth-form {
@@ -31,27 +36,43 @@
   gap: 0.75rem;
 }
 
+.auth-form label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
 .auth-form input {
-  padding: 0.5rem;
-  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 1rem;
 }
 
 .auth-form button {
   margin-top: 1rem;
   padding: 0.75rem;
-  background: #0066ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid var(--color-black, #000);
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  background: var(--color-secondary, #d6abb6);
+  color: var(--color-white, #fff);
+}
+
+.auth-form button:hover:not(:disabled) {
+  background: var(--color-primary, #fbdabb);
+  transform: translateY(-1px);
 }
 
 .auth-form button:disabled {
   background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .error-text {
   color: red;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
 }
