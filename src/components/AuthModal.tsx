@@ -33,16 +33,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = "l
         <button className="modal-close" onClick={onClose} title="Close">
           <FiX />
         </button>
-
-        <div className="auth-modal-header">
-          <button className={`tab ${mode === "login" ? "active" : ""}`} onClick={() => setMode("login")}>
-            Sign In
-          </button>
-          <button className={`tab ${mode === "signup" ? "active" : ""}`} onClick={() => setMode("signup")}>
-            Sign Up
-          </button>
-        </div>
-
         <div className="auth-modal-body">
           {mode === "login" ? (
             <>

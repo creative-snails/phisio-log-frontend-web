@@ -10,13 +10,13 @@ type Props = {
 const LandingPage: React.FC<Props> = ({ onOpenAuth }) => {
   return (
     <div className="landing-page">
-      <HeroSection onSignInClick={() => onOpenAuth("signup")} />
+      <HeroSection onSignInClick={() => onOpenAuth("signup")} showSignInButton={false} />
       <section className="value-prop">
         <h2>Your Health Companion</h2>
         <p>Track symptoms, manage consultations, and get meaningful progress reports over time.</p>
         <div className="cta-row">
           <button className="primary" onClick={() => onOpenAuth("signup")}>
-            Get Started — Free
+            Try It Out
           </button>
           <button className="secondary" onClick={() => onOpenAuth("login")}>
             Sign In
