@@ -10,10 +10,9 @@ type Props = {
 };
 
 const LoginForm: React.FC<Props> = ({ onSuccess }) => {
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
   const [formData, setFormData] = useState<LoginData>({ email: "", password: "" });
   const [errors, setErrors] = useState<FormErrors<LoginData>>({});
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
@@ -35,18 +34,13 @@ const LoginForm: React.FC<Props> = ({ onSuccess }) => {
     }
 
     setErrors({});
-    setLoading(true);
     try {
       await login(result.data);
       onSuccess?.();
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrors({ _errors: [err.message] });
-      } else {
-        setErrors({ _errors: ["Login failed"] });
-      }
-    } finally {
-      setLoading(false);
+      setErrors({
+        _errors: [err instanceof Error ? err.message : "Login failed"],
+      });
     }
   };
 

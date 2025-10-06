@@ -1,5 +1,5 @@
 import React, { type ReactElement } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { useAuth } from "~/components/AuthContext";
 
@@ -9,9 +9,12 @@ type PrivateRouteProps = {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  const location = useLocation();
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
   if (!user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return children;

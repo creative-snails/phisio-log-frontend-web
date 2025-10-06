@@ -10,7 +10,7 @@ type Props = {
 };
 
 const SignupForm: React.FC<Props> = ({ onSuccess }) => {
-  const { signup } = useAuth();
+  const { signup, loading } = useAuth();
   const [formData, setFormData] = useState<SignupData>({
     name: "",
     email: "",
@@ -18,7 +18,6 @@ const SignupForm: React.FC<Props> = ({ onSuccess }) => {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<FormErrors<SignupData>>({});
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
@@ -40,19 +39,14 @@ const SignupForm: React.FC<Props> = ({ onSuccess }) => {
     }
 
     setErrors({});
-    setLoading(true);
     try {
-      const data = result.data;
-      await signup({ name: data.name, email: data.email, password: data.password });
+      const { name, email, password } = result.data;
+      await signup({ name, email, password });
       onSuccess?.();
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrors({ email: { _errors: [err.message || "Sign up failed"] } });
-      } else {
-        setErrors({ email: { _errors: ["Sign up failed"] } });
-      }
-    } finally {
-      setLoading(false);
+      setErrors({
+        email: { _errors: [err instanceof Error ? err.message : "Sign up failed"] },
+      });
     }
   };
 
