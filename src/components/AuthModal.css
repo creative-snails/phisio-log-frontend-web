@@ -1,4 +1,4 @@
-@import "../styles/variables.css";
+@import "~/theme.css";
 
 .modal-backdrop {
   position: fixed;
@@ -11,7 +11,7 @@
 }
 
 .auth-modal {
-  background: var(--color-white, #fff);
+  background: var(--color-bg-primary);
   padding: 2rem;
   border-radius: 12px;
   width: 400px;
@@ -52,16 +52,16 @@
   margin-top: 1rem;
   padding: 0.75rem;
   font-weight: 600;
-  border: 1px solid var(--color-black, #000);
+  border: 1px solid var(--color-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
-  background: var(--color-secondary, #d6abb6);
-  color: var(--color-white, #fff);
+  background: var(--color-primary);
+  color: var(--color-text-white);
 }
 
 .auth-form button:hover:not(:disabled) {
-  background: var(--color-primary, #fbdabb);
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
 }
 

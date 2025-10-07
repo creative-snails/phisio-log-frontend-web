@@ -1,4 +1,4 @@
-@import "../styles/variables.css";
+@import "~/theme.css";
 
 .landing-page {
   padding: 2rem;
@@ -42,13 +42,13 @@
 }
 
 .demo-cards .card {
-  background: var(--color-white);
+  background: var(--color-bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
   flex: 1;
   min-width: 250px;
   text-align: center;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border, #ddd);
 }
 
 .demo-cards .card h4 {
@@ -65,9 +65,9 @@
 
 button.primary {
   background-color: var(--color-primary);
-  color: var(--color-black);
+  color: var(--color-text-white);
   padding: 0.6rem 1.2rem;
-  border: 2px solid var(--color-black);
+  border: 2px solid var(--color-primary-hover);
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
@@ -75,13 +75,13 @@ button.primary {
 }
 
 button.primary:hover {
-  background-color: var(--color-tertiary);
+  background-color: var(--color-primary-hover);
 }
 
 button.secondary {
-  background-color: var(--color-white);
-  color: var(--color-black);
-  border: 2px solid var(--color-black);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-primary);
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
@@ -90,5 +90,5 @@ button.secondary {
 
 button.secondary:hover {
   background-color: var(--color-secondary);
-  color: var(--color-white);
+  color: var(--color-text-white);
 }
