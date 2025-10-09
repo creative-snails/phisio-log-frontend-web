@@ -47,12 +47,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
       setChatHistory((prev) => ({
         id: prev?.id,
         history: [
-          ...(prev?.history || []),
           {
             role: "assistant",
             message:
               "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
           },
+          ...(prev?.history || []),
         ],
       }));
       setHealthRecord(null);
@@ -136,10 +136,10 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   }, [healthRecordId]);
 
   // Scroll to the bottom of the chat body
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!chatBodyRef.current) return;
     chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [chatHistory, showChatWidget]);
+  }, [chatHistory, showChatWidget]); */
 
   // Save chat history to localStorage
   useEffect(() => {
