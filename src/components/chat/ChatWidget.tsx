@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
@@ -13,7 +13,7 @@ import { getHealthRecord } from "~/services/api/healthRecordsApi";
 import { type ChatHistoryType, type HealthRecord } from "~/types";
 
 const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [showChatWidget, setShowChatWidget] = useState<boolean>(() => {
     const isChatOpened = localStorage.getItem("chat_widget_open");
@@ -25,9 +25,8 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     history: [],
   });
   const [isThinking, setIsThinking] = useState(false);
+  const [wasClosedBeforeNavigation, setWasClosedBeforeNavigation] = useState(false);
   const [showContextButtons, setShowContextButtons] = useState(false);
-
-  const chatBodyRef = useRef<HTMLDivElement>(null);
 
   const isValidRecordId = useMemo(() => {
     return Boolean(healthRecordId?.trim());
@@ -46,12 +45,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
       setChatHistory((prev) => ({
         id: prev?.id,
         history: [
-          ...(prev?.history || []),
           {
             role: "assistant",
             message:
               "Hmm, I'm unable to read your health record just now. \nPlease check your connection and try again, or let me know if you'd like to troubleshoot together.",
           },
+          ...(prev?.history || []),
         ],
       }));
       setHealthRecord(null);
@@ -85,31 +84,13 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
 
       // Within the same context
       if (parsedChatHistory.id === healthRecordId) {
-        setShowContextButtons(false);
         setHealthRecord((await fetchHealthRecord(healthRecordId)) || null);
-
         // Within different context
       } else {
-        // Continue previous discussion
-        if (continueChat) {
-          setShowContextButtons(false);
-          // Previous discussion is record related (non general chat)
-          if (parsedChatHistory.id) {
-            const confirm = window.confirm(
-              `This will take you to the ${healthRecord?.title || "previous"} record page. Continue?`
-            );
-            if (!confirm) {
-              setShowContextButtons(true);
-
-              return;
-            }
-            navigate(`/health-record/${parsedChatHistory.id}/edit`);
-          }
-
-          return;
-        }
         setHealthRecord((await fetchHealthRecord(parsedChatHistory.id)) || null);
-        setShowContextButtons(true);
+        // Show context buttons only if chat widget was closed before navigation and continue chat not selected
+        const showButtons = wasClosedBeforeNavigation && !continueChat;
+        setShowContextButtons(showButtons);
       }
 
       // No chat session (fresh start)
@@ -145,11 +126,12 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     initializeChat();
   }, [showChatWidget]);
 
-  // Scroll to the bottom of the chat body
+  // Track when healthRecordId changes while widget is closed
   useEffect(() => {
-    if (!chatBodyRef.current) return;
-    chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [chatHistory, showChatWidget]);
+    if (!showChatWidget) {
+      setWasClosedBeforeNavigation(true);
+    }
+  }, [healthRecordId]);
 
   // Save chat history to localStorage
   useEffect(() => {
@@ -209,10 +191,20 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               {healthRecord.title}
             </button>
           ) : (
-            <div>General Chat</div>
+            <span>General Chat</span>
           )}
         </div>
-        <div ref={chatBodyRef} className="chat-body">
+        <div className="chat-body">
+          {isThinking && (
+            <div className="chat-message chat-assistant-message">
+              <FaUserDoctor className="chat-logo-icon" />
+              <div className="chat-message-text chat-thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
           {chatHistory?.history.map((chat, index) => (
             <div key={index} className={`chat-message chat-${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
@@ -226,16 +218,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               </div>
             </div>
           ))}
-          {isThinking && (
-            <div className="chat-message chat-assistant-message">
-              <FaUserDoctor className="chat-logo-icon" />
-              <div className="chat-message-text chat-thinking-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Chat Footer */}

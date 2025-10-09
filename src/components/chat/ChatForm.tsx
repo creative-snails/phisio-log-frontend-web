@@ -27,7 +27,7 @@ const ChatForm = ({ chatHistory, setChatHistory, setIsThinking, showChatWidget }
 
     setChatHistory((prev) => ({
       id: prev?.id,
-      history: [...(prev?.history || []), { role: "user", message: userMessage }],
+      history: [{ role: "user", message: userMessage }, ...(prev?.history || [])],
     }));
 
     setIsThinking(true);
@@ -36,7 +36,7 @@ const ChatForm = ({ chatHistory, setChatHistory, setIsThinking, showChatWidget }
     setTimeout(() => {
       setChatHistory((prev) => ({
         id: prev?.id,
-        history: [...(prev?.history || []), { role: "assistant", message: getAssistantResponse(userMessage) }],
+        history: [{ role: "assistant", message: getAssistantResponse(userMessage) }, ...(prev?.history || [])],
       }));
       setIsThinking(false);
     }, 2000);
