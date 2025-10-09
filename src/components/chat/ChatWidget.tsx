@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
@@ -27,8 +27,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
   const [isThinking, setIsThinking] = useState(false);
   const [wasClosedBeforeNavigation, setWasClosedBeforeNavigation] = useState(false);
   const [showContextButtons, setShowContextButtons] = useState(false);
-
-  const chatBodyRef = useRef<HTMLDivElement>(null);
 
   const isValidRecordId = useMemo(() => {
     return Boolean(healthRecordId?.trim());
@@ -196,7 +194,7 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
             <span>General Chat</span>
           )}
         </div>
-        <div ref={chatBodyRef} className="chat-body">
+        <div className="chat-body">
           {isThinking && (
             <div className="chat-message chat-assistant-message">
               <FaUserDoctor className="chat-logo-icon" />
