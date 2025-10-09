@@ -4,7 +4,7 @@ import { FaUserDoctor } from "react-icons/fa6";
 import { MdChat } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import ReactMarkdown from "react-markdown";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import ChatForm from "./ChatForm";
 
@@ -135,12 +135,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
     }
   }, [healthRecordId]);
 
-  // Scroll to the bottom of the chat body
-  /*   useEffect(() => {
-    if (!chatBodyRef.current) return;
-    chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: "smooth" });
-  }, [chatHistory, showChatWidget]); */
-
   // Save chat history to localStorage
   useEffect(() => {
     if (showChatWidget && chatHistory && chatHistory.history.length > 0) {
@@ -203,6 +197,16 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
           )}
         </div>
         <div ref={chatBodyRef} className="chat-body">
+          {isThinking && (
+            <div className="chat-message chat-assistant-message">
+              <FaUserDoctor className="chat-logo-icon" />
+              <div className="chat-message-text chat-thinking-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
           {chatHistory?.history.map((chat, index) => (
             <div key={index} className={`chat-message chat-${chat.role}-message`}>
               {chat.role === "assistant" && <FaUserDoctor className="chat-logo-icon" />}
@@ -216,16 +220,6 @@ const ChatWidget = ({ healthRecordId }: { healthRecordId?: string }) => {
               </div>
             </div>
           ))}
-          {isThinking && (
-            <div className="chat-message chat-assistant-message">
-              <FaUserDoctor className="chat-logo-icon" />
-              <div className="chat-message-text chat-thinking-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Chat Footer */}
