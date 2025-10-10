@@ -1,7 +1,6 @@
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 
 import "./SymptomsForm.css";
-import InteractiveBodyMap from "~/components/InteractiveBodyMap";
 import type { FormErrors, SymptomUI } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
@@ -72,12 +71,7 @@ const SymptomsForm = ({
               {touched?.[index]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
               <label>Affected Parts</label>
-              <div className="placeholder">
-                <InteractiveBodyMap
-                  initial={Array.isArray(symptom.affectedParts) ? symptom.affectedParts : []}
-                  onChange={(updatedParts) => onSymptomChange(index, "affectedParts", updatedParts)}
-                />
-              </div>
+              <div className="placeholder"></div>
               {renderErrors(formErrors?.[index]?.affectedParts)}
             </div>
           )}

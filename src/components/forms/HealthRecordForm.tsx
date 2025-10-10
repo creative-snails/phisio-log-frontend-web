@@ -439,7 +439,11 @@ const HealthRecordForm = () => {
         </div>
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
-          <BodyMapViewer records={data.id ? [data] : []} />
+          {Object.keys(touchedSymptoms).length ? (
+            <BodyMapSelector bodyPart={bodyPart} setBodyPart={setBodyPart} />
+          ) : (
+            <BodyMapViewer records={data.id ? [data] : []} />
+          )}
         </div>
       </div>
 
