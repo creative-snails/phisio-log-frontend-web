@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import BodyMapSelector from "./BodyMapSelector";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
@@ -9,7 +10,7 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
+import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -48,6 +49,12 @@ const HealthRecordForm = () => {
       followUpActions?: boolean[];
     };
   }>({});
+
+  const [bodyPart, setBodyPart] = useState<BodyPart>({ key: "upper-abdomen-right", state: "1" });
+
+  useEffect(() => {
+    console.log(bodyPart);
+  }, [bodyPart]);
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -450,7 +457,11 @@ const HealthRecordForm = () => {
           </button>
         </div>
         <div className="body-map-panel-content">
-          <BodyMapViewer records={data.id ? [data] : []} />
+          {Object.keys(touchedSymptoms).length ? (
+            <BodyMapSelector bodyPart={bodyPart} setBodyPart={setBodyPart} />
+          ) : (
+            <BodyMapViewer records={data.id ? [data] : []} />
+          )}
         </div>
       </div>
 

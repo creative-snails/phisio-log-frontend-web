@@ -8,13 +8,15 @@ export type FormErrors<T> = {
 // Health domain types
 export type SeverityState = "0" | "1" | "2" | "3";
 
+export type BodyPart = {
+  key: string;
+  state: SeverityState;
+};
+
 export interface Symptom {
   name: string;
   startDate: string;
-  affectedParts?: {
-    key: string;
-    state: SeverityState;
-  }[];
+  affectedParts?: BodyPart[];
 }
 
 export type SymptomUI = Symptom & {
