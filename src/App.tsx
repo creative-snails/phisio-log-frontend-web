@@ -20,14 +20,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public landing page */}
-          <Route
-            path="/"
-            element={
-              <>
-                <LandingPage onOpenAuth={handleOpenAuth} />
-              </>
-            }
-          />
+          <Route path="/" element={<LandingPage onOpenAuth={handleOpenAuth} />} />
 
           {/* Protected routes */}
           <Route
