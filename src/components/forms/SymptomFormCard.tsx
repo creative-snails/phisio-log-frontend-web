@@ -20,7 +20,7 @@ const SymptomFormCard = ({
   index,
   symptom,
   onSymptomChange,
-  onBodyPartChange,
+  // onBodyPartChange,
   setCurrentSymptom,
   removeSymptom,
   formErrors,
@@ -31,7 +31,7 @@ const SymptomFormCard = ({
 
   useEffect(() => {
     if (isOpen) setCurrentSymptom(symptom);
-    onBodyPartChange(index);
+    // onBodyPartChange(index);
   }, [isOpen, symptom]);
 
   const handleHeaderClick = (e: React.MouseEvent) => {

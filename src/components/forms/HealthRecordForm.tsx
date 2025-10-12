@@ -53,10 +53,6 @@ const HealthRecordForm = () => {
   const [currentBodyPart, setCurrentBodyPart] = useState<BodyPart | null>(null);
 
   useEffect(() => {
-    console.log(currentSymptom);
-  }, [currentSymptom]);
-
-  useEffect(() => {
     const fetchRecord = async () => {
       try {
         if (id) {
@@ -193,6 +189,10 @@ const HealthRecordForm = () => {
   const handleBodyPartChange = (symptomIndex: number) => {
     if (!currentBodyPart) return;
 
+    setCurrentSymptom(
+      (prev) => ({ ...prev, affectedParts: [...(prev?.affectedParts || []), currentBodyPart] }) as Symptom
+    );
+
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
       const currentSymptom = updatedSymptoms[symptomIndex];
@@ -206,6 +206,13 @@ const HealthRecordForm = () => {
       return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
     });
   };
+
+  useEffect(() => {
+    handleBodyPartChange(0);
+    console.log(currentBodyPart);
+    console.log(currentSymptom);
+    console.log(recordFormData.data);
+  }, [currentBodyPart]);
 
   const handleRemoveSymptom = (index: number) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
@@ -447,12 +454,8 @@ const HealthRecordForm = () => {
         </div>
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
-          {Object.keys(touchedSymptoms).length ? (
-            <BodyMapSelector
-              currentSymptom={currentSymptom}
-              currentBodyPart={currentBodyPart}
-              setCurrentBodyPart={setCurrentBodyPart}
-            />
+          {currentSymptom ? (
+            <BodyMapSelector currentSymptom={currentSymptom} setCurrentBodyPart={setCurrentBodyPart} />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}
@@ -473,12 +476,8 @@ const HealthRecordForm = () => {
           </button>
         </div>
         <div className="body-map-panel-content">
-          {Object.keys(touchedSymptoms).length ? (
-            <BodyMapSelector
-              currentSymptom={currentSymptom}
-              currentBodyPart={currentBodyPart}
-              setCurrentBodyPart={setCurrentBodyPart}
-            />
+          {currentSymptom ? (
+            <BodyMapSelector currentSymptom={currentSymptom} setCurrentBodyPart={setCurrentBodyPart} />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}

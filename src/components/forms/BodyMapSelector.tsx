@@ -8,11 +8,10 @@ import { getSeverityColor } from "~/utils/severityColors";
 
 interface BodyMapSelectorProps {
   currentSymptom: Symptom | null;
-  currentBodyPart: BodyPart | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
 }
 
-const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }: BodyMapSelectorProps) => {
+const BodyMapSelector = ({ currentSymptom, setCurrentBodyPart }: BodyMapSelectorProps) => {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [rotationDegrees, setRotationDegrees] = useState(0);
@@ -39,11 +38,11 @@ const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }
   const getPartFill = (part: bodyPartData) => {
     if (hoveredPart === part.id) return "#bbdefb";
 
-    currentSymptom?.affectedParts?.forEach((p) => {
-      if (p.key === part.id) return;
-    });
-
-    if (currentBodyPart?.key === part.id) return getSeverityColor(currentBodyPart.state);
+    if (currentSymptom?.affectedParts) {
+      for (const p of currentSymptom.affectedParts) {
+        if (p.key === part.id) return getSeverityColor(p.state);
+      }
+    }
 
     return "#f8f9fa"; // Light gray - default
   };
