@@ -3,15 +3,16 @@ import { LuRefreshCw } from "react-icons/lu";
 
 import "~/components/BodyMapViewer.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
-import type { BodyPart } from "~/types";
+import type { BodyPart, Symptom } from "~/types";
 import { getSeverityColor } from "~/utils/severityColors";
 
 interface BodyMapSelectorProps {
-  bodyPart: BodyPart;
-  setBodyPart: React.Dispatch<React.SetStateAction<BodyPart>>;
+  currentSymptom: Symptom | null;
+  currentBodyPart: BodyPart | null;
+  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
 }
 
-const BodyMapSelector = ({ bodyPart, setBodyPart }: BodyMapSelectorProps) => {
+const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }: BodyMapSelectorProps) => {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [rotationDegrees, setRotationDegrees] = useState(0);
@@ -38,9 +39,11 @@ const BodyMapSelector = ({ bodyPart, setBodyPart }: BodyMapSelectorProps) => {
   const getPartFill = (part: bodyPartData) => {
     if (hoveredPart === part.id) return "#bbdefb";
 
-    // Check if part is affected by current health issues
+    currentSymptom?.affectedParts?.forEach((p) => {
+      if (p.key === part.id) return;
+    });
 
-    if (bodyPart.key === part.id) return getSeverityColor(bodyPart.state);
+    if (currentBodyPart?.key === part.id) return getSeverityColor(currentBodyPart.state);
 
     return "#f8f9fa"; // Light gray - default
   };
@@ -66,7 +69,7 @@ const BodyMapSelector = ({ bodyPart, setBodyPart }: BodyMapSelectorProps) => {
                 stroke="#333"
                 strokeWidth="2"
                 className="body-part"
-                onClick={() => setBodyPart({ key: part.id, state: "2" })}
+                onClick={() => setCurrentBodyPart({ key: part.id, state: "2" })}
                 onMouseEnter={() => setHoveredPart(part.id)}
                 onMouseLeave={() => setHoveredPart(null)}
                 style={{ cursor: "pointer" }}

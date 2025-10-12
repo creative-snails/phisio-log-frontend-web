@@ -10,7 +10,7 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
+import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, Symptom, SymptomUI } from "~/types";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -49,12 +49,12 @@ const HealthRecordForm = () => {
       followUpActions?: boolean[];
     };
   }>({});
-
-  const [bodyPart, setBodyPart] = useState<BodyPart>({ key: "upper-abdomen-right", state: "1" });
+  const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
+  const [currentBodyPart, setCurrentBodyPart] = useState<BodyPart | null>(null);
 
   useEffect(() => {
-    console.log(bodyPart);
-  }, [bodyPart]);
+    console.log(currentSymptom);
+  }, [currentSymptom]);
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -171,16 +171,6 @@ const HealthRecordForm = () => {
     console.log("Updating symptom", index, field, value);
   };
 
-  const toggleSymptom = (index: number) => {
-    setRecordFormData((prev) => {
-      const updatedSymptoms = [...prev.data.symptoms];
-      updatedSymptoms[index] = { ...updatedSymptoms[index], isOpen: !updatedSymptoms[index].isOpen };
-
-      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
-    });
-    validateForm();
-  };
-
   const handleAddSymptom = () => {
     setRecordFormData((prev) => ({
       ...prev,
@@ -198,6 +188,23 @@ const HealthRecordForm = () => {
       },
     }));
     validateForm();
+  };
+
+  const handleBodyPartChange = (symptomIndex: number) => {
+    if (!currentBodyPart) return;
+
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      const currentSymptom = updatedSymptoms[symptomIndex];
+      const newBodyPart = { key: currentBodyPart.key, state: currentBodyPart.state };
+
+      updatedSymptoms[symptomIndex] = {
+        ...currentSymptom,
+        affectedParts: [...(currentSymptom.affectedParts || []), newBodyPart],
+      };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
   };
 
   const handleRemoveSymptom = (index: number) => {
@@ -362,7 +369,8 @@ const HealthRecordForm = () => {
                     <SymptomsForm
                       symptoms={data.symptoms}
                       onSymptomChange={handleSymptomChange}
-                      toggleSymptom={toggleSymptom}
+                      onBodyPartChange={handleBodyPartChange}
+                      setCurrentSymptom={setCurrentSymptom}
                       addSymptom={handleAddSymptom}
                       removeSymptom={handleRemoveSymptom}
                       formErrors={formErrors.symptoms}
@@ -440,7 +448,11 @@ const HealthRecordForm = () => {
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
           {Object.keys(touchedSymptoms).length ? (
-            <BodyMapSelector bodyPart={bodyPart} setBodyPart={setBodyPart} />
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}
@@ -462,7 +474,11 @@ const HealthRecordForm = () => {
         </div>
         <div className="body-map-panel-content">
           {Object.keys(touchedSymptoms).length ? (
-            <BodyMapSelector bodyPart={bodyPart} setBodyPart={setBodyPart} />
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}
