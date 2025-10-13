@@ -1,23 +1,19 @@
 import SymptomFormCard from "./SymptomFormCard";
 
 import "./SymptomsForm.css";
-import type { FormErrors, Symptom, SymptomUI } from "~/types";
+import type { FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
-  symptoms: SymptomUI[];
-  onSymptomChange: (
-    index: number,
-    field: keyof SymptomUI,
-    value: string | SymptomUI["affectedParts"] | undefined
-  ) => void;
-  onBodyPartChange: (index: number) => void;
+  symptoms: Symptom[];
+  onSymptomChange: (id: string, field: keyof Symptom, value: string | Symptom["affectedParts"] | undefined) => void;
+  onBodyPartChange: (key: string) => void;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
   addSymptom: () => void;
-  removeSymptom: (index: number) => void;
-  formErrors?: FormErrors<SymptomUI[]>;
-  touched?: { [index: number]: { [key in keyof SymptomUI]?: boolean } };
-  setTouched?: (index: number, field: keyof SymptomUI) => void;
+  removeSymptom: (id: string) => void;
+  formErrors?: FormErrors<Symptom[]>;
+  touched?: { [id: string]: { [key in keyof Symptom]?: boolean } };
+  setTouched?: (id: string, field: keyof Symptom) => void;
 };
 
 const SymptomsForm = ({
@@ -35,7 +31,7 @@ const SymptomsForm = ({
     <div className="symptom-form-container">
       {symptoms.map((symptom, index) => (
         <SymptomFormCard
-          key={index}
+          key={symptom.id}
           index={index}
           symptom={symptom}
           onSymptomChange={onSymptomChange}

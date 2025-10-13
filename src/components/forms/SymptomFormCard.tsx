@@ -7,13 +7,13 @@ import { renderErrors } from "~/utils/renderErrors";
 type SymptomFormCardProps = {
   index: number;
   symptom: Symptom;
-  onSymptomChange: (index: number, field: keyof Symptom, value: string | undefined) => void;
-  onBodyPartChange: (index: number) => void;
+  onSymptomChange: (id: string, field: keyof Symptom, value: string | undefined) => void;
+  onBodyPartChange: (key: string) => void;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
-  removeSymptom: (index: number) => void;
+  removeSymptom: (id: string) => void;
   formErrors?: FormErrors<Symptom[]>;
-  touched?: { [index: number]: { [key in keyof Symptom]?: boolean } };
-  setTouched?: (index: number, field: keyof Symptom) => void;
+  touched?: { [id: string]: { [key in keyof Symptom]?: boolean } };
+  setTouched?: (id: string, field: keyof Symptom) => void;
 };
 
 const SymptomFormCard = ({
@@ -53,7 +53,7 @@ const SymptomFormCard = ({
           className="remove-icon"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            removeSymptom(index);
+            removeSymptom(symptom.id);
           }}
         />
       </div>
@@ -64,22 +64,22 @@ const SymptomFormCard = ({
           <input
             type="text"
             value={symptom.name}
-            onChange={(e) => onSymptomChange(index, "name", e.target.value)}
+            onChange={(e) => onSymptomChange(symptom.id, "name", e.target.value)}
             placeholder="Enter symptom name"
-            onBlur={() => setTouched && setTouched(index, "name")}
-            className={touched?.[index]?.name && formErrors?.[index]?.name?._errors ? "input-error" : ""}
+            onBlur={() => setTouched && setTouched(symptom.id, "name")}
+            className={touched?.[symptom.id]?.name && formErrors?.[index]?.name?._errors ? "input-error" : ""}
           />
-          {touched?.[index]?.name && renderErrors(formErrors?.[index]?.name)}
+          {touched?.[symptom.id]?.name && renderErrors(formErrors?.[index]?.name)}
 
           <label>Start Date</label>
           <input
             type="date"
             value={symptom.startDate}
-            onChange={(e) => onSymptomChange(index, "startDate", e.target.value)}
-            onBlur={() => setTouched && setTouched(index, "startDate")}
-            className={touched?.[index]?.startDate && formErrors?.[index]?.startDate?._errors ? "input-error" : ""}
+            onChange={(e) => onSymptomChange(symptom.id, "startDate", e.target.value)}
+            onBlur={() => setTouched && setTouched(symptom.id, "startDate")}
+            className={touched?.[symptom.id]?.startDate && formErrors?.[index]?.startDate?._errors ? "input-error" : ""}
           />
-          {touched?.[index]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
+          {touched?.[symptom.id]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
           <label>Affected Parts</label>
           <div className="placeholder"></div>

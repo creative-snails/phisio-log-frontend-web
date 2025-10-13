@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import BodyMapSelector from "./BodyMapSelector";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
@@ -10,7 +11,7 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, Symptom, SymptomUI } from "~/types";
+import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -38,9 +39,7 @@ const HealthRecordForm = () => {
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
   const [touchedStatus, setTouchedStatus] = useState<{ [key in keyof Status]?: boolean }>({});
   const [touchedTreatments, setTouchedTreatments] = useState<boolean>(false);
-  const [touchedSymptoms, setTouchedSymptoms] = useState<{ [index: number]: { [key in keyof SymptomUI]?: boolean } }>(
-    {}
-  );
+  const [touchedSymptoms, setTouchedSymptoms] = useState<{ [id: string]: { [key in keyof Symptom]?: boolean } }>({});
   const [touchedConsultations, setTouchedConsultations] = useState<{
     [index: number]: {
       consultant?: boolean;
@@ -152,21 +151,6 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleSymptomChange = (
-    index: number,
-    field: keyof SymptomUI,
-    value: string | SymptomUI["affectedParts"] | undefined
-  ) => {
-    setRecordFormData((prev) => {
-      const updatedSymptoms = [...prev.data.symptoms];
-      updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
-
-      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
-    });
-    validateForm();
-    console.log("Updating symptom", index, field, value);
-  };
-
   const handleAddSymptom = () => {
     setRecordFormData((prev) => ({
       ...prev,
@@ -175,6 +159,7 @@ const HealthRecordForm = () => {
         symptoms: [
           ...prev.data.symptoms,
           {
+            id: uuidv4(),
             name: "",
             startDate: "",
             affectedParts: [],
@@ -186,7 +171,23 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleBodyPartChange = (symptomIndex: number) => {
+  const handleSymptomChange = (
+    id: string,
+    field: keyof Symptom,
+    value: string | Symptom["affectedParts"] | undefined
+  ) => {
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      const index = updatedSymptoms.findIndex((s) => s.id === id);
+      updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
+    validateForm();
+    console.log("Updating symptom", field, value);
+  };
+
+  const handleBodyPartChange = (symptomId: string) => {
     if (!currentBodyPart) return;
 
     setCurrentSymptom(
@@ -195,10 +196,11 @@ const HealthRecordForm = () => {
 
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
-      const currentSymptom = updatedSymptoms[symptomIndex];
+      const index = updatedSymptoms.findIndex((s) => s.id === symptomId);
+      const currentSymptom = updatedSymptoms[index];
       const newBodyPart = { key: currentBodyPart.key, state: currentBodyPart.state };
 
-      updatedSymptoms[symptomIndex] = {
+      updatedSymptoms[index] = {
         ...currentSymptom,
         affectedParts: [...(currentSymptom.affectedParts || []), newBodyPart],
       };
@@ -207,22 +209,22 @@ const HealthRecordForm = () => {
     });
   };
 
-  useEffect(() => {
-    handleBodyPartChange(0);
-    console.log(currentBodyPart);
-    console.log(currentSymptom);
-    console.log(recordFormData.data);
-  }, [currentBodyPart]);
-
-  const handleRemoveSymptom = (index: number) => {
+  const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
       setRecordFormData((prev) => ({
         ...prev,
-        data: { ...prev.data, symptoms: prev.data.symptoms.filter((_, i) => i !== index) },
+        data: { ...prev.data, symptoms: prev.data.symptoms.filter((s) => s.id !== id) },
       }));
       validateForm();
     }
   };
+
+  useEffect(() => {
+    if (currentSymptom) handleBodyPartChange(currentSymptom.id);
+    console.log(currentBodyPart);
+    console.log(currentSymptom);
+    console.log(recordFormData.data);
+  }, [currentBodyPart]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -382,10 +384,10 @@ const HealthRecordForm = () => {
                       removeSymptom={handleRemoveSymptom}
                       formErrors={formErrors.symptoms}
                       touched={touchedSymptoms}
-                      setTouched={(index, field) =>
+                      setTouched={(id, field) =>
                         setTouchedSymptoms((prev) => ({
                           ...prev,
-                          [index]: { ...prev[index], [field]: true },
+                          [id]: { ...prev[id], [field]: true },
                         }))
                       }
                     />

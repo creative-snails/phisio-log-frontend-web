@@ -14,14 +14,11 @@ export type BodyPart = {
 };
 
 export interface Symptom {
+  id: string;
   name: string;
   startDate: string;
   affectedParts?: BodyPart[];
 }
-
-export type SymptomUI = Symptom & {
-  isOpen?: boolean;
-};
 
 export interface Status {
   stage: string;
@@ -61,7 +58,7 @@ export interface HealthRecord {
 
 export interface RecordFormData {
   data: Omit<HealthRecord, "symptoms"> & {
-    symptoms: SymptomUI[];
+    symptoms: Symptom[];
   };
   loading: boolean;
   error: string;
