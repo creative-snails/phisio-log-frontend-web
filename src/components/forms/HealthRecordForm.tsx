@@ -152,22 +152,22 @@ const HealthRecordForm = () => {
   };
 
   const handleAddSymptom = () => {
+    const newSymptom = {
+      id: uuidv4(),
+      name: "",
+      startDate: "",
+      affectedParts: [],
+      isOpen: true,
+    };
+
     setRecordFormData((prev) => ({
       ...prev,
       data: {
         ...prev.data,
-        symptoms: [
-          ...prev.data.symptoms,
-          {
-            id: uuidv4(),
-            name: "",
-            startDate: "",
-            affectedParts: [],
-            isOpen: true,
-          },
-        ],
+        symptoms: [...prev.data.symptoms, newSymptom],
       },
     }));
+    setCurrentSymptom(newSymptom);
     validateForm();
   };
 
@@ -221,9 +221,6 @@ const HealthRecordForm = () => {
 
   useEffect(() => {
     if (currentSymptom) handleBodyPartChange(currentSymptom.id);
-    console.log(currentBodyPart);
-    console.log(currentSymptom);
-    console.log(recordFormData.data);
   }, [currentBodyPart]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -379,6 +376,7 @@ const HealthRecordForm = () => {
                       symptoms={data.symptoms}
                       onSymptomChange={handleSymptomChange}
                       onBodyPartChange={handleBodyPartChange}
+                      currentSymptom={currentSymptom}
                       setCurrentSymptom={setCurrentSymptom}
                       addSymptom={handleAddSymptom}
                       removeSymptom={handleRemoveSymptom}

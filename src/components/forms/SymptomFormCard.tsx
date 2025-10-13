@@ -9,6 +9,7 @@ type SymptomFormCardProps = {
   symptom: Symptom;
   onSymptomChange: (id: string, field: keyof Symptom, value: string | undefined) => void;
   onBodyPartChange: (key: string) => void;
+  currentSymptom: Symptom | null;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
   removeSymptom: (id: string) => void;
   formErrors?: FormErrors<Symptom[]>;
@@ -21,6 +22,7 @@ const SymptomFormCard = ({
   symptom,
   onSymptomChange,
   // onBodyPartChange,
+  currentSymptom,
   setCurrentSymptom,
   removeSymptom,
   formErrors,
@@ -43,7 +45,10 @@ const SymptomFormCard = ({
   };
 
   return (
-    <div className="symptom-card" onClick={() => isOpen && setCurrentSymptom(symptom)}>
+    <div
+      className={`symptom-card ${symptom.id === currentSymptom?.id ? "active" : ""}`}
+      onClick={() => isOpen && setCurrentSymptom(symptom)}
+    >
       <div className="symptom-header" onClick={handleHeaderClick}>
         <div className="symptom-header-content">
           {isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}

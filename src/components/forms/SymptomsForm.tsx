@@ -8,6 +8,7 @@ type SymptomsFormProps = {
   symptoms: Symptom[];
   onSymptomChange: (id: string, field: keyof Symptom, value: string | Symptom["affectedParts"] | undefined) => void;
   onBodyPartChange: (key: string) => void;
+  currentSymptom: Symptom | null;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
   addSymptom: () => void;
   removeSymptom: (id: string) => void;
@@ -20,6 +21,7 @@ const SymptomsForm = ({
   symptoms,
   onSymptomChange,
   onBodyPartChange,
+  currentSymptom,
   setCurrentSymptom,
   addSymptom,
   removeSymptom,
@@ -36,6 +38,7 @@ const SymptomsForm = ({
           symptom={symptom}
           onSymptomChange={onSymptomChange}
           onBodyPartChange={onBodyPartChange}
+          currentSymptom={currentSymptom}
           setCurrentSymptom={setCurrentSymptom}
           removeSymptom={removeSymptom}
           formErrors={formErrors}
