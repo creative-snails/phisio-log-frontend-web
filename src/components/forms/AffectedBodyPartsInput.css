@@ -3,6 +3,11 @@
   justify-content: space-between;
 }
 
-.affected-body-parts-input > * {
+.affected-body-parts-input .sides,
+.affected-body-parts-input .states {
   flex-grow: 1;
+}
+
+.affected-body-parts-input .body-parts {
+  flex-grow: 3;
 }
