@@ -40,10 +40,6 @@
 
 .consultation-header:hover {
   background-color: rgba(83, 107, 161, 0.05);
-  padding-left: var(--space-sm);
-  padding-right: var(--space-sm);
-  margin-left: calc(-1 * var(--space-sm));
-  margin-right: calc(-1 * var(--space-sm));
 }
 
 .consultation-header-content {

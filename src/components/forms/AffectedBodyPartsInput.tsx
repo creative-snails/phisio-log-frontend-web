@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
 import "./AffectedBodyPartsInput.css";
+import type { BodyPart, SeverityState } from "~/types";
 
 interface SelectOption {
   label: string;
@@ -56,7 +58,7 @@ const frontSideParts: SelectOption[] = [
   },
   {
     value: "forearm-right-front",
-    label: "Forearm Fight",
+    label: "Forearm Right",
   },
   {
     value: "wrist-left-front",
@@ -298,35 +300,66 @@ const states: SelectOption[] = [
   { value: "3", label: "Severe" },
 ];
 
+type BodyPartInput = BodyPart & { side: string };
+
 const AffectedBodyPartsInput = () => {
-  const [selectedSide, setSelectedSide] = useState<SelectOption>(sides[0]);
-  const [selectedState, setSelectedState] = useState<SelectOption>(states[0]);
-  const [selectedBodyPart, setSelectedBodyPart] = useState<SelectOption>(
-    selectedSide.value === "front" ? frontSideParts[0] : backSideParts[0]
-  );
+  const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
+
+  const handleAddBodyPart = () => {
+    const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
+    setBodyParts((prev) => [...prev, newBodyPart]);
+  };
+
+  const handleRemoveBodyPart = (index: number) => {
+    setBodyParts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleBodyPartUpdate = (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
+    setBodyParts((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [property]: value };
+
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    console.log(bodyParts);
+  }, [bodyParts]);
 
   return (
-    <div className="affected-body-parts-input">
-      <Select<SelectOption>
-        className="sides"
-        options={sides}
-        value={selectedSide}
-        onChange={(selectedOption) => selectedOption && setSelectedSide(selectedOption)}
-      />
-      <Select<SelectOption>
-        className="body-parts"
-        options={selectedSide.value === "front" ? frontSideParts : backSideParts}
-        value={selectedBodyPart}
-        onChange={(selectedOption) => selectedOption && setSelectedBodyPart(selectedOption)}
-        menuPortalTarget={document.body}
-        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-      />
-      <Select<SelectOption>
-        className="states"
-        options={states}
-        value={selectedState}
-        onChange={(selectedOption) => selectedOption && setSelectedState(selectedOption)}
-      />
+    <div className="affecte-body-parts-container">
+      {bodyParts.map((bp, index) => (
+        <div className="affected-body-parts-input" key={bp.key + index}>
+          <Select<SelectOption>
+            className="sides"
+            options={sides}
+            value={sides.find((s) => s.value === bp.side)}
+            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "side", selectedOption.value)}
+          />
+          <Select<SelectOption>
+            className="body-parts"
+            options={bp.side === "front" ? frontSideParts : backSideParts}
+            value={(bp.side === "front" ? frontSideParts : backSideParts).find((p) => p.value === bp.key)}
+            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "key", selectedOption.value)}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+          />
+          <Select<SelectOption>
+            className="states"
+            options={states}
+            value={states.find((s) => s.value === bp.state)}
+            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "state", selectedOption.value)}
+          />
+          <button type="button" className="remove-button" onClick={() => handleRemoveBodyPart(index)}>
+            <FaMinusCircle className="remove-icon" />
+          </button>
+        </div>
+      ))}
+
+      <button type="button" className="add-button" onClick={handleAddBodyPart}>
+        + Add Body Part
+      </button>
     </div>
   );
 };

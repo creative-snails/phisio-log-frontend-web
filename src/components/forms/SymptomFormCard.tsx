@@ -89,7 +89,6 @@ const SymptomFormCard = ({
 
           <label>Affected Parts</label>
           <AffectedBodyPartsInput />
-          <div className="placeholder"></div>
           {renderErrors(formErrors?.[index]?.affectedParts)}
         </div>
       )}

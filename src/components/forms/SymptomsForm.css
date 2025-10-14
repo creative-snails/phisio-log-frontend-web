@@ -21,7 +21,14 @@
   left: -20px;
   width: 4px;
   height: 100%;
+  border-radius: 2px;
   background-color: var(--color-border-medium, rgb(253, 230, 138));
+}
+
+@media (max-width: 768px) {
+  .symptom-card.active:after {
+    left: -16px;
+  }
 }
 
 /* Remove border from the last symptom card */
@@ -31,10 +38,6 @@
 
 .symptom-card:hover {
   background-color: rgba(83, 107, 161, 0.02);
-  /* margin: 0 calc(-1 * var(--space-lg));
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-  border-radius: var(--radius-sm); */
 }
 
 .symptom-header {
@@ -50,10 +53,6 @@
 
 .symptom-header:hover {
   background-color: rgba(83, 107, 161, 0.05);
-  padding-left: var(--space-sm);
-  padding-right: var(--space-sm);
-  margin-left: calc(-1 * var(--space-sm));
-  margin-right: calc(-1 * var(--space-sm));
 }
 
 .symptom-header-content {
@@ -124,13 +123,6 @@
   outline: none;
 }
 
-.placeholder {
-  padding: 0.5rem;
-  background-color: #eee;
-  border-radius: 4px;
-  color: #555;
-}
-
 button.add-button {
   padding: 0.4rem 0.8rem;
   border: none;
@@ -152,13 +144,12 @@ button.add-button:hover {
 
 .remove-icon {
   position: absolute;
-  top: 0.7rem;
+  top: 0.5rem;
   right: 0.7rem;
   color: #dc3545;
   cursor: pointer;
   font-size: 1.4em;
   padding: 3px;
-  border-radius: 4px;
   transition: all 0.2s ease;
 }
 
