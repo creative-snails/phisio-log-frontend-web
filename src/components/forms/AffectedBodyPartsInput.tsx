@@ -3,7 +3,7 @@ import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
 import "./AffectedBodyPartsInput.css";
-import type { BodyPart, SeverityState } from "~/types";
+import type { BodyPartExtended, BodyPartInput, SeverityState } from "~/types";
 
 interface SelectOption {
   label: string;
@@ -300,16 +300,18 @@ const states: SelectOption[] = [
   { value: "3", label: "Severe" },
 ];
 
-type BodyPartInput = BodyPart & { side: string };
+type AffectedBodyPartsInputProps = {
+  currentBodyPart: BodyPartExtended | null;
+  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+};
 
-const AffectedBodyPartsInput = () => {
+const AffectedBodyPartsInput = ({ currentBodyPart, setCurrentBodyPart }: AffectedBodyPartsInputProps) => {
   const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
-  const [currentBodyPart, setCurrentBodyPart] = useState({ index: 0, key: "head-front" });
 
   const handleAddBodyPart = () => {
     const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
     setBodyParts((prev) => {
-      setCurrentBodyPart({ index: prev?.length, key: newBodyPart.key });
+      setCurrentBodyPart({ ...newBodyPart, index: prev?.length });
 
       return [...prev, newBodyPart];
     });
@@ -329,9 +331,11 @@ const AffectedBodyPartsInput = () => {
   };
 
   useEffect(() => {
-    console.log(bodyParts);
-    console.log(currentBodyPart);
-  }, [bodyParts, currentBodyPart]);
+    if (currentBodyPart) {
+      handleBodyPartUpdate(currentBodyPart?.index, "key", currentBodyPart?.key);
+      handleBodyPartUpdate(currentBodyPart?.index, "side", currentBodyPart?.side);
+    }
+  }, [currentBodyPart]);
 
   return (
     <div className="affecte-body-parts-container">
@@ -340,8 +344,8 @@ const AffectedBodyPartsInput = () => {
           <input
             type="radio"
             name="active-input"
-            checked={currentBodyPart.index === index}
-            onChange={() => setCurrentBodyPart({ index, key: bp.key })}
+            checked={currentBodyPart?.index === index}
+            onChange={() => setCurrentBodyPart({ ...bp, index })}
           />
           <Select<SelectOption>
             className="sides"

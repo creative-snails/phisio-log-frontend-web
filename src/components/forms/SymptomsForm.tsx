@@ -1,13 +1,15 @@
 import SymptomFormCard from "./SymptomFormCard";
 
 import "./SymptomsForm.css";
-import type { FormErrors, Symptom } from "~/types";
+import type { BodyPartExtended, FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
   symptoms: Symptom[];
   onSymptomChange: (id: string, field: keyof Symptom, value: string | Symptom["affectedParts"] | undefined) => void;
-  onBodyPartChange: (key: string) => void;
+  // onBodyPartChange: (key: string) => void;
+  currentBodyPart: BodyPartExtended | null;
+  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
   currentSymptom: Symptom | null;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
   addSymptom: () => void;
@@ -20,7 +22,9 @@ type SymptomsFormProps = {
 const SymptomsForm = ({
   symptoms,
   onSymptomChange,
-  onBodyPartChange,
+  // onBodyPartChange,
+  currentBodyPart,
+  setCurrentBodyPart,
   currentSymptom,
   setCurrentSymptom,
   addSymptom,
@@ -37,7 +41,9 @@ const SymptomsForm = ({
           index={index}
           symptom={symptom}
           onSymptomChange={onSymptomChange}
-          onBodyPartChange={onBodyPartChange}
+          // onBodyPartChange={onBodyPartChange}
+          currentBodyPart={currentBodyPart}
+          setCurrentBodyPart={setCurrentBodyPart}
           currentSymptom={currentSymptom}
           setCurrentSymptom={setCurrentSymptom}
           removeSymptom={removeSymptom}

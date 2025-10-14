@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
-import type { FormErrors, Symptom } from "~/types";
+import type { BodyPartExtended, FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomFormCardProps = {
   index: number;
   symptom: Symptom;
   onSymptomChange: (id: string, field: keyof Symptom, value: string | undefined) => void;
-  onBodyPartChange: (key: string) => void;
+  // onBodyPartChange: (key: string) => void;
+  currentBodyPart: BodyPartExtended | null;
+  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
   currentSymptom: Symptom | null;
   setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
   removeSymptom: (id: string) => void;
@@ -23,6 +25,8 @@ const SymptomFormCard = ({
   symptom,
   onSymptomChange,
   // onBodyPartChange,
+  currentBodyPart,
+  setCurrentBodyPart,
   currentSymptom,
   setCurrentSymptom,
   removeSymptom,
@@ -88,7 +92,7 @@ const SymptomFormCard = ({
           {touched?.[symptom.id]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
           <label>Affected Parts</label>
-          <AffectedBodyPartsInput />
+          <AffectedBodyPartsInput currentBodyPart={currentBodyPart} setCurrentBodyPart={setCurrentBodyPart} />
           {renderErrors(formErrors?.[index]?.affectedParts)}
         </div>
       )}

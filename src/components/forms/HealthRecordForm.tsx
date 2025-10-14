@@ -11,7 +11,7 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPart, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
+import type { BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -49,7 +49,7 @@ const HealthRecordForm = () => {
     };
   }>({});
   const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
-  const [currentBodyPart, setCurrentBodyPart] = useState<BodyPart | null>(null);
+  const [currentBodyPart, setCurrentBodyPart] = useState<BodyPartExtended | null>(null);
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -187,27 +187,27 @@ const HealthRecordForm = () => {
     console.log("Updating symptom", field, value);
   };
 
-  const handleBodyPartChange = (symptomId: string) => {
-    if (!currentBodyPart) return;
+  // const handleBodyPartChange = (symptomId: string) => {
+  //   if (!currentBodyPart) return;
 
-    setCurrentSymptom(
-      (prev) => ({ ...prev, affectedParts: [...(prev?.affectedParts || []), currentBodyPart] }) as Symptom
-    );
+  //   setCurrentSymptom(
+  //     (prev) => ({ ...prev, affectedParts: [...(prev?.affectedParts || []), currentBodyPart] }) as Symptom
+  //   );
 
-    setRecordFormData((prev) => {
-      const updatedSymptoms = [...prev.data.symptoms];
-      const index = updatedSymptoms.findIndex((s) => s.id === symptomId);
-      const currentSymptom = updatedSymptoms[index];
-      const newBodyPart = { key: currentBodyPart.key, state: currentBodyPart.state };
+  //   setRecordFormData((prev) => {
+  //     const updatedSymptoms = [...prev.data.symptoms];
+  //     const index = updatedSymptoms.findIndex((s) => s.id === symptomId);
+  //     const currentSymptom = updatedSymptoms[index];
+  //     const newBodyPart = { key: currentBodyPart.key, state: currentBodyPart.state };
 
-      updatedSymptoms[index] = {
-        ...currentSymptom,
-        affectedParts: [...(currentSymptom.affectedParts || []), newBodyPart],
-      };
+  //     updatedSymptoms[index] = {
+  //       ...currentSymptom,
+  //       affectedParts: [...(currentSymptom.affectedParts || []), newBodyPart],
+  //     };
 
-      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
-    });
-  };
+  //     return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+  //   });
+  // };
 
   const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
@@ -219,9 +219,9 @@ const HealthRecordForm = () => {
     }
   };
 
-  useEffect(() => {
-    if (currentSymptom) handleBodyPartChange(currentSymptom.id);
-  }, [currentBodyPart]);
+  // useEffect(() => {
+  //   if (currentSymptom) handleBodyPartChange(currentSymptom.id);
+  // }, [currentBodyPart]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -375,7 +375,9 @@ const HealthRecordForm = () => {
                     <SymptomsForm
                       symptoms={data.symptoms}
                       onSymptomChange={handleSymptomChange}
-                      onBodyPartChange={handleBodyPartChange}
+                      // onBodyPartChange={handleBodyPartChange}
+                      currentBodyPart={currentBodyPart}
+                      setCurrentBodyPart={setCurrentBodyPart}
                       currentSymptom={currentSymptom}
                       setCurrentSymptom={setCurrentSymptom}
                       addSymptom={handleAddSymptom}
@@ -455,7 +457,11 @@ const HealthRecordForm = () => {
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
           {currentSymptom ? (
-            <BodyMapSelector currentSymptom={currentSymptom} setCurrentBodyPart={setCurrentBodyPart} />
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}
@@ -477,7 +483,11 @@ const HealthRecordForm = () => {
         </div>
         <div className="body-map-panel-content">
           {currentSymptom ? (
-            <BodyMapSelector currentSymptom={currentSymptom} setCurrentBodyPart={setCurrentBodyPart} />
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
           ) : (
             <BodyMapViewer records={data.id ? [data] : []} />
           )}

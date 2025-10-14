@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
 import "~/components/BodyMapViewer.css";
 import { backSide, type bodyPartData, frontSide } from "~/services/bodyParts";
-import type { BodyPart, Symptom } from "~/types";
+import type { BodyPartExtended, Symptom } from "~/types";
 import { getSeverityColor } from "~/utils/severityColors";
 
 interface BodyMapSelectorProps {
   currentSymptom: Symptom | null;
-  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPart | null>>;
+  currentBodyPart: BodyPartExtended | null;
+  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
 }
 
-const BodyMapSelector = ({ currentSymptom, setCurrentBodyPart }: BodyMapSelectorProps) => {
+const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }: BodyMapSelectorProps) => {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [side, setSide] = useState("front");
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -23,6 +25,8 @@ const BodyMapSelector = ({ currentSymptom, setCurrentBodyPart }: BodyMapSelector
     setIsAnimating(true);
     const newRotation = rotationDegrees + 180;
     setRotationDegrees(newRotation);
+
+    setSide(side === "front" ? "back" : "front");
 
     // Switch the data at 90° (halfway through 0.6s animation)
     setTimeout(() => {
@@ -34,6 +38,8 @@ const BodyMapSelector = ({ currentSymptom, setCurrentBodyPart }: BodyMapSelector
       setIsAnimating(false);
     }, 600);
   };
+
+  useEffect(() => {});
 
   const getPartFill = (part: bodyPartData) => {
     if (hoveredPart === part.id) return "#bbdefb";
@@ -68,7 +74,7 @@ const BodyMapSelector = ({ currentSymptom, setCurrentBodyPart }: BodyMapSelector
                 stroke="#333"
                 strokeWidth="2"
                 className="body-part"
-                onClick={() => setCurrentBodyPart({ key: part.id, state: "2" })}
+                onClick={() => currentBodyPart && setCurrentBodyPart({ ...currentBodyPart, key: part.id, side })}
                 onMouseEnter={() => setHoveredPart(part.id)}
                 onMouseLeave={() => setHoveredPart(null)}
                 style={{ cursor: "pointer" }}

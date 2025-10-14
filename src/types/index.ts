@@ -13,6 +13,9 @@ export type BodyPart = {
   state: SeverityState;
 };
 
+export type BodyPartInput = BodyPart & { side: string };
+export type BodyPartExtended = BodyPartInput & { index: number };
+
 export interface Symptom {
   id: string;
   name: string;
