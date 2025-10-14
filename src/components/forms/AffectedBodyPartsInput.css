@@ -1,0 +1,8 @@
+.affected-body-parts-input {
+  display: flex;
+  justify-content: space-between;
+}
+
+.affected-body-parts-input > * {
+  flex-grow: 1;
+}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
+import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
 import type { FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
@@ -87,6 +88,7 @@ const SymptomFormCard = ({
           {touched?.[symptom.id]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
           <label>Affected Parts</label>
+          <AffectedBodyPartsInput />
           <div className="placeholder"></div>
           {renderErrors(formErrors?.[index]?.affectedParts)}
         </div>
