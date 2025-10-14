@@ -6,8 +6,13 @@
 
 .affected-body-parts-input {
   display: grid;
-  grid-template-columns: 3fr 6fr 3fr 1fr;
-  gap: 8px;
+  grid-template-columns: 1fr 3fr 6fr 3fr 1fr;
+  gap: 6px;
+}
+
+.affected-body-parts-input > input {
+  height: 20px;
+  margin: auto;
 }
 
 .affected-body-parts-input .sides,

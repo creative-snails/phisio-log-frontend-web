@@ -304,10 +304,15 @@ type BodyPartInput = BodyPart & { side: string };
 
 const AffectedBodyPartsInput = () => {
   const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
+  const [currentBodyPart, setCurrentBodyPart] = useState({ index: 0, key: "head-front" });
 
   const handleAddBodyPart = () => {
     const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
-    setBodyParts((prev) => [...prev, newBodyPart]);
+    setBodyParts((prev) => {
+      setCurrentBodyPart({ index: prev?.length, key: newBodyPart.key });
+
+      return [...prev, newBodyPart];
+    });
   };
 
   const handleRemoveBodyPart = (index: number) => {
@@ -325,12 +330,19 @@ const AffectedBodyPartsInput = () => {
 
   useEffect(() => {
     console.log(bodyParts);
-  }, [bodyParts]);
+    console.log(currentBodyPart);
+  }, [bodyParts, currentBodyPart]);
 
   return (
     <div className="affecte-body-parts-container">
       {bodyParts.map((bp, index) => (
         <div className="affected-body-parts-input" key={bp.key + index}>
+          <input
+            type="radio"
+            name="active-input"
+            checked={currentBodyPart.index === index}
+            onChange={() => setCurrentBodyPart({ index, key: bp.key })}
+          />
           <Select<SelectOption>
             className="sides"
             options={sides}
