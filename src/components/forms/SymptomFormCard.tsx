@@ -9,7 +9,6 @@ type SymptomFormCardProps = {
   index: number;
   symptom: Symptom;
   onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
-  // onBodyPartChange: (key: string) => void;
   currentBodyPart: BodyPartExtended | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
   currentSymptom: Symptom | null;
@@ -24,7 +23,6 @@ const SymptomFormCard = ({
   index,
   symptom,
   onSymptomChange,
-  // onBodyPartChange,
   currentBodyPart,
   setCurrentBodyPart,
   currentSymptom,
@@ -84,7 +82,6 @@ const SymptomFormCard = ({
 
   useEffect(() => {
     if (isOpen) setCurrentSymptom(symptom);
-    // onBodyPartChange(index);
   }, [isOpen, symptom]);
 
   const handleHeaderClick = (e: React.MouseEvent) => {

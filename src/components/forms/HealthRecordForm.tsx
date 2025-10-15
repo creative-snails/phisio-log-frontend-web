@@ -183,28 +183,6 @@ const HealthRecordForm = () => {
     console.log("Updating symptom", field, value);
   };
 
-  // const handleBodyPartChange = (symptomId: string) => {
-  //   if (!currentBodyPart) return;
-
-  //   setCurrentSymptom(
-  //     (prev) => ({ ...prev, affectedParts: [...(prev?.affectedParts || []), currentBodyPart] }) as Symptom
-  //   );
-
-  //   setRecordFormData((prev) => {
-  //     const updatedSymptoms = [...prev.data.symptoms];
-  //     const index = updatedSymptoms.findIndex((s) => s.id === symptomId);
-  //     const currentSymptom = updatedSymptoms[index];
-  //     const newBodyPart = { key: currentBodyPart.key, state: currentBodyPart.state };
-
-  //     updatedSymptoms[index] = {
-  //       ...currentSymptom,
-  //       affectedParts: [...(currentSymptom.affectedParts || []), newBodyPart],
-  //     };
-
-  //     return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
-  //   });
-  // };
-
   const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
       setRecordFormData((prev) => ({
@@ -214,10 +192,6 @@ const HealthRecordForm = () => {
       validateForm();
     }
   };
-
-  // useEffect(() => {
-  //   if (currentSymptom) handleBodyPartChange(currentSymptom.id);
-  // }, [currentBodyPart]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,7 +345,6 @@ const HealthRecordForm = () => {
                     <SymptomsForm
                       symptoms={data.symptoms}
                       onSymptomChange={handleSymptomChange}
-                      // onBodyPartChange={handleBodyPartChange}
                       currentBodyPart={currentBodyPart}
                       setCurrentBodyPart={setCurrentBodyPart}
                       currentSymptom={currentSymptom}

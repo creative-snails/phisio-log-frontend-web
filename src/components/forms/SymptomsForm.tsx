@@ -7,7 +7,6 @@ import { renderErrors } from "~/utils/renderErrors";
 type SymptomsFormProps = {
   symptoms: Symptom[];
   onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
-  // onBodyPartChange: (key: string) => void;
   currentBodyPart: BodyPartExtended | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
   currentSymptom: Symptom | null;
@@ -22,7 +21,6 @@ type SymptomsFormProps = {
 const SymptomsForm = ({
   symptoms,
   onSymptomChange,
-  // onBodyPartChange,
   currentBodyPart,
   setCurrentBodyPart,
   currentSymptom,
@@ -41,7 +39,6 @@ const SymptomsForm = ({
           index={index}
           symptom={symptom}
           onSymptomChange={onSymptomChange}
-          // onBodyPartChange={onBodyPartChange}
           currentBodyPart={currentBodyPart}
           setCurrentBodyPart={setCurrentBodyPart}
           currentSymptom={currentSymptom}
