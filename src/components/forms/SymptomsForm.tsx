@@ -1,12 +1,12 @@
 import SymptomFormCard from "./SymptomFormCard";
 
 import "./SymptomsForm.css";
-import type { BodyPartExtended, FormErrors, Symptom } from "~/types";
+import type { BodyPart, BodyPartExtended, FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
   symptoms: Symptom[];
-  onSymptomChange: (id: string, field: keyof Symptom, value: string | Symptom["affectedParts"] | undefined) => void;
+  onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
   // onBodyPartChange: (key: string) => void;
   currentBodyPart: BodyPartExtended | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
@@ -301,39 +301,26 @@ const states: SelectOption[] = [
 ];
 
 type AffectedBodyPartsInputProps = {
+  bodyParts: BodyPartInput[];
   currentBodyPart: BodyPartExtended | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+  handleAddBodyPart: () => void;
+  handleRemoveBodyPart: (index: number) => void;
+  handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;
 };
 
-const AffectedBodyPartsInput = ({ currentBodyPart, setCurrentBodyPart }: AffectedBodyPartsInputProps) => {
-  const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
-
-  const handleAddBodyPart = () => {
-    const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
-    setBodyParts((prev) => {
-      setCurrentBodyPart({ ...newBodyPart, index: prev?.length });
-
-      return [...prev, newBodyPart];
-    });
-  };
-
-  const handleRemoveBodyPart = (index: number) => {
-    setBodyParts((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleBodyPartUpdate = (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
-    setBodyParts((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [property]: value };
-
-      return updated;
-    });
-  };
-
+const AffectedBodyPartsInput = ({
+  bodyParts,
+  currentBodyPart,
+  setCurrentBodyPart,
+  handleAddBodyPart,
+  handleUpdateBodyPart,
+  handleRemoveBodyPart,
+}: AffectedBodyPartsInputProps) => {
   useEffect(() => {
     if (currentBodyPart) {
-      handleBodyPartUpdate(currentBodyPart?.index, "key", currentBodyPart?.key);
-      handleBodyPartUpdate(currentBodyPart?.index, "side", currentBodyPart?.side);
+      handleUpdateBodyPart(currentBodyPart?.index, "key", currentBodyPart?.key);
+      handleUpdateBodyPart(currentBodyPart?.index, "side", currentBodyPart?.side);
     }
   }, [currentBodyPart]);
 
@@ -351,13 +338,13 @@ const AffectedBodyPartsInput = ({ currentBodyPart, setCurrentBodyPart }: Affecte
             className="sides"
             options={sides}
             value={sides.find((s) => s.value === bp.side)}
-            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "side", selectedOption.value)}
+            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "side", selectedOption.value)}
           />
           <Select<SelectOption>
             className="body-parts"
             options={bp.side === "front" ? frontSideParts : backSideParts}
             value={(bp.side === "front" ? frontSideParts : backSideParts).find((p) => p.value === bp.key)}
-            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "key", selectedOption.value)}
+            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "key", selectedOption.value)}
             menuPortalTarget={document.body}
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           />
@@ -365,7 +352,7 @@ const AffectedBodyPartsInput = ({ currentBodyPart, setCurrentBodyPart }: Affecte
             className="states"
             options={states}
             value={states.find((s) => s.value === bp.state)}
-            onChange={(selectedOption) => selectedOption && handleBodyPartUpdate(index, "state", selectedOption.value)}
+            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "state", selectedOption.value)}
           />
           <button type="button" className="remove-button" onClick={() => handleRemoveBodyPart(index)}>
             <FaMinusCircle className="remove-icon" />

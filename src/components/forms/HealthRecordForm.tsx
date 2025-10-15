@@ -11,7 +11,7 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
+import type { BodyPart, BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -171,11 +171,7 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleSymptomChange = (
-    id: string,
-    field: keyof Symptom,
-    value: string | Symptom["affectedParts"] | undefined
-  ) => {
+  const handleSymptomChange = (id: string, field: keyof Symptom, value: string | BodyPart[]) => {
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
       const index = updatedSymptoms.findIndex((s) => s.id === id);

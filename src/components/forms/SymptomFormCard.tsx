@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
-import type { BodyPartExtended, FormErrors, Symptom } from "~/types";
+import type { BodyPart, BodyPartExtended, BodyPartInput, FormErrors, SeverityState, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomFormCardProps = {
   index: number;
   symptom: Symptom;
-  onSymptomChange: (id: string, field: keyof Symptom, value: string | undefined) => void;
+  onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
   // onBodyPartChange: (key: string) => void;
   currentBodyPart: BodyPartExtended | null;
   setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
@@ -35,6 +35,52 @@ const SymptomFormCard = ({
   setTouched,
 }: SymptomFormCardProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
+
+  const handleAddBodyPart = () => {
+    const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
+    const updatedBodyParts = [...bodyParts, newBodyPart];
+
+    setBodyParts(updatedBodyParts);
+    setCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 });
+    onSymptomChange(
+      symptom.id,
+      "affectedParts",
+      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
+    );
+  };
+
+  const handleRemoveBodyPart = (index: number) => {
+    const updatedBodyParts = bodyParts.filter((_, i) => i !== index);
+
+    setBodyParts(updatedBodyParts);
+
+    if (updatedBodyParts.length) {
+      if (currentBodyPart && currentBodyPart.index < updatedBodyParts.length)
+        setCurrentBodyPart({ ...updatedBodyParts[currentBodyPart.index], index: currentBodyPart.index });
+      else setCurrentBodyPart({ ...updatedBodyParts[updatedBodyParts.length - 1], index: bodyParts.length - 1 });
+    } else {
+      setCurrentBodyPart(null);
+    }
+
+    onSymptomChange(
+      symptom.id,
+      "affectedParts",
+      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
+    );
+  };
+
+  const handleUpdateBodyPart = (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
+    const updatedBodyParts = [...bodyParts];
+    updatedBodyParts[index] = { ...updatedBodyParts[index], [property]: value };
+
+    setBodyParts(updatedBodyParts);
+    onSymptomChange(
+      symptom.id,
+      "affectedParts",
+      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
+    );
+  };
 
   useEffect(() => {
     if (isOpen) setCurrentSymptom(symptom);
@@ -92,7 +138,14 @@ const SymptomFormCard = ({
           {touched?.[symptom.id]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
 
           <label>Affected Parts</label>
-          <AffectedBodyPartsInput currentBodyPart={currentBodyPart} setCurrentBodyPart={setCurrentBodyPart} />
+          <AffectedBodyPartsInput
+            currentBodyPart={currentBodyPart}
+            bodyParts={bodyParts}
+            setCurrentBodyPart={setCurrentBodyPart}
+            handleAddBodyPart={handleAddBodyPart}
+            handleRemoveBodyPart={handleRemoveBodyPart}
+            handleUpdateBodyPart={handleUpdateBodyPart}
+          />
           {renderErrors(formErrors?.[index]?.affectedParts)}
         </div>
       )}
