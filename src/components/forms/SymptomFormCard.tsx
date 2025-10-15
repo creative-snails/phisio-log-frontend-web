@@ -35,12 +35,24 @@ const SymptomFormCard = ({
   const [isOpen, setIsOpen] = useState(true);
   const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
 
+  useEffect(() => {
+    const initialBodyParts: BodyPartInput[] =
+      symptom?.affectedParts?.map((bp) => ({
+        side: bp.key.includes("-front") ? "front" : "back",
+        key: bp.key,
+        state: bp.state,
+      })) || [];
+    setBodyParts(initialBodyParts);
+  }, [symptom.id]);
+
   const handleAddBodyPart = () => {
-    const newBodyPart = { side: "front", key: "head-front", state: "0" as SeverityState };
+    const newBodyPart = { side: "", key: "", state: "" as SeverityState };
     const updatedBodyParts = [...bodyParts, newBodyPart];
 
     setBodyParts(updatedBodyParts);
-    setCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 });
+
+    if (symptom.id === currentSymptom?.id) setCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 });
+
     onSymptomChange(
       symptom.id,
       "affectedParts",
@@ -53,12 +65,14 @@ const SymptomFormCard = ({
 
     setBodyParts(updatedBodyParts);
 
-    if (updatedBodyParts.length) {
-      if (currentBodyPart && currentBodyPart.index < updatedBodyParts.length)
-        setCurrentBodyPart({ ...updatedBodyParts[currentBodyPart.index], index: currentBodyPart.index });
-      else setCurrentBodyPart({ ...updatedBodyParts[updatedBodyParts.length - 1], index: bodyParts.length - 1 });
-    } else {
-      setCurrentBodyPart(null);
+    if (symptom.id === currentSymptom?.id) {
+      if (updatedBodyParts.length) {
+        if (currentBodyPart && currentBodyPart.index < updatedBodyParts.length)
+          setCurrentBodyPart({ ...updatedBodyParts[currentBodyPart.index], index: currentBodyPart.index });
+        else setCurrentBodyPart({ ...updatedBodyParts[updatedBodyParts.length - 1], index: bodyParts.length - 1 });
+      } else {
+        setCurrentBodyPart(null);
+      }
     }
 
     onSymptomChange(
