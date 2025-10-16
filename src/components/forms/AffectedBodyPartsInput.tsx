@@ -307,6 +307,8 @@ type AffectedBodyPartsInputProps = {
   handleAddBodyPart: () => void;
   handleRemoveBodyPart: (index: number) => void;
   handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;
+  symptomId: string;
+  activeSymptomId?: string;
 };
 
 const AffectedBodyPartsInput = ({
@@ -316,18 +318,22 @@ const AffectedBodyPartsInput = ({
   handleAddBodyPart,
   handleUpdateBodyPart,
   handleRemoveBodyPart,
+  symptomId,
+  activeSymptomId,
 }: AffectedBodyPartsInputProps) => {
   useEffect(() => {
-    if (currentBodyPart) {
-      handleUpdateBodyPart(currentBodyPart?.index, "key", currentBodyPart?.key);
-      handleUpdateBodyPart(currentBodyPart?.index, "side", currentBodyPart?.side);
-    }
-  }, [currentBodyPart]);
+    if (!currentBodyPart) return;
+    if (activeSymptomId !== symptomId) return;
+
+    handleUpdateBodyPart(currentBodyPart.index, "key", currentBodyPart.key);
+    handleUpdateBodyPart(currentBodyPart.index, "state", currentBodyPart.state);
+    handleUpdateBodyPart(currentBodyPart.index, "side", currentBodyPart.side);
+  }, [currentBodyPart, activeSymptomId, symptomId]);
 
   return (
     <div className="affecte-body-parts-container">
       {bodyParts.map((bp, index) => (
-        <div className="affected-body-parts-input" key={bp.key + index}>
+        <div className="affected-body-parts-input" key={bp.key}>
           <input
             type="radio"
             name="active-input"

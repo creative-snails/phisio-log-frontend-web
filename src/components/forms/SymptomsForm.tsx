@@ -35,7 +35,7 @@ const SymptomsForm = ({
     <div className="symptom-form-container">
       {symptoms.map((symptom, index) => (
         <SymptomFormCard
-          key={symptom.id}
+          key={symptom.id + index}
           index={index}
           symptom={symptom}
           onSymptomChange={onSymptomChange}

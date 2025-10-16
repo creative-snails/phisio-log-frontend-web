@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
+import { v4 as uuidv4 } from "uuid";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
 import type { BodyPart, BodyPartExtended, BodyPartInput, FormErrors, SeverityState, Symptom } from "~/types";
@@ -46,7 +47,7 @@ const SymptomFormCard = ({
   }, [symptom.id]);
 
   const handleAddBodyPart = () => {
-    const newBodyPart = { side: "", key: "", state: "" as SeverityState };
+    const newBodyPart = { side: "", key: uuidv4(), state: "" as SeverityState };
     const updatedBodyParts = [...bodyParts, newBodyPart];
 
     setBodyParts(updatedBodyParts);
@@ -59,6 +60,11 @@ const SymptomFormCard = ({
       updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
     );
   };
+
+  useEffect(() => {
+    console.log(symptom.id);
+    console.log("useEffect: ", bodyParts);
+  }, [bodyParts]);
 
   const handleRemoveBodyPart = (index: number) => {
     const updatedBodyParts = bodyParts.filter((_, i) => i !== index);
@@ -156,6 +162,8 @@ const SymptomFormCard = ({
             handleAddBodyPart={handleAddBodyPart}
             handleRemoveBodyPart={handleRemoveBodyPart}
             handleUpdateBodyPart={handleUpdateBodyPart}
+            symptomId={symptom.id}
+            activeSymptomId={currentSymptom?.id}
           />
           {renderErrors(formErrors?.[index]?.affectedParts)}
         </div>
