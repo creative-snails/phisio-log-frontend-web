@@ -51,6 +51,73 @@ const HealthRecordForm = () => {
   const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
   const [currentBodyPart, setCurrentBodyPart] = useState<BodyPartExtended | null>(null);
 
+  // When switching active symptom, ensure the selected body part belongs to it.
+  // If not, select the last affected part of that symptom (or clear if none).
+  useEffect(() => {
+    const s = currentSymptom;
+    if (!s) {
+      if (currentBodyPart) setCurrentBodyPart(null);
+
+      return;
+    }
+    const parts = s.affectedParts || [];
+    if (parts.length === 0) {
+      if (currentBodyPart) setCurrentBodyPart(null);
+
+      return;
+    }
+
+    const keys = parts.map((p) => p.key);
+    if (!currentBodyPart || !keys.includes(currentBodyPart.key)) {
+      const idx = parts.length - 1;
+      const key = parts[idx].key;
+      const state = parts[idx].state;
+      const side = key.includes("-back") ? "back" : "front";
+      setCurrentBodyPart({ key, state, side, index: idx });
+
+      return;
+    }
+
+    // Keep index/side/state in sync if they differ
+    const idx = keys.indexOf(currentBodyPart.key);
+    const desiredState = parts[idx].state;
+    const desiredSide = currentBodyPart.key.includes("-back") ? "back" : "front";
+    if (
+      currentBodyPart.index !== idx ||
+      currentBodyPart.state !== desiredState ||
+      currentBodyPart.side !== desiredSide
+    ) {
+      setCurrentBodyPart({ ...currentBodyPart, index: idx, state: desiredState, side: desiredSide });
+    }
+  }, [currentSymptom?.id]);
+
+  // Mirror map selection into the active symptom’s affectedParts in the central form state.
+  useEffect(() => {
+    if (!currentSymptom) return;
+    if (!currentBodyPart) return;
+    // Ignore placeholder UUID keys to avoid clobbering dropdown edits
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      currentBodyPart.key
+    );
+    if (isUuid) return;
+
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      const sIdx = updatedSymptoms.findIndex((s) => s.id === currentSymptom.id);
+      if (sIdx === -1) return prev;
+      const parts = updatedSymptoms[sIdx].affectedParts || [];
+      const idx = currentBodyPart.index;
+      if (!parts[idx]) return prev;
+      const desired = { key: currentBodyPart.key, state: currentBodyPart.state };
+      if (parts[idx].key === desired.key && parts[idx].state === desired.state) return prev;
+      const nextParts = [...parts];
+      nextParts[idx] = desired;
+      updatedSymptoms[sIdx] = { ...updatedSymptoms[sIdx], affectedParts: nextParts };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
+  }, [currentBodyPart, currentSymptom?.id]);
+
   useEffect(() => {
     const fetchRecord = async () => {
       try {
@@ -176,6 +243,11 @@ const HealthRecordForm = () => {
       const updatedSymptoms = [...prev.data.symptoms];
       const index = updatedSymptoms.findIndex((s) => s.id === id);
       updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
+
+      // Keep currentSymptom reference fresh to avoid stale affectedParts in BodyMapSelector
+      if (currentSymptom?.id === id) {
+        setCurrentSymptom(updatedSymptoms[index]);
+      }
 
       return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
     });

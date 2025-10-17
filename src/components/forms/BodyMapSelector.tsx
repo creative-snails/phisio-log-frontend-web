@@ -26,27 +26,54 @@ const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }
     const newRotation = rotationDegrees + 180;
     setRotationDegrees(newRotation);
 
-    setSide(side === "front" ? "back" : "front");
+    const newSide = side === "front" ? "back" : "front";
+    setSide(newSide);
+    // Two-way sync: flipping the map updates the current selection side
+    if (currentBodyPart) setCurrentBodyPart({ ...currentBodyPart, side: newSide });
 
     // Switch the data at 90° (halfway through 0.6s animation)
-    setTimeout(() => {
-      setIsFlipped(!isFlipped);
-    }, 300); // Half of 600ms
+    setTimeout(() => setIsFlipped(!isFlipped), 300); // Half of 600ms
 
     // End animation state
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 600);
+    setTimeout(() => setIsAnimating(false), 600);
   };
 
-  useEffect(() => {});
+  // When the active symptom changes, reset UI. If no selection, prefer front.
+  useEffect(() => {
+    setHoveredPart(null);
+    if (!currentBodyPart) {
+      // Only force to front if there's no active selection
+      if (side !== "front" && !isAnimating) handleFlip();
+    }
+  }, [currentSymptom?.id]);
+
+  // Keep the displayed side in sync with the selected body part
+  useEffect(() => {
+    if (!currentBodyPart) return;
+    if (currentBodyPart.side !== side && !isAnimating) {
+      handleFlip();
+    }
+    // Clear hover when selection changes
+    setHoveredPart(null);
+  }, [currentBodyPart?.side, side, isAnimating]);
 
   const getPartFill = (part: bodyPartData) => {
+    const activeKeys = new Set(currentSymptom?.affectedParts?.map((p) => p.key) || []);
+
     if (hoveredPart === part.id) return "#bbdefb";
+
+    // Highlight the currently selected body part even if it's not yet in affectedParts
+    // Only if it belongs to the active symptom to avoid cross-card bleed
+    if (currentBodyPart?.key === part.id && activeKeys.has(part.id)) {
+      const state: string = currentBodyPart.state;
+      // const state: string = currentBodyPart.state || "1";
+
+      return getSeverityColor(state);
+    }
 
     if (currentSymptom?.affectedParts) {
       for (const p of currentSymptom.affectedParts) {
-        if (p.key === part.id) return getSeverityColor(p.state);
+        if (p.key === part.id && p.state) return getSeverityColor(p.state);
       }
     }
 

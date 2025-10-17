@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
 import type { BodyPart, BodyPartExtended, BodyPartInput, FormErrors, SeverityState, Symptom } from "~/types";
@@ -39,20 +38,47 @@ const SymptomFormCard = ({
   useEffect(() => {
     const initialBodyParts: BodyPartInput[] =
       symptom?.affectedParts?.map((bp) => ({
-        side: bp.key.includes("-front") ? "front" : "back",
+        // Derive side from key: if it explicitly includes '-back' it's back; otherwise treat as front.
+        side: bp.key.includes("-back") ? "back" : "front",
         key: bp.key,
         state: bp.state,
       })) || [];
     setBodyParts(initialBodyParts);
-  }, [symptom.id]);
+  }, [symptom.id, symptom.affectedParts]);
+
+  const isActive = currentSymptom?.id === symptom.id;
+
+  const isActiveRef = useRef(isActive);
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
+
+  // Keep refs for current selection to make setter idempotent without re-creating callbacks
+  const currentBodyPartRef = useRef(currentBodyPart);
+  useEffect(() => {
+    currentBodyPartRef.current = currentBodyPart;
+  }, [currentBodyPart]);
+
+  const setScopedCurrentBodyPart = useCallback(
+    (bp: BodyPartExtended | null, force = false) => {
+      // Only allow writes from the active card unless explicitly forced
+      if (!force && !isActiveRef.current) return;
+      // Idempotency: avoid setting if selection is already the same (even when forced)
+      const cur = currentBodyPartRef.current;
+      if (cur && bp && cur.index === bp.index && cur.key === bp.key && cur.side === bp.side && cur.state === bp.state)
+        return;
+      setCurrentBodyPart(bp);
+    },
+    [setCurrentBodyPart]
+  );
 
   const handleAddBodyPart = () => {
-    const newBodyPart = { side: "", key: uuidv4(), state: "" as SeverityState };
+    const newBodyPart = { side: "front", key: "", state: "" as SeverityState };
     const updatedBodyParts = [...bodyParts, newBodyPart];
 
     setBodyParts(updatedBodyParts);
-
-    if (symptom.id === currentSymptom?.id) setCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 });
+    if (!isActiveRef.current) setCurrentSymptom(symptom);
+    setScopedCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 }, true);
 
     onSymptomChange(
       symptom.id,
@@ -61,24 +87,24 @@ const SymptomFormCard = ({
     );
   };
 
-  useEffect(() => {
-    console.log(symptom.id);
-    console.log("useEffect: ", bodyParts);
-  }, [bodyParts]);
-
-  const handleRemoveBodyPart = (index: number) => {
-    const updatedBodyParts = bodyParts.filter((_, i) => i !== index);
+  const handleRemoveBodyPart = (removedIndex: number) => {
+    const updatedBodyParts = bodyParts.filter((_, i) => i !== removedIndex);
 
     setBodyParts(updatedBodyParts);
+    setCurrentSymptom(symptom);
 
-    if (symptom.id === currentSymptom?.id) {
-      if (updatedBodyParts.length) {
-        if (currentBodyPart && currentBodyPart.index < updatedBodyParts.length)
-          setCurrentBodyPart({ ...updatedBodyParts[currentBodyPart.index], index: currentBodyPart.index });
-        else setCurrentBodyPart({ ...updatedBodyParts[updatedBodyParts.length - 1], index: bodyParts.length - 1 });
-      } else {
-        setCurrentBodyPart(null);
-      }
+    if (updatedBodyParts.length === 0) {
+      setScopedCurrentBodyPart(null, true);
+    } else {
+      const current = isActive && currentBodyPart ? currentBodyPart.index : null;
+      let nextIndex: number;
+
+      if (current == null) nextIndex = Math.min(removedIndex, updatedBodyParts.length - 1);
+      else if (removedIndex < current) nextIndex = current - 1;
+      else if (removedIndex === current) nextIndex = Math.min(current, updatedBodyParts.length - 1);
+      else nextIndex = current;
+
+      setScopedCurrentBodyPart({ ...updatedBodyParts[nextIndex], index: nextIndex }, true);
     }
 
     onSymptomChange(
@@ -88,34 +114,95 @@ const SymptomFormCard = ({
     );
   };
 
-  const handleUpdateBodyPart = (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
-    const updatedBodyParts = [...bodyParts];
-    updatedBodyParts[index] = { ...updatedBodyParts[index], [property]: value };
+  const handleUpdateBodyPart = useCallback(
+    (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
+      const current = bodyParts[index];
+      if (!current) return;
+      // idempotent: skip if no change
+      if (property === "side" && current.side === value) return;
+      if (property === "key" && current.key === value) return;
+      if (property === "state" && current.state === value) return;
 
-    setBodyParts(updatedBodyParts);
-    onSymptomChange(
-      symptom.id,
-      "affectedParts",
-      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
-    );
-  };
+      const updatedBodyParts = [...bodyParts];
+      updatedBodyParts[index] = { ...current, [property]: value };
 
-  useEffect(() => {
-    if (isOpen) setCurrentSymptom(symptom);
-  }, [isOpen, symptom]);
+      setBodyParts(updatedBodyParts);
+      onSymptomChange(
+        symptom.id,
+        "affectedParts",
+        updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
+      );
+      // Do not re-set currentBodyPart here; deriving by index avoids snapshot churn and loops
+    },
+    [bodyParts, onSymptomChange, symptom.id]
+  );
+
+  // Atomic helper: select this card and set the body part in one go to avoid races
+  const selectThisCardAndSetBodyPart = useCallback(
+    (bp: BodyPartExtended | null) => {
+      if (!isActiveRef.current) setCurrentSymptom(symptom);
+      setScopedCurrentBodyPart(bp, true);
+    },
+    [setCurrentSymptom, setScopedCurrentBodyPart, symptom]
+  );
+
+  // Debug logging removed to avoid noise
 
   const handleHeaderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     const newIsOpen = !isOpen;
     setIsOpen(newIsOpen);
 
-    if (!newIsOpen) setCurrentSymptom(null);
+    if (newIsOpen) {
+      setCurrentSymptom(symptom);
+      const parts = symptom.affectedParts || [];
+      if (parts.length > 0) {
+        const idx = parts.length - 1;
+        const key = parts[idx].key;
+        const state = parts[idx].state;
+        const side = key.includes("-back") ? "back" : "front";
+        setScopedCurrentBodyPart({ key, state, side, index: idx }, true);
+      } else {
+        setScopedCurrentBodyPart(null, true);
+      }
+    } else if (isActive) {
+      setCurrentSymptom(null);
+      setScopedCurrentBodyPart(null, true);
+    }
   };
+
+  // Keep the side dropdown in sync when the body map is flipped (two-way binding)
+  useEffect(() => {
+    if (!isActiveRef.current) return;
+    if (!currentBodyPart) return;
+    const { index: selIndex, side: selSide } = currentBodyPart;
+    const cur = bodyParts[selIndex];
+    if (!cur) return;
+    if (cur.side === selSide) return;
+    const updated = [...bodyParts];
+    updated[selIndex] = { ...cur, side: selSide };
+    setBodyParts(updated);
+  }, [currentBodyPart?.side]);
 
   return (
     <div
       className={`symptom-card ${symptom.id === currentSymptom?.id ? "active" : ""}`}
-      onClick={() => isOpen && setCurrentSymptom(symptom)}
+      onClick={() => {
+        if (!isOpen) return;
+        if (!isActiveRef.current) {
+          setCurrentSymptom(symptom);
+          const parts = symptom.affectedParts || [];
+          if (parts.length > 0) {
+            const idx = parts.length - 1;
+            const key = parts[idx].key;
+            const state = parts[idx].state;
+            const side = key.includes("-back") ? "back" : "front";
+            setScopedCurrentBodyPart({ key, state, side, index: idx }, true);
+          } else {
+            setScopedCurrentBodyPart(null, true);
+          }
+        }
+      }}
     >
       <div className="symptom-header" onClick={handleHeaderClick}>
         <div className="symptom-header-content">
@@ -158,7 +245,7 @@ const SymptomFormCard = ({
           <AffectedBodyPartsInput
             currentBodyPart={currentBodyPart}
             bodyParts={bodyParts}
-            setCurrentBodyPart={setCurrentBodyPart}
+            setScopedCurrentBodyPart={selectThisCardAndSetBodyPart}
             handleAddBodyPart={handleAddBodyPart}
             handleRemoveBodyPart={handleRemoveBodyPart}
             handleUpdateBodyPart={handleUpdateBodyPart}
