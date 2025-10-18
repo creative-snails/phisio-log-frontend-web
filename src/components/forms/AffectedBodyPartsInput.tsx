@@ -2,7 +2,7 @@ import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
 import "./AffectedBodyPartsInput.css";
-import type { BodyPartExtended, BodyPartInput, SeverityState } from "~/types";
+import type { BodyPart, BodyPartExtended, SeverityState } from "~/types";
 
 interface SelectOption {
   label: string;
@@ -300,89 +300,107 @@ const states: SelectOption[] = [
 ];
 
 type AffectedBodyPartsInputProps = {
-  bodyParts: BodyPartInput[];
-  currentBodyPart: BodyPartExtended | null;
-  setScopedCurrentBodyPart: (bp: BodyPartExtended | null, force?: boolean) => void;
-  handleAddBodyPart: () => void;
-  handleRemoveBodyPart: (index: number) => void;
-  handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;
+  parts: BodyPart[];
+  selected: BodyPartExtended | null;
+  setSelected: (bp: BodyPartExtended | null, force?: boolean) => void;
+  onAdd: () => void;
+  onRemove: (index: number) => void;
+  onChange: (index: number, property: keyof BodyPart, value: string | SeverityState) => void;
   symptomId: string;
   activeSymptomId?: string;
 };
 
 const AffectedBodyPartsInput = ({
-  bodyParts,
-  currentBodyPart,
-  setScopedCurrentBodyPart,
-  handleAddBodyPart,
-  handleUpdateBodyPart,
-  handleRemoveBodyPart,
+  parts,
+  selected,
+  setSelected,
+  onAdd,
+  onChange,
+  onRemove,
   symptomId,
   activeSymptomId,
 }: AffectedBodyPartsInputProps) => {
   return (
     <div className="affecte-body-parts-container">
-      {bodyParts.map((bp, index) => (
-        <div className="affected-body-parts-input" key={`${symptomId}-${index}`}>
-          <input
-            type="radio"
-            name={`active-input-${symptomId}`}
-            checked={activeSymptomId === symptomId && currentBodyPart?.index === index}
-            onChange={() => setScopedCurrentBodyPart({ ...bp, index })}
-          />
-          <Select<SelectOption>
-            className="sides"
-            options={sides}
-            value={sides.find((s) => s.value === bp.side)}
-            onChange={(selectedOption) => {
-              if (!selectedOption) return;
-              // Keep selection snapshot in sync with new side
-              setScopedCurrentBodyPart({ ...bp, side: selectedOption.value, index });
-              handleUpdateBodyPart(index, "side", selectedOption.value);
-            }}
-            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
-            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
-          />
-          <Select<SelectOption>
-            className="body-parts"
-            options={bp.side === "front" ? frontSideParts : backSideParts}
-            value={(bp.side === "front" ? frontSideParts : backSideParts).find((p) => p.value === bp.key)}
-            onChange={(selectedOption) => {
-              if (!selectedOption) return;
-              // Derive side from chosen key to keep selection and map in sync
-              const newKey = selectedOption.value;
-              const derivedSide = newKey.includes("back") ? "back" : "front";
-              // Update selection snapshot to new key and side to prevent reversion
-              setScopedCurrentBodyPart({ ...bp, key: newKey, side: derivedSide, index });
-              handleUpdateBodyPart(index, "key", newKey);
-              if (bp.side !== derivedSide) {
-                handleUpdateBodyPart(index, "side", derivedSide);
-              }
-            }}
-            menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
-            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
-          />
-          <Select<SelectOption>
-            className="states"
-            options={states}
-            value={states.find((s) => s.value === bp.state)}
-            onChange={(selectedOption) => {
-              if (!selectedOption) return;
-              setScopedCurrentBodyPart({ ...bp, state: selectedOption.value as SeverityState, index });
-              handleUpdateBodyPart(index, "state", selectedOption.value as SeverityState);
-            }}
-            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
-            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
-          />
-          <button type="button" className="remove-button" onClick={() => handleRemoveBodyPart(index)}>
-            <FaMinusCircle className="remove-icon" />
-          </button>
-        </div>
-      ))}
+      {parts.map((bp, index) => {
+        const derivedSide = bp.key.includes("back") ? "back" : "front";
+        const isSelectedRow = activeSymptomId === symptomId && selected?.index === index;
+        const sideForRow = isSelectedRow ? selected?.side || derivedSide : derivedSide;
+        const baseOptions = sideForRow === "front" ? frontSideParts : backSideParts;
+        const usedKeys = new Set(parts.map((p, i) => (i === index ? null : p.key)).filter(Boolean) as string[]);
+        // Filter out keys already used by other rows of the same symptom, but keep the current row's key visible
+        const filteredBase = baseOptions.filter((opt) => !usedKeys.has(opt.value) || opt.value === bp.key);
+        const bodyPartOptions =
+          bp.key && !filteredBase.some((p) => p.value === bp.key)
+            ? [{ value: bp.key, label: bp.key }, ...filteredBase]
+            : filteredBase;
+        const bodyPartValue = bodyPartOptions.find((p) => p.value === bp.key) || null;
 
-      <button type="button" className="add-button" onClick={handleAddBodyPart}>
+        return (
+          <div className="affected-body-parts-input" key={`${symptomId}-${index}`}>
+            <input
+              type="radio"
+              name={`active-input-${symptomId}`}
+              checked={isSelectedRow}
+              onChange={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+            />
+            <Select<SelectOption>
+              className="sides"
+              options={sides}
+              value={sides.find((s) => s.value === sideForRow)}
+              onChange={(selectedOption) => {
+                if (!selectedOption) return;
+                // Side only affects the selection pointer; data model remains as key/state only
+                // If this row isn't selected, select it first
+                if (!isSelectedRow) setSelected({ ...bp, side: selectedOption.value as "front" | "back", index });
+                else setSelected({ ...bp, side: selectedOption.value as "front" | "back", index });
+              }}
+              onFocus={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+              onMenuOpen={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+            />
+            <Select<SelectOption>
+              className="body-parts"
+              options={bodyPartOptions}
+              value={bodyPartValue}
+              onChange={(selectedOption) => {
+                if (!selectedOption) return;
+                // Derive side from chosen key to keep selection and map in sync
+                const newKey = selectedOption.value;
+                const derivedSide2 = newKey.includes("back") ? "back" : "front";
+                // Update selection pointer and data model key
+                setSelected({ ...bp, key: newKey, side: derivedSide2 as "front" | "back", index });
+                onChange(index, "key", newKey);
+              }}
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+              onFocus={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+              onMenuOpen={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+            />
+            <Select<SelectOption>
+              className="states"
+              options={states}
+              value={states.find((s) => s.value === bp.state)}
+              onChange={(selectedOption) => {
+                if (!selectedOption) return;
+                setSelected({
+                  ...bp,
+                  side: sideForRow as "front" | "back",
+                  state: selectedOption.value as SeverityState,
+                  index,
+                });
+                onChange(index, "state", selectedOption.value as SeverityState);
+              }}
+              onFocus={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+              onMenuOpen={() => setSelected({ ...bp, side: sideForRow as "front" | "back", index })}
+            />
+            <button type="button" className="remove-button" onClick={() => onRemove(index)}>
+              <FaMinusCircle className="remove-icon" />
+            </button>
+          </div>
+        );
+      })}
+
+      <button type="button" className="add-button" onClick={onAdd}>
         + Add Body Part
       </button>
     </div>

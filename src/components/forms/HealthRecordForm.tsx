@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
+/* eslint-disable simple-import-sort/imports */
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+
+import BodyMapViewer from "~/components/BodyMapViewer";
+import ChatWidget from "~/components/chat/ChatWidget";
+import { getHealthRecord } from "~/services/api/healthRecordsApi";
+import { deriveSideFromKey, selectionReducer } from "~/state/selection";
+import type { BodyPart, BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
+import { numericToLabel, statusOptions } from "~/utils/constants";
+import { renderErrors } from "~/utils/renderErrors";
+import "~/utils/renderErrors.css";
+import { Z_HealthRecord } from "~/validation/healthRecordSchema";
+
 import BodyMapSelector from "./BodyMapSelector";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
 import TreatmentsTried from "./TreatmentsTried";
-
-import "~/utils/renderErrors.css";
-import BodyMapViewer from "~/components/BodyMapViewer";
-import ChatWidget from "~/components/chat/ChatWidget";
-import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPart, BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
-import { numericToLabel, statusOptions } from "~/utils/constants";
-import { renderErrors } from "~/utils/renderErrors";
-import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
 const HealthRecordForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,58 +51,160 @@ const HealthRecordForm = () => {
       followUpActions?: boolean[];
     };
   }>({});
-  const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
-  const [currentBodyPart, setCurrentBodyPart] = useState<BodyPartExtended | null>(null);
+  const [selection, dispatchSelection] = useReducer(selectionReducer, {
+    symptomId: null,
+    index: null,
+    side: "front",
+  });
 
-  // When switching active symptom, ensure the selected body part belongs to it.
-  // If not, select the last affected part of that symptom (or clear if none).
+  // Derived currentSymptom and currentBodyPart from selection + record data
+  const currentSymptom: Symptom | null = useMemo(() => {
+    if (!selection.symptomId) return null;
+
+    return recordFormData.data.symptoms.find((s) => s.id === selection.symptomId) || null;
+  }, [recordFormData.data.symptoms, selection.symptomId]);
+
+  const currentBodyPart: BodyPartExtended | null = useMemo(() => {
+    if (!currentSymptom) return null;
+    if (selection.index == null) return null;
+    const parts = currentSymptom.affectedParts || [];
+    const part = parts[selection.index];
+    if (!part) return null;
+    // Prefer selection.side for UI; derive from key as fallback
+    const side = (selection.side ?? deriveSideFromKey(part.key)) as "front" | "back";
+
+    return { key: part.key, state: part.state, side, index: selection.index };
+  }, [currentSymptom, selection.index, selection.side]);
+
+  // Wrapper setters to keep children API stable while using pointer internally
+  const setCurrentSymptom = (sym: Symptom | null) => {
+    if (!sym) {
+      dispatchSelection({ type: "SELECT_CARD", symptomId: null, parts: [] });
+
+      return;
+    }
+    dispatchSelection({ type: "SELECT_CARD", symptomId: sym.id, parts: sym.affectedParts || [] });
+  };
+
+  const setCurrentBodyPart = (bp: BodyPartExtended | null) => {
+    if (!currentSymptom) {
+      dispatchSelection({ type: "SELECT_CARD", symptomId: null, parts: [] });
+
+      return;
+    }
+    if (!bp) {
+      dispatchSelection({ type: "SELECT_PART", index: null });
+
+      return;
+    }
+    const side = (bp.side === "back" ? "back" : "front") as "front" | "back";
+    dispatchSelection({ type: "SELECT_PART", index: bp.index, side });
+
+    // Consolidated state update: handle side-flip reset, dedup, and mirroring in one go
+    if (typeof bp.index === "number" && bp.index >= 0) {
+      setRecordFormData((prev) => {
+        const updatedSymptoms = [...prev.data.symptoms];
+        const sIdx = updatedSymptoms.findIndex((s) => s.id === currentSymptom.id);
+        if (sIdx === -1) return prev;
+        const parts = updatedSymptoms[sIdx].affectedParts || [];
+        const existing = parts[bp.index];
+        if (!existing) return prev;
+
+        const existingSide = deriveSideFromKey(existing.key);
+        // Determine the new key to write: clear if side changed relative to existing key
+        const newKeyCandidate = existing.key && existingSide !== side ? "" : bp.key;
+
+        // If another row already has this key under the same symptom, move selection there to avoid duplicates
+        if (newKeyCandidate) {
+          const duplicateIdx = parts.findIndex((p, i) => i !== bp.index && p.key === newKeyCandidate);
+          if (duplicateIdx !== -1) {
+            const dupSide = deriveSideFromKey(newKeyCandidate);
+            dispatchSelection({ type: "SELECT_PART", index: duplicateIdx, side: dupSide });
+
+            return prev; // No write, just switch selection
+          }
+        }
+
+        const desired = { key: newKeyCandidate, state: bp.state };
+        if (parts[bp.index].key === desired.key && parts[bp.index].state === desired.state) return prev;
+        const nextParts = [...parts];
+        nextParts[bp.index] = desired;
+        updatedSymptoms[sIdx] = { ...updatedSymptoms[sIdx], affectedParts: nextParts };
+
+        return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+      });
+    }
+  };
+
+  // No need for reconciliation effect: SELECT_CARD action sets a valid selection atomically
+
+  // Guarantee: if an active card has parts but no selection, select the last part by default
   useEffect(() => {
-    const s = currentSymptom;
-    if (!s) {
-      if (currentBodyPart) setCurrentBodyPart(null);
-
-      return;
-    }
-    const parts = s.affectedParts || [];
-    if (parts.length === 0) {
-      if (currentBodyPart) setCurrentBodyPart(null);
-
-      return;
-    }
-
-    const keys = parts.map((p) => p.key);
-    if (!currentBodyPart || !keys.includes(currentBodyPart.key)) {
+    if (!currentSymptom) return;
+    const parts = currentSymptom.affectedParts || [];
+    if (parts.length > 0 && selection.index == null) {
       const idx = parts.length - 1;
-      const key = parts[idx].key;
-      const state = parts[idx].state;
-      const side = key.includes("-back") ? "back" : "front";
-      setCurrentBodyPart({ key, state, side, index: idx });
+      const side = deriveSideFromKey(parts[idx]?.key);
+      dispatchSelection({ type: "SELECT_PART", index: idx, side });
+    }
+  }, [currentSymptom?.id, selection.index]);
 
-      return;
+  // Global selection guard: if nothing is selected but there are symptoms with parts,
+  // auto-select the last part of the first such symptom.
+  useEffect(() => {
+    if (selection.symptomId) return;
+    const firstWithParts = recordFormData.data.symptoms.find((s) => (s.affectedParts?.length || 0) > 0);
+    if (!firstWithParts) return;
+    const idx = (firstWithParts.affectedParts?.length || 1) - 1;
+    const side = deriveSideFromKey(firstWithParts.affectedParts?.[idx]?.key || "");
+    dispatchSelection({ type: "SELECT_CARD", symptomId: firstWithParts.id, parts: firstWithParts.affectedParts || [] });
+    dispatchSelection({ type: "SELECT_PART", index: idx, side });
+  }, [recordFormData.data.symptoms, selection.symptomId]);
+
+  // If the active card has no parts but other cards do, move selection to the nearest card with parts
+  useEffect(() => {
+    const symptoms = recordFormData.data.symptoms;
+    if (!symptoms.length) return;
+    const anyWithParts = symptoms.some((s) => (s.affectedParts?.length || 0) > 0);
+    if (!anyWithParts) return;
+
+    const activeHasParts = !!(currentSymptom && (currentSymptom.affectedParts?.length || 0) > 0);
+    if (activeHasParts) return;
+
+    // Choose a target symptom with parts: prefer same index position if possible, else first with parts
+    const currentIdx = symptoms.findIndex((s) => s.id === selection.symptomId);
+    const targetIdx = currentIdx !== -1 ? currentIdx : 0;
+    // Scan outward from targetIdx to find closest symptom with parts
+    let chosen = undefined as Symptom | undefined;
+    const n = symptoms.length;
+    for (let radius = 0; radius < n; radius++) {
+      const left = targetIdx - radius;
+      const right = targetIdx + radius;
+      const candidates: (Symptom | undefined)[] = [];
+      if (left >= 0) candidates.push(symptoms[left]);
+      if (right < n) candidates.push(symptoms[right]);
+      for (const c of candidates) {
+        if (c && (c.affectedParts?.length || 0) > 0) {
+          chosen = c;
+          break;
+        }
+      }
+      if (chosen) break;
     }
 
-    // Keep index/side/state in sync if they differ
-    const idx = keys.indexOf(currentBodyPart.key);
-    const desiredState = parts[idx].state;
-    const desiredSide = currentBodyPart.key.includes("-back") ? "back" : "front";
-    if (
-      currentBodyPart.index !== idx ||
-      currentBodyPart.state !== desiredState ||
-      currentBodyPart.side !== desiredSide
-    ) {
-      setCurrentBodyPart({ ...currentBodyPart, index: idx, state: desiredState, side: desiredSide });
-    }
-  }, [currentSymptom?.id]);
+    if (!chosen) return;
+
+    const parts = chosen.affectedParts || [];
+    const idx = parts.length - 1;
+    const side = deriveSideFromKey(parts[idx]?.key);
+    dispatchSelection({ type: "SELECT_CARD", symptomId: chosen.id, parts });
+    dispatchSelection({ type: "SELECT_PART", index: idx, side });
+  }, [recordFormData.data.symptoms, currentSymptom?.id, currentSymptom?.affectedParts?.length]);
 
   // Mirror map selection into the active symptom’s affectedParts in the central form state.
   useEffect(() => {
     if (!currentSymptom) return;
     if (!currentBodyPart) return;
-    // Ignore placeholder UUID keys to avoid clobbering dropdown edits
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      currentBodyPart.key
-    );
-    if (isUuid) return;
 
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
@@ -244,11 +349,6 @@ const HealthRecordForm = () => {
       const index = updatedSymptoms.findIndex((s) => s.id === id);
       updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
 
-      // Keep currentSymptom reference fresh to avoid stale affectedParts in BodyMapSelector
-      if (currentSymptom?.id === id) {
-        setCurrentSymptom(updatedSymptoms[index]);
-      }
-
       return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
     });
     validateForm();
@@ -257,10 +357,40 @@ const HealthRecordForm = () => {
 
   const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
+      // Compute the next selection target before mutating state
+      const curSymptoms = recordFormData.data.symptoms;
+      const removedIdx = curSymptoms.findIndex((s) => s.id === id);
+      const updatedSymptoms = curSymptoms.filter((s) => s.id !== id);
+
       setRecordFormData((prev) => ({
         ...prev,
-        data: { ...prev.data, symptoms: prev.data.symptoms.filter((s) => s.id !== id) },
+        data: { ...prev.data, symptoms: updatedSymptoms },
       }));
+
+      // Adjust selection: if we removed the active symptom, move selection to a nearby one with parts
+      if (selection.symptomId === id) {
+        if (updatedSymptoms.length === 0) {
+          dispatchSelection({ type: "SELECT_CARD", symptomId: null, parts: [] });
+          dispatchSelection({ type: "SELECT_PART", index: null });
+        } else {
+          // Pick the closest index (same position or previous if last removed)
+          const targetIdx = Math.min(Math.max(removedIdx, 0), updatedSymptoms.length - 1);
+          // Prefer the closest symptom that actually has parts
+          let chosen = updatedSymptoms[targetIdx];
+          if (!(chosen.affectedParts && chosen.affectedParts.length)) {
+            chosen = updatedSymptoms.find((s) => s.affectedParts && s.affectedParts.length) || updatedSymptoms[0];
+          }
+          const parts = chosen.affectedParts || [];
+          dispatchSelection({ type: "SELECT_CARD", symptomId: chosen.id, parts });
+          if (parts.length) {
+            const idx = parts.length - 1;
+            const side = deriveSideFromKey(parts[idx]?.key);
+            dispatchSelection({ type: "SELECT_PART", index: idx, side });
+          } else {
+            dispatchSelection({ type: "SELECT_PART", index: null });
+          }
+        }
+      }
       validateForm();
     }
   };

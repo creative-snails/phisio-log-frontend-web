@@ -9,7 +9,7 @@ import { getSeverityColor } from "~/utils/severityColors";
 interface BodyMapSelectorProps {
   currentSymptom: Symptom | null;
   currentBodyPart: BodyPartExtended | null;
-  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+  setCurrentBodyPart: (bp: BodyPartExtended | null) => void;
 }
 
 const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }: BodyMapSelectorProps) => {
@@ -101,7 +101,21 @@ const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }
                 stroke="#333"
                 strokeWidth="2"
                 className="body-part"
-                onClick={() => currentBodyPart && setCurrentBodyPart({ ...currentBodyPart, key: part.id, side })}
+                onClick={() => {
+                  // If no selection yet but the card has rows, select the last row first
+                  if (!currentBodyPart && currentSymptom?.affectedParts?.length) {
+                    const idx = currentSymptom.affectedParts.length - 1;
+                    setCurrentBodyPart({
+                      key: currentSymptom.affectedParts[idx].key,
+                      state: currentSymptom.affectedParts[idx].state,
+                      side,
+                      index: idx,
+                    });
+                  }
+                  if (!currentBodyPart) return;
+                  // Pointer: update selected row's key and keep side from map view
+                  setCurrentBodyPart({ ...currentBodyPart, key: part.id, side });
+                }}
                 onMouseEnter={() => setHoveredPart(part.id)}
                 onMouseLeave={() => setHoveredPart(null)}
                 style={{ cursor: "pointer" }}
