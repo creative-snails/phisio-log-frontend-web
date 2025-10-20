@@ -51,6 +51,72 @@ const HealthRecordForm = () => {
   const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
   const [currentBodyPart, setCurrentBodyPart] = useState<BodyPartExtended | null>(null);
 
+  // When switching active symptom, ensure the selected body part belongs to it.
+  // If not, select the last affected part of that symptom (or clear if none)
+  useEffect(() => {
+    const s = currentSymptom;
+
+    if (!s) {
+      if (currentBodyPart) setCurrentBodyPart(null);
+
+      return;
+    }
+
+    const parts = s.affectedParts || [];
+    if (parts.length === 0) {
+      if (currentBodyPart) setCurrentBodyPart(null);
+
+      return;
+    }
+
+    const keys = parts.map((p) => p.key);
+    if (!currentBodyPart || !keys.includes(currentBodyPart.key)) {
+      const idx = parts.length - 1;
+      const key = parts[idx].key;
+      const state = parts[idx].state;
+      const side = key.includes("-back") ? "back" : "front";
+      setCurrentBodyPart({ key, state, side, index: idx });
+
+      return;
+    }
+
+    // keep index/side/state in sync if they differ
+    const idx = keys.indexOf(currentBodyPart.key);
+    const desiredState = parts[idx].state;
+    const desiredSide = currentBodyPart.key.includes("-back") ? "back" : "front";
+    if (
+      currentBodyPart.index !== idx ||
+      currentBodyPart.state !== desiredState ||
+      currentBodyPart.side !== desiredSide
+    ) {
+      setCurrentBodyPart({ ...currentBodyPart, state: desiredState, side: desiredSide, index: idx });
+    }
+  }, [currentSymptom?.id]);
+
+  // Mirror map selection into the active symptom's affectedParts in the central state.
+  useEffect(() => {
+    if (!currentSymptom || !currentBodyPart) return;
+
+    setRecordFormData((prev) => {
+      const updatedSymptoms = [...prev.data.symptoms];
+      const sIndex = updatedSymptoms.findIndex((s) => s.id === currentSymptom.id);
+      if (sIndex === -1) return prev;
+
+      const parts = updatedSymptoms[sIndex].affectedParts || [];
+      const idx = currentBodyPart.index;
+      if (!parts[idx]) return prev;
+
+      const desired = { key: currentBodyPart.key, state: currentBodyPart.state };
+      if (parts[idx].key === desired.key && parts[idx].state === desired.state) return prev;
+
+      const nextParts = [...parts];
+      nextParts[idx] = desired;
+      updatedSymptoms[sIndex] = { ...updatedSymptoms[sIndex], affectedParts: nextParts };
+
+      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+    });
+  }, [currentBodyPart, currentSymptom?.id]);
+
   useEffect(() => {
     const fetchRecord = async () => {
       try {
