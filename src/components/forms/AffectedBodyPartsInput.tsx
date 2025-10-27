@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
@@ -303,7 +302,7 @@ const states: SelectOption[] = [
 type AffectedBodyPartsInputProps = {
   bodyParts: BodyPartInput[];
   currentBodyPart: BodyPartExtended | null;
-  setCurrentBodyPart: (bp: BodyPartExtended | null) => void;
+  setScopedCurrentBodyPart: (bp: BodyPartExtended | null) => void;
   handleAddBodyPart: () => void;
   handleRemoveBodyPart: (index: number) => void;
   handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;
@@ -314,43 +313,54 @@ type AffectedBodyPartsInputProps = {
 const AffectedBodyPartsInput = ({
   bodyParts,
   currentBodyPart,
-  setCurrentBodyPart,
+  setScopedCurrentBodyPart,
   handleAddBodyPart,
   handleUpdateBodyPart,
   handleRemoveBodyPart,
   symptomId,
   activeSymptomId,
 }: AffectedBodyPartsInputProps) => {
-  useEffect(() => {
-    if (!currentBodyPart) return;
-    if (activeSymptomId !== symptomId) return;
-
-    handleUpdateBodyPart(currentBodyPart.index, "key", currentBodyPart.key);
-    handleUpdateBodyPart(currentBodyPart.index, "state", currentBodyPart.state);
-    handleUpdateBodyPart(currentBodyPart.index, "side", currentBodyPart.side);
-  }, [currentBodyPart, activeSymptomId, symptomId]);
-
   return (
     <div className="affecte-body-parts-container">
       {bodyParts.map((bp, index) => (
-        <div className="affected-body-parts-input" key={bp.key}>
+        <div className="affected-body-parts-input" key={`${symptomId}-${index}`}>
           <input
             type="radio"
-            name="active-input"
-            checked={currentBodyPart?.index === index}
-            onChange={() => setCurrentBodyPart({ ...bp, index })}
+            name={`active-input-${symptomId}`}
+            checked={activeSymptomId === symptomId && currentBodyPart?.index === index}
+            onChange={() => setScopedCurrentBodyPart({ ...bp, index })}
           />
           <Select<SelectOption>
             className="sides"
             options={sides}
             value={sides.find((s) => s.value === bp.side)}
-            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "side", selectedOption.value)}
+            onChange={(selectedOption) => {
+              if (!selectedOption) return;
+              // Keep selection snapshot in sync with new side
+              setScopedCurrentBodyPart({ ...bp, side: selectedOption.value, index });
+              handleUpdateBodyPart(index, "side", selectedOption.value);
+            }}
+            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
+            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           />
           <Select<SelectOption>
             className="body-parts"
             options={bp.side === "front" ? frontSideParts : backSideParts}
             value={(bp.side === "front" ? frontSideParts : backSideParts).find((p) => p.value === bp.key)}
-            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "key", selectedOption.value)}
+            onChange={(selectedOption) => {
+              if (!selectedOption) return;
+
+              // Derive side from chosen key to keep selection on map in sync
+              const newKey = selectedOption.value;
+              const derivedSide = newKey.includes("-back") ? "back" : "front";
+
+              handleUpdateBodyPart(index, "key", newKey);
+              if (bp.side !== derivedSide) handleUpdateBodyPart(index, "side", derivedSide);
+            }}
+            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
+            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
             menuPortalTarget={document.body}
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           />
@@ -358,7 +368,16 @@ const AffectedBodyPartsInput = ({
             className="states"
             options={states}
             value={states.find((s) => s.value === bp.state)}
-            onChange={(selectedOption) => selectedOption && handleUpdateBodyPart(index, "state", selectedOption.value)}
+            onChange={(selectedOption) => {
+              if (!selectedOption) return;
+              // Keep selection snapshot in sync with new side
+              setScopedCurrentBodyPart({ ...bp, state: selectedOption.value as SeverityState, index });
+              handleUpdateBodyPart(index, "state", selectedOption.value as SeverityState);
+            }}
+            onFocus={() => setScopedCurrentBodyPart({ ...bp, index })}
+            onMenuOpen={() => setScopedCurrentBodyPart({ ...bp, index })}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           />
           <button type="button" className="remove-button" onClick={() => handleRemoveBodyPart(index)}>
             <FaMinusCircle className="remove-icon" />

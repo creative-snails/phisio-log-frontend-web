@@ -240,7 +240,7 @@ const SymptomFormCard = ({
           <AffectedBodyPartsInput
             currentBodyPart={currentBodyPart}
             bodyParts={bodyParts}
-            setCurrentBodyPart={selectThisCardAndSetBodyPart}
+            setScopedCurrentBodyPart={selectThisCardAndSetBodyPart}
             handleAddBodyPart={handleAddBodyPart}
             handleRemoveBodyPart={handleRemoveBodyPart}
             handleUpdateBodyPart={handleUpdateBodyPart}
