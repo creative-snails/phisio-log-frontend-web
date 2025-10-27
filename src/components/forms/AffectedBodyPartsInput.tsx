@@ -303,7 +303,7 @@ const states: SelectOption[] = [
 type AffectedBodyPartsInputProps = {
   bodyParts: BodyPartInput[];
   currentBodyPart: BodyPartExtended | null;
-  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+  setCurrentBodyPart: (bp: BodyPartExtended | null) => void;
   handleAddBodyPart: () => void;
   handleRemoveBodyPart: (index: number) => void;
   handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;

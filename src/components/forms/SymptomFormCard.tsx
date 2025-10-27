@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
 import type { BodyPart, BodyPartExtended, BodyPartInput, FormErrors, SeverityState, Symptom } from "~/types";
@@ -39,20 +38,43 @@ const SymptomFormCard = ({
   useEffect(() => {
     const initialBodyParts: BodyPartInput[] =
       symptom?.affectedParts?.map((bp) => ({
-        side: bp.key.includes("-front") ? "front" : "back",
+        side: bp.key.includes("-back") ? "back" : "front",
         key: bp.key,
         state: bp.state,
       })) || [];
     setBodyParts(initialBodyParts);
-  }, [symptom.id]);
+  }, [symptom.id, symptom.affectedParts]);
+
+  const isActive = currentSymptom?.id === symptom.id;
+
+  const isActiveRef = useRef(isActive);
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
+
+  // keep refs for current selection to make setter consistent without re-creating callbacks
+  const currentBodyPartRef = useRef(currentBodyPart);
+  useEffect(() => {
+    currentBodyPartRef.current = currentBodyPart;
+  }, [currentBodyPart]);
+
+  const setScopedCurrentBodyPart = useCallback((bp: BodyPartExtended | null, force = false) => {
+    if (!force && !isActiveRef.current) return;
+
+    const cur = currentBodyPartRef.current;
+    if (cur && bp && cur.index === bp.index && cur.side == bp.side && cur.state === bp.state) return;
+
+    setCurrentBodyPart(bp);
+  }, []);
 
   const handleAddBodyPart = () => {
-    const newBodyPart = { side: "", key: uuidv4(), state: "" as SeverityState };
+    const newBodyPart = { side: "front", key: "", state: "" as SeverityState };
     const updatedBodyParts = [...bodyParts, newBodyPart];
 
     setBodyParts(updatedBodyParts);
 
-    if (symptom.id === currentSymptom?.id) setCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 });
+    if (!isActiveRef.current) setCurrentSymptom(symptom);
+    setScopedCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 }, true);
 
     onSymptomChange(
       symptom.id,
@@ -61,24 +83,24 @@ const SymptomFormCard = ({
     );
   };
 
-  useEffect(() => {
-    console.log(symptom.id);
-    console.log("useEffect: ", bodyParts);
-  }, [bodyParts]);
-
-  const handleRemoveBodyPart = (index: number) => {
-    const updatedBodyParts = bodyParts.filter((_, i) => i !== index);
+  const handleRemoveBodyPart = (removeIndex: number) => {
+    const updatedBodyParts = bodyParts.filter((_, i) => i !== removeIndex);
 
     setBodyParts(updatedBodyParts);
+    setCurrentSymptom(symptom);
 
-    if (symptom.id === currentSymptom?.id) {
-      if (updatedBodyParts.length) {
-        if (currentBodyPart && currentBodyPart.index < updatedBodyParts.length)
-          setCurrentBodyPart({ ...updatedBodyParts[currentBodyPart.index], index: currentBodyPart.index });
-        else setCurrentBodyPart({ ...updatedBodyParts[updatedBodyParts.length - 1], index: bodyParts.length - 1 });
-      } else {
-        setCurrentBodyPart(null);
-      }
+    if (updatedBodyParts.length === 0) {
+      setScopedCurrentBodyPart(null, true);
+    } else {
+      const current = isActiveRef.current && currentBodyPart ? currentBodyPart.index : null;
+      let nextIndex: number;
+
+      if (current === null) nextIndex = Math.min(removeIndex, updatedBodyParts.length - 1);
+      else if (removeIndex < current) nextIndex = current - 1;
+      else if (removeIndex === current) nextIndex = Math.min(current, updatedBodyParts.length - 1);
+      else nextIndex = current;
+
+      setScopedCurrentBodyPart({ ...updatedBodyParts[nextIndex], index: nextIndex }, true);
     }
 
     onSymptomChange(
@@ -88,34 +110,94 @@ const SymptomFormCard = ({
     );
   };
 
-  const handleUpdateBodyPart = (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
-    const updatedBodyParts = [...bodyParts];
-    updatedBodyParts[index] = { ...updatedBodyParts[index], [property]: value };
+  const handleUpdateBodyPart = useCallback(
+    (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
+      const current = bodyParts[index];
+      if (!current) return;
 
-    setBodyParts(updatedBodyParts);
-    onSymptomChange(
-      symptom.id,
-      "affectedParts",
-      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
-    );
-  };
+      if (property === "side" && current.side === value) return;
+      if (property === "key" && current.key === value) return;
+      if (property === "state" && current.state === value) return;
 
-  useEffect(() => {
-    if (isOpen) setCurrentSymptom(symptom);
-  }, [isOpen, symptom]);
+      const updatedBodyParts = [...bodyParts];
+      updatedBodyParts[index] = { ...updatedBodyParts[index], [property]: value };
+
+      setBodyParts(updatedBodyParts);
+      onSymptomChange(
+        symptom.id,
+        "affectedParts",
+        updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
+      );
+    },
+    [bodyParts, symptom.id]
+  );
+
+  // Atomic helper: select this card and set the body part in one go to avoid races
+  const selectThisCardAndSetBodyPart = useCallback(
+    (bp: BodyPartExtended | null) => {
+      if (!isActiveRef.current) setCurrentSymptom(symptom);
+      setScopedCurrentBodyPart(bp, true);
+    },
+    [symptom]
+  );
 
   const handleHeaderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     const newIsOpen = !isOpen;
     setIsOpen(newIsOpen);
 
-    if (!newIsOpen) setCurrentSymptom(null);
+    if (newIsOpen) {
+      setCurrentSymptom(symptom);
+      const parts = symptom.affectedParts || [];
+      if (parts.length > 0) {
+        const index = parts.length - 1;
+        const key = parts[index].key;
+        const state = parts[index].state;
+        const side = key.includes("-back") ? "back" : "front";
+        setScopedCurrentBodyPart({ key, state, side, index }, true);
+      } else {
+        setScopedCurrentBodyPart(null, true);
+      }
+    } else if (isActive) {
+      setCurrentSymptom(null);
+      setScopedCurrentBodyPart(null, true);
+    }
   };
+
+  // Keep the side dropdown in sync when the body map is fillped (two-way binding)
+  useEffect(() => {
+    if (!isActiveRef.current) return;
+    if (!currentBodyPart) return;
+
+    const { index: selectedIndex, side: selectedSide } = currentBodyPart;
+    const current = bodyParts[selectedIndex];
+    if (!current) return;
+    if (current.side === selectedSide) return;
+
+    const updated = [...bodyParts];
+    updated[selectedIndex] = { ...current, side: selectedSide };
+    setBodyParts(updated);
+  }, [currentBodyPart?.side]);
 
   return (
     <div
       className={`symptom-card ${symptom.id === currentSymptom?.id ? "active" : ""}`}
-      onClick={() => isOpen && setCurrentSymptom(symptom)}
+      onClick={() => {
+        if (!isOpen) return;
+        if (!isActiveRef.current) {
+          setCurrentSymptom(symptom);
+          const parts = symptom.affectedParts || [];
+          if (parts.length > 0) {
+            const index = parts.length - 1;
+            const key = parts[index].key;
+            const state = parts[index].state;
+            const side = key.includes("-back") ? "back" : "front";
+            setScopedCurrentBodyPart({ key, state, side, index }, true);
+          } else {
+            setScopedCurrentBodyPart(null, true);
+          }
+        }
+      }}
     >
       <div className="symptom-header" onClick={handleHeaderClick}>
         <div className="symptom-header-content">
@@ -158,7 +240,7 @@ const SymptomFormCard = ({
           <AffectedBodyPartsInput
             currentBodyPart={currentBodyPart}
             bodyParts={bodyParts}
-            setCurrentBodyPart={setCurrentBodyPart}
+            setCurrentBodyPart={selectThisCardAndSetBodyPart}
             handleAddBodyPart={handleAddBodyPart}
             handleRemoveBodyPart={handleRemoveBodyPart}
             handleUpdateBodyPart={handleUpdateBodyPart}
