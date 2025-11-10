@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import BodyMapSelector from "./BodyMapSelector";
@@ -11,7 +11,17 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { BodyPart, BodyPartExtended, FormErrors, HealthRecord, RecordFormData, Status, Symptom } from "~/types";
+import type {
+  BodyPart,
+  BodyPartExtended,
+  BodyPartSelectionState,
+  FormErrors,
+  HealthRecord,
+  RecordFormData,
+  Status,
+  Symptom,
+} from "~/types";
+import { deriveSideFromKey } from "~/utils";
 import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
@@ -48,50 +58,102 @@ const HealthRecordForm = () => {
       followUpActions?: boolean[];
     };
   }>({});
-  const [currentSymptom, setCurrentSymptom] = useState<Symptom | null>(null);
-  const [currentBodyPart, setCurrentBodyPart] = useState<BodyPartExtended | null>(null);
+  const [bodyPartSelectionState, setBodyPartSelectionState] = useState<BodyPartSelectionState>({
+    symptomId: null,
+    index: null,
+    side: "front",
+  });
 
-  // When switching active symptom, ensure the selected body part belongs to it.
-  // If not, select the last affected part of that symptom (or clear if none)
+  // Derived currentSymptom and currendBodyPart from selection + record data
+  const currentSymptom: Symptom | null = useMemo(() => {
+    if (!bodyPartSelectionState.symptomId) return null;
+
+    return recordFormData.data.symptoms.find((s) => s.id === bodyPartSelectionState.symptomId) || null;
+  }, [recordFormData.data.symptoms, bodyPartSelectionState.symptomId]);
+
+  const currentBodyPart: BodyPartExtended | null = useMemo(() => {
+    if (!currentSymptom) return null;
+    if (bodyPartSelectionState.index === null) return null;
+    const parts = currentSymptom.affectedParts || [];
+    const part = parts[bodyPartSelectionState.index];
+    if (!part) return null;
+    const side = bodyPartSelectionState.side ?? deriveSideFromKey(part.key);
+
+    return { index: bodyPartSelectionState.index, key: part.key, side, state: part.state };
+  }, [currentSymptom, bodyPartSelectionState.index, bodyPartSelectionState.side]);
+
+  const setCurrentSymptom = (symptom: Symptom | null) => {
+    if (!symptom) {
+      setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+    } else {
+      const parts = symptom.affectedParts || [];
+      const hasParts = parts.length > 0;
+      const index = hasParts ? parts.length - 1 : null;
+      const side = hasParts ? deriveSideFromKey(parts[parts.length - 1]?.key) : "front";
+      setBodyPartSelectionState((prev) => ({ ...prev, symptomId: symptom.id, index, side }));
+    }
+  };
+
+  const setCurrentBodyPart = (bp: BodyPartExtended | null) => {
+    if (!currentSymptom) {
+      setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+
+      return;
+    }
+
+    if (!bp) {
+      setBodyPartSelectionState((prev) => ({ ...prev, index: null }));
+
+      return;
+    }
+
+    const side = bp.side === "back" ? "back" : "front";
+    setBodyPartSelectionState((prev) => ({ ...prev, index: bp.index, side }));
+
+    if (typeof bp.index === "number" && bp.index >= 0) {
+      setRecordFormData((prev) => {
+        const updatedSymptoms = [...prev.data.symptoms];
+        const sIndex = updatedSymptoms.findIndex((s) => s.id === currentSymptom.id);
+        if (sIndex === -1) return prev;
+        const parts = updatedSymptoms[sIndex].affectedParts || [];
+        const existing = parts[bp.index];
+        if (!existing) return prev;
+
+        if (existing.key === bp.key && existing.state === bp.state) return prev;
+
+        const newParts = [...parts];
+        newParts[bp.index] = { key: bp.key, state: bp.state };
+        updatedSymptoms[sIndex] = { ...updatedSymptoms[sIndex], affectedParts: newParts };
+
+        return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+      });
+    }
+  };
+
+  // If an active cardd has parts but no slection, slecet the last part by default
   useEffect(() => {
-    const s = currentSymptom;
+    if (!currentSymptom) return;
 
-    if (!s) {
-      if (currentBodyPart) setCurrentBodyPart(null);
-
-      return;
+    const parts = currentSymptom.affectedParts || [];
+    if (parts.length > 0 && bodyPartSelectionState.index === null) {
+      const index = parts.length - 1;
+      const side = deriveSideFromKey(parts[index].key);
+      setBodyPartSelectionState((prev) => ({ ...prev, index, side }));
     }
+  }, [currentSymptom?.id, bodyPartSelectionState.index]);
 
-    const parts = s.affectedParts || [];
-    if (parts.length === 0) {
-      if (currentBodyPart) setCurrentBodyPart(null);
+  // If nothing is selected but there are symptoms with parts, auto-select the last part of the first symptom
+  useEffect(() => {
+    if (bodyPartSelectionState.symptomId) return;
 
-      return;
-    }
+    const firstWithPart = recordFormData.data.symptoms.find((s) => (s.affectedParts?.length || 0) > 0);
+    if (!firstWithPart) return;
 
-    const keys = parts.map((p) => p.key);
-    if (!currentBodyPart || !keys.includes(currentBodyPart.key)) {
-      const idx = parts.length - 1;
-      const key = parts[idx].key;
-      const state = parts[idx].state;
-      const side = key.includes("-back") ? "back" : "front";
-      setCurrentBodyPart({ key, state, side, index: idx });
+    const index = (firstWithPart.affectedParts?.length || 1) - 1;
+    const side = deriveSideFromKey(firstWithPart.affectedParts![index].key);
 
-      return;
-    }
-
-    // keep index/side/state in sync if they differ
-    const idx = keys.indexOf(currentBodyPart.key);
-    const desiredState = parts[idx].state;
-    const desiredSide = currentBodyPart.key.includes("-back") ? "back" : "front";
-    if (
-      currentBodyPart.index !== idx ||
-      currentBodyPart.state !== desiredState ||
-      currentBodyPart.side !== desiredSide
-    ) {
-      setCurrentBodyPart({ ...currentBodyPart, state: desiredState, side: desiredSide, index: idx });
-    }
-  }, [currentSymptom?.id]);
+    setBodyPartSelectionState((prev) => ({ ...prev, symptomId: firstWithPart.id, index, side }));
+  }, [recordFormData.data.symptoms, bodyPartSelectionState.symptomId]);
 
   // Mirror map selection into the active symptom's affectedParts in the central state.
   useEffect(() => {
@@ -251,10 +313,34 @@ const HealthRecordForm = () => {
 
   const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
-      setRecordFormData((prev) => ({
-        ...prev,
-        data: { ...prev.data, symptoms: prev.data.symptoms.filter((s) => s.id !== id) },
-      }));
+      const currentSymptoms = recordFormData.data.symptoms;
+      const removeIndex = currentSymptoms.findIndex((s) => s.id === id);
+      const updatedSymptoms = currentSymptoms.filter((s) => s.id === id);
+
+      setRecordFormData((prev) => ({ ...prev, data: { ...prev.data, symptoms: updatedSymptoms } }));
+
+      // If we removed the active symptom, move selection to a nearby one with parts
+      if (bodyPartSelectionState.symptomId === id) {
+        if (updatedSymptoms.length === 0) {
+          setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+        } else {
+          const targetIndex = Math.min(Math.max(removeIndex, 0), updatedSymptoms.length - 1);
+          // Prefer the closest sysmptom that actually has parts
+          let chosen = updatedSymptoms[targetIndex];
+          if (!chosen.affectedParts?.length) {
+            chosen = updatedSymptoms.find((s) => s.affectedParts?.length) || updatedSymptoms[0];
+          }
+          if (!chosen.affectedParts?.length) {
+            setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+          }
+
+          const index = chosen.affectedParts!.length - 1;
+          const side = deriveSideFromKey(chosen.affectedParts![index].key);
+
+          setBodyPartSelectionState({ symptomId: chosen.id, index, side });
+        }
+      }
+
       validateForm();
     }
   };

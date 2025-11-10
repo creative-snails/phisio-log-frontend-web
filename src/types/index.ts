@@ -67,6 +67,14 @@ export interface RecordFormData {
   error: string;
 }
 
+export type Side = "front" | "back";
+
+export type BodyPartSelectionState = {
+  symptomId: string | null;
+  index: number | null;
+  side: Side;
+};
+
 // Chat types
 export interface ChatHistoryType {
   id?: string;
