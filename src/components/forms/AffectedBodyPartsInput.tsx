@@ -2,7 +2,7 @@ import { FaMinusCircle } from "react-icons/fa";
 import Select from "react-select";
 
 import "./AffectedBodyPartsInput.css";
-import type { BodyPartExtended, BodyPartInput, SeverityState } from "~/types";
+import type { BodyPart, BodyPartExtended, BodyPartInput, SeverityState } from "~/types";
 
 interface SelectOption {
   label: string;
@@ -300,12 +300,12 @@ const states: SelectOption[] = [
 ];
 
 type AffectedBodyPartsInputProps = {
-  bodyParts: BodyPartInput[];
+  bodyParts: BodyPart[];
   currentBodyPart: BodyPartExtended | null;
   setScopedCurrentBodyPart: (bp: BodyPartExtended | null) => void;
   handleAddBodyPart: () => void;
   handleRemoveBodyPart: (index: number) => void;
-  handleUpdateBodyPart: (index: number, property: keyof BodyPartInput, value: string | SeverityState) => void;
+  handleUpdateBodyPart: (index: number, property: keyof BodyPart, value: string | SeverityState) => void;
   symptomId: string;
   activeSymptomId?: string;
 };

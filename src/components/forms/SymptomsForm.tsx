@@ -8,9 +8,9 @@ type SymptomsFormProps = {
   symptoms: Symptom[];
   onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
   currentBodyPart: BodyPartExtended | null;
-  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+  setCurrentBodyPart: (pb: BodyPartExtended | null) => void;
   currentSymptom: Symptom | null;
-  setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
+  setCurrentSymptom: (symptom: Symptom | null) => void;
   addSymptom: () => void;
   removeSymptom: (id: string) => void;
   formErrors?: FormErrors<Symptom[]>;

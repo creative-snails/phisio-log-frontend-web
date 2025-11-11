@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
 import AffectedBodyPartsInput from "./AffectedBodyPartsInput";
 
-import type { BodyPart, BodyPartExtended, BodyPartInput, FormErrors, SeverityState, Symptom } from "~/types";
+import type { BodyPart, BodyPartExtended, FormErrors, SeverityState, Symptom } from "~/types";
+import { deriveSideFromKey } from "~/utils";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomFormCardProps = {
@@ -10,9 +11,9 @@ type SymptomFormCardProps = {
   symptom: Symptom;
   onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
   currentBodyPart: BodyPartExtended | null;
-  setCurrentBodyPart: React.Dispatch<React.SetStateAction<BodyPartExtended | null>>;
+  setCurrentBodyPart: (bp: BodyPartExtended | null) => void;
   currentSymptom: Symptom | null;
-  setCurrentSymptom: React.Dispatch<React.SetStateAction<Symptom | null>>;
+  setCurrentSymptom: (symtom: Symptom | null) => void;
   removeSymptom: (id: string) => void;
   formErrors?: FormErrors<Symptom[]>;
   touched?: { [id: string]: { [key in keyof Symptom]?: boolean } };
@@ -33,17 +34,6 @@ const SymptomFormCard = ({
   setTouched,
 }: SymptomFormCardProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [bodyParts, setBodyParts] = useState<BodyPartInput[]>([]);
-
-  useEffect(() => {
-    const initialBodyParts: BodyPartInput[] =
-      symptom?.affectedParts?.map((bp) => ({
-        side: bp.key.includes("-back") ? "back" : "front",
-        key: bp.key,
-        state: bp.state,
-      })) || [];
-    setBodyParts(initialBodyParts);
-  }, [symptom.id, symptom.affectedParts]);
 
   const isActive = currentSymptom?.id === symptom.id;
 
@@ -68,25 +58,22 @@ const SymptomFormCard = ({
   }, []);
 
   const handleAddBodyPart = () => {
-    const newBodyPart = { side: "front", key: "", state: "" as SeverityState };
-    const updatedBodyParts = [...bodyParts, newBodyPart];
+    const parts = symptom.affectedParts || [];
+    const newBodyPart: BodyPart = { key: "", state: "0" as SeverityState };
+    const newIndex = parts.length;
 
-    setBodyParts(updatedBodyParts);
-
+    // Ensure the card is active and selection points to the new row immediately
     if (!isActiveRef.current) setCurrentSymptom(symptom);
-    setScopedCurrentBodyPart({ ...newBodyPart, index: updatedBodyParts.length - 1 }, true);
+    setScopedCurrentBodyPart({ ...newBodyPart, index: newIndex, side: "front" }, true);
 
-    onSymptomChange(
-      symptom.id,
-      "affectedParts",
-      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
-    );
+    const updatedParts: BodyPart[] = [...parts, newBodyPart];
+    onSymptomChange(symptom.id, "affectedParts", updatedParts);
   };
 
   const handleRemoveBodyPart = (removeIndex: number) => {
-    const updatedBodyParts = bodyParts.filter((_, i) => i !== removeIndex);
+    const parts = symptom.affectedParts || [];
+    const updatedBodyParts = parts.filter((_, i) => i !== removeIndex);
 
-    setBodyParts(updatedBodyParts);
     setCurrentSymptom(symptom);
 
     if (updatedBodyParts.length === 0) {
@@ -100,36 +87,27 @@ const SymptomFormCard = ({
       else if (removeIndex === current) nextIndex = Math.min(current, updatedBodyParts.length - 1);
       else nextIndex = current;
 
-      setScopedCurrentBodyPart({ ...updatedBodyParts[nextIndex], index: nextIndex }, true);
+      const bp = updatedBodyParts[nextIndex];
+      setScopedCurrentBodyPart({ ...bp, index: nextIndex, side: deriveSideFromKey(bp.key) }, true);
     }
 
-    onSymptomChange(
-      symptom.id,
-      "affectedParts",
-      updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
-    );
+    onSymptomChange(symptom.id, "affectedParts", updatedBodyParts);
   };
 
   const handleUpdateBodyPart = useCallback(
-    (index: number, property: keyof BodyPartInput, value: string | SeverityState) => {
-      const current = bodyParts[index];
+    (index: number, property: keyof BodyPart, value: string | SeverityState) => {
+      const parts = symptom.affectedParts || [];
+      const current = parts[index];
       if (!current) return;
 
-      if (property === "side" && current.side === value) return;
       if (property === "key" && current.key === value) return;
       if (property === "state" && current.state === value) return;
 
-      const updatedBodyParts = [...bodyParts];
-      updatedBodyParts[index] = { ...updatedBodyParts[index], [property]: value };
-
-      setBodyParts(updatedBodyParts);
-      onSymptomChange(
-        symptom.id,
-        "affectedParts",
-        updatedBodyParts.map((bp) => ({ key: bp.key, state: bp.state }))
-      );
+      const newParts = [...parts];
+      newParts[index] = { ...current, [property]: value };
+      onSymptomChange(symptom.id, "affectedParts", newParts);
     },
-    [bodyParts, symptom.id]
+    [symptom.affectedParts, symptom.id]
   );
 
   // Atomic helper: select this card and set the body part in one go to avoid races
@@ -163,21 +141,6 @@ const SymptomFormCard = ({
       setScopedCurrentBodyPart(null, true);
     }
   };
-
-  // Keep the side dropdown in sync when the body map is fillped (two-way binding)
-  useEffect(() => {
-    if (!isActiveRef.current) return;
-    if (!currentBodyPart) return;
-
-    const { index: selectedIndex, side: selectedSide } = currentBodyPart;
-    const current = bodyParts[selectedIndex];
-    if (!current) return;
-    if (current.side === selectedSide) return;
-
-    const updated = [...bodyParts];
-    updated[selectedIndex] = { ...current, side: selectedSide };
-    setBodyParts(updated);
-  }, [currentBodyPart?.side]);
 
   return (
     <div
@@ -238,8 +201,8 @@ const SymptomFormCard = ({
 
           <label>Affected Parts</label>
           <AffectedBodyPartsInput
+            bodyParts={symptom.affectedParts || []}
             currentBodyPart={currentBodyPart}
-            bodyParts={bodyParts}
             setScopedCurrentBodyPart={selectThisCardAndSetBodyPart}
             handleAddBodyPart={handleAddBodyPart}
             handleRemoveBodyPart={handleRemoveBodyPart}
