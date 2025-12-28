@@ -7,7 +7,7 @@ interface AppHeaderProps {
 }
 
 const AppHeader = ({ onOpenNav, onOpenAuth }: AppHeaderProps) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="app-header">
@@ -21,6 +21,12 @@ const AppHeader = ({ onOpenNav, onOpenAuth }: AppHeaderProps) => {
       {!user && onOpenAuth && (
         <button className="sign-in-button" onClick={() => onOpenAuth("login")}>
           Sign In
+        </button>
+      )}
+
+      {user && (
+        <button className="sign-in-button" onClick={logout}>
+          Sign Out
         </button>
       )}
     </header>
