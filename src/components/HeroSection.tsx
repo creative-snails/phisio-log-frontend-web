@@ -5,15 +5,21 @@ import "./HeroSection.css";
 
 interface HeroSectionProps {
   onOpenNav?: () => void;
+  onSignInClick?: () => void;
+  showSignInButton?: boolean;
 }
 
-const HeroSection = ({ onOpenNav }: HeroSectionProps) => {
+const HeroSection = ({ onOpenNav, onSignInClick, showSignInButton = true }: HeroSectionProps) => {
   return (
     <section className="hero-section">
       <button className="nav-toggle-tab" onClick={onOpenNav} title="Open Navigation">
         <FiMenu />
       </button>
-      <button className="sign-in-button">Sign In</button>
+      {showSignInButton && (
+        <button className="sign-in-button" onClick={onSignInClick}>
+          Sign In
+        </button>
+      )}
       <div className="hero-header">
         <h1 className="hero-title">Your Health Companion</h1>
       </div>

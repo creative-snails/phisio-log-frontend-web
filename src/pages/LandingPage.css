@@ -1,0 +1,94 @@
+@import "~/theme.css";
+
+.landing-page {
+  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.value-prop {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.value-prop h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.value-prop p {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+}
+
+.demo {
+  margin-top: 3rem;
+}
+
+.demo h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.demo-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.demo-cards .card {
+  background: var(--color-bg-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+  border: 1px solid var(--color-border, #ddd);
+}
+
+.demo-cards .card h4 {
+  margin-bottom: 0.5rem;
+  color: var(--color-secondary);
+}
+
+.cta-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+button.primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  padding: 0.6rem 1.2rem;
+  border: 2px solid var(--color-primary-hover);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+button.primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+button.secondary {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-primary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button.secondary:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-text-white);
+}

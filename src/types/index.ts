@@ -1,9 +1,11 @@
 // Form validation types
-export type FormErrors<T> = {
-  _errors?: string[];
-} & {
-  [K in keyof T]?: FormErrors<T[K]>;
-};
+export type FormErrors<T> = T extends object
+  ? {
+      _errors?: string[];
+    } & {
+      [K in keyof T]?: FormErrors<T[K]>;
+    }
+  : { _errors?: string[] };
 
 // Health domain types
 export interface Symptom {
