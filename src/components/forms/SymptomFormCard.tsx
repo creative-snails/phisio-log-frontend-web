@@ -51,8 +51,11 @@ const SymptomFormCard = ({
   const setScopedCurrentBodyPart = useCallback((bp: BodyPartExtended | null, force = false) => {
     if (!force && !isActiveRef.current) return;
 
-    const cur = currentBodyPartRef.current;
-    if (cur && bp && cur.index === bp.index && cur.side == bp.side && cur.state === bp.state) return;
+    if (!force) {
+      const cur = currentBodyPartRef.current;
+      if (cur && bp && cur.index === bp.index && cur.key === bp.key && cur.side === bp.side && cur.state === bp.state)
+        return;
+    }
 
     setCurrentBodyPart(bp);
   }, []);
@@ -201,12 +204,12 @@ const SymptomFormCard = ({
 
           <label>Affected Parts</label>
           <AffectedBodyPartsInput
-            bodyParts={symptom.affectedParts || []}
-            currentBodyPart={currentBodyPart}
-            setScopedCurrentBodyPart={selectThisCardAndSetBodyPart}
-            handleAddBodyPart={handleAddBodyPart}
-            handleRemoveBodyPart={handleRemoveBodyPart}
-            handleUpdateBodyPart={handleUpdateBodyPart}
+            parts={symptom.affectedParts || []}
+            selected={currentBodyPart}
+            setSelected={selectThisCardAndSetBodyPart}
+            onAdd={handleAddBodyPart}
+            onRemove={handleRemoveBodyPart}
+            onChange={handleUpdateBodyPart}
             symptomId={symptom.id}
             activeSymptomId={currentSymptom?.id}
           />

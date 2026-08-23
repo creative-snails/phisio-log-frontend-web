@@ -15,7 +15,7 @@ interface BodyMapSelectorProps {
 const BodyMapSelector = ({ currentSymptom, currentBodyPart, setCurrentBodyPart }: BodyMapSelectorProps) => {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [side, setSide] = useState("front");
+  const [side, setSide] = useState<"front" | "back">("front");
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
