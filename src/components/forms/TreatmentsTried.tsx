@@ -19,6 +19,7 @@ const TreatmentsTried = ({ treatments, setTreatments, formErrors, touched, setTo
     updated[index] = value;
     setTreatments(updated);
   };
+
   const addTreatment = () => setTreatments([...treatments, ""]);
   const removeTreatment = (index: number) => {
     const updated = [...treatments];

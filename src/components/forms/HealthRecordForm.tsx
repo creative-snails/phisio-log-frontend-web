@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import BodyMapSelector from "./BodyMapSelector";
 import HealthStatusForm from "./HealthStatusForm";
 import MedicalConsultationsForm from "./MedicalConsultationsForm";
 import SymptomsForm from "./SymptomsForm";
@@ -9,8 +11,18 @@ import "~/utils/renderErrors.css";
 import BodyMapViewer from "~/components/BodyMapViewer";
 import ChatWidget from "~/components/chat/ChatWidget";
 import { getHealthRecord } from "~/services/api/healthRecordsApi";
-import type { FormErrors, HealthRecord, RecordFormData, Status, SymptomUI } from "~/types";
-import { statusOptions } from "~/utils/constants";
+import type {
+  BodyPart,
+  BodyPartExtended,
+  BodyPartSelectionState,
+  FormErrors,
+  HealthRecord,
+  RecordFormData,
+  Status,
+  Symptom,
+} from "~/types";
+import { deriveSideFromKey } from "~/utils";
+import { numericToLabel, statusOptions } from "~/utils/constants";
 import { renderErrors } from "~/utils/renderErrors";
 import { Z_HealthRecord } from "~/validation/healthRecordSchema";
 
@@ -37,9 +49,7 @@ const HealthRecordForm = () => {
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
   const [touchedStatus, setTouchedStatus] = useState<{ [key in keyof Status]?: boolean }>({});
   const [touchedTreatments, setTouchedTreatments] = useState<boolean>(false);
-  const [touchedSymptoms, setTouchedSymptoms] = useState<{ [index: number]: { [key in keyof SymptomUI]?: boolean } }>(
-    {}
-  );
+  const [touchedSymptoms, setTouchedSymptoms] = useState<{ [id: string]: { [key in keyof Symptom]?: boolean } }>({});
   const [touchedConsultations, setTouchedConsultations] = useState<{
     [index: number]: {
       consultant?: boolean;
@@ -48,14 +58,168 @@ const HealthRecordForm = () => {
       followUpActions?: boolean[];
     };
   }>({});
+  const [bodyPartSelectionState, setBodyPartSelectionState] = useState<BodyPartSelectionState>({
+    symptomId: null,
+    index: null,
+    side: "front",
+  });
+
+  // Derived currentSymptom and currendBodyPart from selection + record data
+  const currentSymptom: Symptom | null = useMemo(() => {
+    if (!bodyPartSelectionState.symptomId) return null;
+
+    return recordFormData.data.symptoms.find((s) => s.id === bodyPartSelectionState.symptomId) || null;
+  }, [recordFormData.data.symptoms, bodyPartSelectionState.symptomId]);
+
+  const currentBodyPart: BodyPartExtended | null = useMemo(() => {
+    if (!currentSymptom) return null;
+    if (bodyPartSelectionState.index === null) return null;
+    const parts = currentSymptom.affectedParts || [];
+    const part = parts[bodyPartSelectionState.index];
+    if (!part) return null;
+    const side = bodyPartSelectionState.side ?? deriveSideFromKey(part.key);
+
+    return { index: bodyPartSelectionState.index, key: part.key, side, state: part.state };
+  }, [currentSymptom, bodyPartSelectionState.index, bodyPartSelectionState.side]);
+
+  const setCurrentSymptom = (symptom: Symptom | null) => {
+    if (!symptom) {
+      setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+    } else {
+      const parts = symptom.affectedParts || [];
+      const hasParts = parts.length > 0;
+      const index = hasParts ? parts.length - 1 : null;
+      const side = hasParts ? deriveSideFromKey(parts[parts.length - 1]?.key) : "front";
+      setBodyPartSelectionState((prev) => ({ ...prev, symptomId: symptom.id, index, side }));
+    }
+  };
+
+  const setCurrentBodyPart = (bp: BodyPartExtended | null) => {
+    if (!currentSymptom) {
+      setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+
+      return;
+    }
+
+    if (!bp) {
+      setBodyPartSelectionState((prev) => ({ ...prev, index: null }));
+
+      return;
+    }
+
+    const side = bp.side === "back" ? "back" : "front";
+    setBodyPartSelectionState((prev) => ({ ...prev, index: bp.index, side }));
+
+    // Update the data model with side-flip clearing and duplicate prevention
+    if (typeof bp.index === "number" && bp.index >= 0) {
+      setRecordFormData((prev) => {
+        const updatedSymptoms = [...prev.data.symptoms];
+        const sIndex = updatedSymptoms.findIndex((s) => s.id === currentSymptom.id);
+        if (sIndex === -1) return prev;
+        const parts = updatedSymptoms[sIndex].affectedParts || [];
+        const existing = parts[bp.index];
+        if (!existing) return prev;
+
+        // Side-flip clearing: if the user changed side relative to the existing key, clear the key
+        const existingSide = deriveSideFromKey(existing.key);
+        const newKey = existing.key && existingSide !== side ? "" : bp.key;
+
+        // Duplicate prevention: if another row already has this key, just move selection there
+        if (newKey) {
+          const duplicateIdx = parts.findIndex((p, i) => i !== bp.index && p.key === newKey);
+          if (duplicateIdx !== -1) {
+            const dupSide = deriveSideFromKey(newKey);
+            setBodyPartSelectionState((prev) => ({ ...prev, index: duplicateIdx, side: dupSide }));
+
+            return prev; // No data write, just switch selection
+          }
+        }
+        const desired = { key: newKey, state: bp.state };
+        if (parts[bp.index].key === desired.key && parts[bp.index].state === desired.state) return prev;
+
+        const newParts = [...parts];
+        newParts[bp.index] = desired;
+        updatedSymptoms[sIndex] = { ...updatedSymptoms[sIndex], affectedParts: newParts };
+
+        return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
+      });
+    }
+  };
+
+  // If an active cardd has parts but no slection, slecet the last part by default
+  useEffect(() => {
+    if (!currentSymptom) return;
+
+    const parts = currentSymptom.affectedParts || [];
+    if (parts.length > 0 && bodyPartSelectionState.index === null) {
+      const index = parts.length - 1;
+      const side = deriveSideFromKey(parts[index].key);
+      setBodyPartSelectionState((prev) => ({ ...prev, index, side }));
+    }
+  }, [currentSymptom?.id, bodyPartSelectionState.index]);
+
+  // If nothing is selected but there are symptoms with parts, auto-select the last part of the first symptom
+  useEffect(() => {
+    if (bodyPartSelectionState.symptomId) return;
+
+    const firstWithPart = recordFormData.data.symptoms.find((s) => (s.affectedParts?.length || 0) > 0);
+    if (!firstWithPart) return;
+
+    const index = (firstWithPart.affectedParts?.length || 1) - 1;
+    const side = deriveSideFromKey(firstWithPart.affectedParts![index].key);
+
+    setBodyPartSelectionState((prev) => ({ ...prev, symptomId: firstWithPart.id, index, side }));
+  }, [recordFormData.data.symptoms, bodyPartSelectionState.symptomId]);
+
+  // If the active card has no parts but other cards do, move selection to the nearest card with parts
+  useEffect(() => {
+    const symptoms = recordFormData.data.symptoms;
+    if (!symptoms.length) return;
+
+    const anyWithParts = symptoms.some((s) => (s.affectedParts?.length || 0) > 0);
+    if (!anyWithParts) return;
+
+    const activeHasParts = !!(currentSymptom && (currentSymptom.affectedParts?.length || 0) > 0);
+    if (activeHasParts) return;
+
+    // Scan outward from current position to find the closest symptom with parts
+    const currentIdx = symptoms.findIndex((s) => s.id === bodyPartSelectionState.symptomId);
+    const startIdx = currentIdx !== -1 ? currentIdx : 0;
+    let chosen: (typeof symptoms)[number] | undefined;
+
+    for (let radius = 0; radius < symptoms.length; radius++) {
+      for (const offset of [startIdx - radius, startIdx + radius]) {
+        if (offset >= 0 && offset < symptoms.length) {
+          const candidate = symptoms[offset];
+          if ((candidate.affectedParts?.length || 0) > 0) {
+            chosen = candidate;
+            break;
+          }
+        }
+      }
+      if (chosen) break;
+    }
+
+    if (!chosen) return;
+
+    const parts = chosen.affectedParts || [];
+    const index = parts.length - 1;
+    const side = deriveSideFromKey(parts[index]?.key);
+    setBodyPartSelectionState({ symptomId: chosen.id, index, side });
+  }, [recordFormData.data.symptoms, currentSymptom?.id, currentSymptom?.affectedParts?.length]);
 
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         if (id) {
           const record = await getHealthRecord(id);
+          // Ensure all symptoms have client-side ids for React keying
+          const symptomsWithIds = (record.symptoms || []).map((s) => ({
+            ...s,
+            id: s.id || uuidv4(),
+          }));
           setRecordFormData({
-            data: record,
+            data: { ...record, symptoms: symptomsWithIds },
             loading: false,
             error: "",
           });
@@ -149,51 +313,68 @@ const HealthRecordForm = () => {
     validateForm();
   };
 
-  const handleSymptomChange = (index: number, field: keyof SymptomUI, value: string) => {
+  const handleAddSymptom = () => {
+    const newSymptom = {
+      id: uuidv4(),
+      name: "",
+      startDate: "",
+      affectedParts: [],
+      isOpen: true,
+    };
+
+    setRecordFormData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        symptoms: [...prev.data.symptoms, newSymptom],
+      },
+    }));
+    setCurrentSymptom(newSymptom);
+    validateForm();
+  };
+
+  const handleSymptomChange = (id: string, field: keyof Symptom, value: string | BodyPart[]) => {
     setRecordFormData((prev) => {
       const updatedSymptoms = [...prev.data.symptoms];
+      const index = updatedSymptoms.findIndex((s) => s.id === id);
       updatedSymptoms[index] = { ...updatedSymptoms[index], [field]: value };
 
       return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
     });
     validateForm();
+    console.log("Updating symptom", field, value);
   };
 
-  const toggleSymptom = (index: number) => {
-    setRecordFormData((prev) => {
-      const updatedSymptoms = [...prev.data.symptoms];
-      updatedSymptoms[index] = { ...updatedSymptoms[index], isOpen: !updatedSymptoms[index].isOpen };
-
-      return { ...prev, data: { ...prev.data, symptoms: updatedSymptoms } };
-    });
-    validateForm();
-  };
-
-  const handleAddSymptom = () => {
-    setRecordFormData((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        symptoms: [
-          ...prev.data.symptoms,
-          {
-            name: "",
-            startDate: "",
-            affectedParts: [],
-            isOpen: true,
-          },
-        ],
-      },
-    }));
-    validateForm();
-  };
-
-  const handleRemoveSymptom = (index: number) => {
+  const handleRemoveSymptom = (id: string) => {
     if (window.confirm("Are you sure you want to remove this symptom?")) {
-      setRecordFormData((prev) => ({
-        ...prev,
-        data: { ...prev.data, symptoms: prev.data.symptoms.filter((_, i) => i !== index) },
-      }));
+      const currentSymptoms = recordFormData.data.symptoms;
+      const removeIndex = currentSymptoms.findIndex((s) => s.id === id);
+      const updatedSymptoms = currentSymptoms.filter((s) => s.id !== id);
+
+      setRecordFormData((prev) => ({ ...prev, data: { ...prev.data, symptoms: updatedSymptoms } }));
+
+      // If we removed the active symptom, move selection to a nearby one with parts
+      if (bodyPartSelectionState.symptomId === id) {
+        if (updatedSymptoms.length === 0) {
+          setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+        } else {
+          const targetIndex = Math.min(Math.max(removeIndex, 0), updatedSymptoms.length - 1);
+          // Prefer the closest sysmptom that actually has parts
+          let chosen = updatedSymptoms[targetIndex];
+          if (!chosen.affectedParts?.length) {
+            chosen = updatedSymptoms.find((s) => s.affectedParts?.length) || updatedSymptoms[0];
+          }
+          if (!chosen.affectedParts?.length) {
+            setBodyPartSelectionState({ symptomId: null, index: null, side: "front" });
+          }
+
+          const index = chosen.affectedParts!.length - 1;
+          const side = deriveSideFromKey(chosen.affectedParts![index].key);
+
+          setBodyPartSelectionState({ symptomId: chosen.id, index, side });
+        }
+      }
+
       validateForm();
     }
   };
@@ -201,8 +382,20 @@ const HealthRecordForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Convert numeric severity to labels for validation
+    const payloadForValidation = {
+      ...data,
+      symptoms: data.symptoms.map((symptom) => ({
+        ...symptom,
+        affectedParts: symptom.affectedParts?.map((part) => ({
+          key: part.key,
+          state: numericToLabel[part.state], // numeric → label
+        })),
+      })),
+    };
+
     // Perform full validation before submission
-    const parseResult = Z_HealthRecord.safeParse(data);
+    const parseResult = Z_HealthRecord.safeParse(payloadForValidation);
     if (!parseResult.success) {
       // Show all validation errors, including optional fields if they have invalid data
       const formattedErrors = parseResult.error.format() as unknown as FormErrors<HealthRecord>;
@@ -213,9 +406,9 @@ const HealthRecordForm = () => {
 
     // Clean up data for backend submission - use empty strings consistently
     const cleanedData = {
-      ...data,
-      treatmentsTried: data.treatmentsTried.filter((treatment) => treatment.trim() !== ""),
-      medicalConsultations: data.medicalConsultations.map((consultation) => ({
+      ...payloadForValidation,
+      treatmentsTried: payloadForValidation.treatmentsTried.filter((treatment) => treatment.trim() !== ""),
+      medicalConsultations: payloadForValidation.medicalConsultations.map((consultation) => ({
         ...consultation,
         diagnosis: consultation.diagnosis || "",
         followUpActions: consultation.followUpActions.filter((action) => action.trim() !== ""),
@@ -226,11 +419,19 @@ const HealthRecordForm = () => {
   };
 
   const validateForm = () => {
-    // Validate all fields using the full schema
-    const parseResult = Z_HealthRecord.safeParse({
+    // Convert numeric severity to labels for validation
+    const payloadForValidation = {
       ...data,
-      symptoms: data.symptoms,
-    });
+      symptoms: data.symptoms.map((symptom) => ({
+        ...symptom,
+        affectedParts: symptom.affectedParts?.map((part) => ({
+          key: part.key,
+          state: numericToLabel[part.state], // numeric → label
+        })),
+      })),
+    };
+    // Validate all fields using the full schema
+    const parseResult = Z_HealthRecord.safeParse(payloadForValidation);
 
     // Show validation errors for real-time feedback
     if (!parseResult.success) {
@@ -330,15 +531,18 @@ const HealthRecordForm = () => {
                     <SymptomsForm
                       symptoms={data.symptoms}
                       onSymptomChange={handleSymptomChange}
-                      toggleSymptom={toggleSymptom}
+                      currentBodyPart={currentBodyPart}
+                      setCurrentBodyPart={setCurrentBodyPart}
+                      currentSymptom={currentSymptom}
+                      setCurrentSymptom={setCurrentSymptom}
                       addSymptom={handleAddSymptom}
                       removeSymptom={handleRemoveSymptom}
                       formErrors={formErrors.symptoms}
                       touched={touchedSymptoms}
-                      setTouched={(index, field) =>
+                      setTouched={(id, field) =>
                         setTouchedSymptoms((prev) => ({
                           ...prev,
-                          [index]: { ...prev[index], [field]: true },
+                          [id]: { ...prev[id], [field]: true },
                         }))
                       }
                     />
@@ -407,7 +611,15 @@ const HealthRecordForm = () => {
         </div>
         <div className="body-map-section">
           <h2 className="dashboard-section-title bodymap-title">Body Map</h2>
-          <BodyMapViewer records={data.id ? [data] : []} />
+          {currentSymptom ? (
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
+          ) : (
+            <BodyMapViewer records={data.id ? [data] : []} />
+          )}
         </div>
       </div>
 
@@ -425,7 +637,15 @@ const HealthRecordForm = () => {
           </button>
         </div>
         <div className="body-map-panel-content">
-          <BodyMapViewer records={data.id ? [data] : []} />
+          {currentSymptom ? (
+            <BodyMapSelector
+              currentSymptom={currentSymptom}
+              currentBodyPart={currentBodyPart}
+              setCurrentBodyPart={setCurrentBodyPart}
+            />
+          ) : (
+            <BodyMapViewer records={data.id ? [data] : []} />
+          )}
         </div>
       </div>
 

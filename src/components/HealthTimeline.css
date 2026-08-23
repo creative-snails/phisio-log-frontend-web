@@ -72,8 +72,8 @@
 }
 
 .timeline-group-items {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
   margin-left: 8px;
 }
@@ -175,6 +175,7 @@
   z-index: 10;
   position: relative;
   margin: var(--space-lg) 0;
+  grid-column: 1 / -1;
 }
 
 .timeline-expanded-content {
@@ -333,6 +334,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .timeline-group-items {
+    grid-template-columns: 1fr;
+  }
+
   .expanded-details {
     grid-template-columns: 1fr;
     gap: var(--space-lg);

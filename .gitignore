@@ -29,3 +29,6 @@ dist-ssr
 
 # TypeScript build cache
 *.tsbuildinfo
+
+# Local housekeeping files
+.github/TODO.md

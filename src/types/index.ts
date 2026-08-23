@@ -6,18 +6,21 @@ export type FormErrors<T> = {
 };
 
 // Health domain types
+export type SeverityState = "0" | "1" | "2" | "3";
+
+export type BodyPart = {
+  key: string;
+  state: SeverityState;
+};
+
+export type BodyPartExtended = BodyPart & { side: Side; index: number };
+
 export interface Symptom {
+  id: string;
   name: string;
   startDate: string;
-  affectedParts?: {
-    key: string;
-    state: "1" | "2" | "3";
-  }[];
+  affectedParts?: BodyPart[];
 }
-
-export type SymptomUI = Symptom & {
-  isOpen?: boolean;
-};
 
 export interface Status {
   stage: string;
@@ -57,11 +60,19 @@ export interface HealthRecord {
 
 export interface RecordFormData {
   data: Omit<HealthRecord, "symptoms"> & {
-    symptoms: SymptomUI[];
+    symptoms: Symptom[];
   };
   loading: boolean;
   error: string;
 }
+
+export type Side = "front" | "back";
+
+export type BodyPartSelectionState = {
+  symptomId: string | null;
+  index: number | null;
+  side: Side;
+};
 
 // Chat types
 export interface ChatHistoryType {

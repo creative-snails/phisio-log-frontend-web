@@ -1,24 +1,30 @@
-import { FaChevronDown, FaChevronUp, FaMinusCircle } from "react-icons/fa";
+import SymptomFormCard from "./SymptomFormCard";
 
 import "./SymptomsForm.css";
-import type { FormErrors, SymptomUI } from "~/types";
+import type { BodyPart, BodyPartExtended, FormErrors, Symptom } from "~/types";
 import { renderErrors } from "~/utils/renderErrors";
 
 type SymptomsFormProps = {
-  symptoms: SymptomUI[];
-  onSymptomChange: (index: number, field: keyof SymptomUI, value: string) => void;
-  toggleSymptom: (index: number) => void;
+  symptoms: Symptom[];
+  onSymptomChange: (id: string, field: keyof Symptom, value: string | BodyPart[]) => void;
+  currentBodyPart: BodyPartExtended | null;
+  setCurrentBodyPart: (pb: BodyPartExtended | null) => void;
+  currentSymptom: Symptom | null;
+  setCurrentSymptom: (symptom: Symptom | null) => void;
   addSymptom: () => void;
-  removeSymptom: (index: number) => void;
-  formErrors?: FormErrors<SymptomUI[]>;
-  touched?: { [index: number]: { [key in keyof SymptomUI]?: boolean } };
-  setTouched?: (index: number, field: keyof SymptomUI) => void;
+  removeSymptom: (id: string) => void;
+  formErrors?: FormErrors<Symptom[]>;
+  touched?: { [id: string]: { [key in keyof Symptom]?: boolean } };
+  setTouched?: (id: string, field: keyof Symptom) => void;
 };
 
 const SymptomsForm = ({
   symptoms,
   onSymptomChange,
-  toggleSymptom,
+  currentBodyPart,
+  setCurrentBodyPart,
+  currentSymptom,
+  setCurrentSymptom,
   addSymptom,
   removeSymptom,
   formErrors,
@@ -28,62 +34,20 @@ const SymptomsForm = ({
   return (
     <div className="symptom-form-container">
       {symptoms.map((symptom, index) => (
-        <div key={index} className="symptom-card">
-          <div className="symptom-header" onClick={() => toggleSymptom(index)}>
-            <div className="symptom-header-content">
-              {symptom.isOpen ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
-              <h4>{symptom.name || "New Symptom"}</h4>
-            </div>
-            <FaMinusCircle
-              className="remove-icon"
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                removeSymptom(index);
-              }}
-            />
-          </div>
-
-          {symptom.isOpen && (
-            <div className="symptom-body">
-              <label>Name</label>
-              <input
-                type="text"
-                value={symptom.name}
-                onChange={(e) => onSymptomChange(index, "name", e.target.value)}
-                placeholder="Enter symptom name"
-                onBlur={() => setTouched && setTouched(index, "name")}
-                className={touched?.[index]?.name && formErrors?.[index]?.name?._errors ? "input-error" : ""}
-              />
-              {touched?.[index]?.name && renderErrors(formErrors?.[index]?.name)}
-
-              <label>Start Date</label>
-              <input
-                type="date"
-                value={symptom.startDate}
-                onChange={(e) => onSymptomChange(index, "startDate", e.target.value)}
-                onBlur={() => setTouched && setTouched(index, "startDate")}
-                className={touched?.[index]?.startDate && formErrors?.[index]?.startDate?._errors ? "input-error" : ""}
-              />
-              {touched?.[index]?.startDate && renderErrors(formErrors?.[index]?.startDate)}
-
-              <label>Affected Parts</label>
-              <div className="placeholder">
-                {Array.isArray(symptom.affectedParts) && symptom.affectedParts.length > 0
-                  ? symptom.affectedParts
-                      .map((part, i) => (
-                        <span key={i}>
-                          {part.key} (severity: {part.state})
-                        </span>
-                      ))
-                      .join(", ")
-                  : typeof symptom.affectedParts === "string"
-                    ? symptom.affectedParts
-                    : "No affected parts specified"}
-              </div>
-              {renderErrors(formErrors?.[index]?.affectedParts)}
-            </div>
-          )}
-        </div>
+        <SymptomFormCard
+          key={symptom.id}
+          index={index}
+          symptom={symptom}
+          onSymptomChange={onSymptomChange}
+          currentBodyPart={currentBodyPart}
+          setCurrentBodyPart={setCurrentBodyPart}
+          currentSymptom={currentSymptom}
+          setCurrentSymptom={setCurrentSymptom}
+          removeSymptom={removeSymptom}
+          formErrors={formErrors}
+          touched={touched}
+          setTouched={setTouched}
+        />
       ))}
       <button type="button" className="add-button" onClick={addSymptom}>
         + Add Symptom
